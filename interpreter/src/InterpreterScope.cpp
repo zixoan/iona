@@ -107,6 +107,8 @@ void InterpreterScope::DeclareVariable(const std::string& variableName, const To
 	t.value = array;
 
 	this->variables[variableName] = std::make_shared<VariableType>(t);
+
+	IONA_LOG("Declared array: %s\n", variableName.c_str());
 }
 
 bool InterpreterScope::IsDeclared(const std::string& name)
@@ -117,6 +119,16 @@ bool InterpreterScope::IsDeclared(const std::string& name)
 void InterpreterScope::UpdateVariable(const std::string& variableName, const VariableType& type)
 {
 	this->variables[variableName]->value = type.value;
+}
+
+void InterpreterScope::UpdateVariable(const std::string& variableName, int arrayIndex, const VariableType& type)
+{
+	auto array = this->variables[variableName]->value;
+	auto arrayValues = std::any_cast<std::vector<VariableType>>(array);
+	
+	arrayValues[arrayIndex].value = type.value;
+	
+	this->variables[variableName]->value = arrayValues;
 }
 
 void InterpreterScope::UpdateVariable(const std::string& variableName, const std::vector<VariableType>& array)

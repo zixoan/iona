@@ -137,7 +137,7 @@ TODO for future (provide an online interpreter as a playground)
 
 ### Roadmap
 
-- [ ] array index variable assignment
+- [X] array index variable assignment
 - [ ] improved and standardized error messages (with file name etc.)
 - [ ] more boolean operators
 - [ ] more binary operator handling

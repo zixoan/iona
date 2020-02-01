@@ -457,3 +457,24 @@ void Interpreter::Visit(const Ref<VariableArrayUsageNode>& n)
 		Exit("Variable '%s' not declared", n->GetName().c_str());
 	}
 }
+
+void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
+{
+	auto innerScope = FindScopeOfVariable(n->GetName());
+	if (innerScope == nullptr)
+	{
+		Exit("Array variable '%s' not declared", n->GetName().c_str());
+	}
+
+	n->GetExpression()->Accept(shared_from_this());
+
+	auto variable = innerScope->GetVariable(n->GetName());
+
+	if (this->currentVariable.type != std::any_cast<std::vector<VariableType>>(variable->value).at(0).type)
+	{
+		Exit("New value of array variable '%s' needs to be of type '%s', but is '%s'",
+			n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+	}
+
+	innerScope->UpdateVariable(n->GetName(), n->GetIndex(), this->currentVariable);
+}

@@ -24,6 +24,7 @@
 #include <Ast/VariableArrayUsageNode.h>
 #include <Ast/ForEachNode.h>
 #include <Ast/BooleanNode.h>
+#include <Ast/VariableArrayAssignNode.h>
 
 class Visitor
 {
@@ -46,6 +47,7 @@ public:
 	virtual void Visit(const Ref<VariableUsageNode>& n) = 0;
 	virtual void Visit(const Ref<VariableAssignNode>& n) = 0;
 	virtual void Visit(const Ref<VariableArrayUsageNode>& n) = 0;
+	virtual void Visit(const Ref<VariableArrayAssignNode>& n) = 0;
 };
 
 #endif

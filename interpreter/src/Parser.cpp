@@ -22,6 +22,7 @@
 #include <Ast/VariableArrayUsageNode.h>
 #include <Ast/ForEachNode.h>
 #include <Ast/BooleanNode.h>
+#include <Ast/VariableArrayAssignNode.h>
 
 Parser::Parser(Lexer& lexer) 
 	: lexer(lexer), currentToken(lexer.NextToken())
@@ -362,6 +363,24 @@ Ref<Node> Parser::Statement()
 			Advance(Assign);
 
 			return std::make_shared<VariableAssignNode>(varName, Expression());
+		}
+		else if (this->currentToken.GetTokenType() == SquareLeft)
+		{
+			Advance(TokenType::SquareLeft);
+
+			if (this->currentToken.GetTokenType() != TokenType::Int)
+			{
+				Exit("Array access index can only be an int (line %i)", this->currentToken.GetLine());
+			}
+
+			unsigned int arrayIndex = std::stoul(this->currentToken.GetValue());
+			Advance(TokenType::Int);
+
+			Advance(TokenType::SquareRight);
+
+			Advance(TokenType::Assign);
+
+			return std::make_unique<VariableArrayAssignNode>(varName, arrayIndex, Expression());
 		}
 		else
 		{

@@ -144,7 +144,7 @@ Token Lexer::NextToken()
 			return HandleReserved(line);
 		}
 
-		if (std::isdigit(this->currentChar) || (this->currentChar == '-' || std::isdigit(this->Peek())))
+		if (std::isdigit(this->currentChar) || (this->currentChar == '-' && std::isdigit(this->Peek())))
 		{
 			std::stringstream number;
 			bool hasFloatPoint = false;

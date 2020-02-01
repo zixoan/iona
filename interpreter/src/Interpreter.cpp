@@ -447,7 +447,7 @@ void Interpreter::Visit(const Ref<VariableArrayUsageNode>& n)
 		auto arrayVar = std::any_cast<std::vector<VariableType>>(innerMostScope->GetVariable(n->GetName())->value);
 		if (n->GetIndex() > arrayVar.size() - 1)
 		{
-			Exit("Array index %i is higher than the max array index of %i", n->GetIndex(), arrayVar.size());
+			Exit("Array index %i is higher than the max array index of %i", n->GetIndex(), arrayVar.size() - 1);
 		}
 
 		this->currentVariable = std::move(arrayVar.at(n->GetIndex()));
@@ -470,10 +470,16 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 
 	auto variable = innerScope->GetVariable(n->GetName());
 
-	if (this->currentVariable.type != std::any_cast<std::vector<VariableType>>(variable->value).at(0).type)
+	auto arrayValues = std::any_cast<std::vector<VariableType>>(variable->value);
+	if (this->currentVariable.type != arrayValues.at(0).type)
 	{
 		Exit("New value of array variable '%s' needs to be of type '%s', but is '%s'",
 			n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+	}
+
+	if (n->GetIndex() > arrayValues.size() - 1)
+	{
+		Exit("Array index %i is higher than the max array index of %i", n->GetIndex(), arrayValues.size() - 1);
 	}
 
 	innerScope->UpdateVariable(n->GetName(), n->GetIndex(), this->currentVariable);

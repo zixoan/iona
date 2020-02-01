@@ -269,10 +269,14 @@ Ref<Node> Parser::Factor()
 
 			if (this->currentToken.GetTokenType() != Int)
 			{
-				Exit("Array access index can only be an int (line %i)", this->currentToken.GetLine());
+				Exit("Array access index for '%s' can only be an int (line %i)", varName.c_str(), this->currentToken.GetLine());
 			}
 
-			unsigned int arrayIndex = std::stoul(this->currentToken.GetValue());
+			int arrayIndex = std::stoi(this->currentToken.GetValue());
+			if (arrayIndex < 0)
+			{
+				Exit("Array index for '%s' cannot be negative (line %i)", varName.c_str(), this->currentToken.GetLine());
+			}
 			Advance(Int);
 
 			Advance(SquareRight);
@@ -370,10 +374,14 @@ Ref<Node> Parser::Statement()
 
 			if (this->currentToken.GetTokenType() != TokenType::Int)
 			{
-				Exit("Array access index can only be an int (line %i)", this->currentToken.GetLine());
+				Exit("Array access index for '%s' can only be an int (line %i)", varName.c_str(), this->currentToken.GetLine());
 			}
 
-			unsigned int arrayIndex = std::stoul(this->currentToken.GetValue());
+			int arrayIndex = std::stoi(this->currentToken.GetValue());
+			if (arrayIndex < 0)
+			{
+				Exit("Array index for '%s' cannot be negative (line %i)", varName.c_str(), this->currentToken.GetLine());
+			}
 			Advance(TokenType::Int);
 
 			Advance(TokenType::SquareRight);

@@ -11,19 +11,20 @@
 #include "Ast/FunctionNode.h"
 #include "Ast/BlockNode.h"
 #include "Ast/FunctionCallNode.h"
-#include <Ast/Literal/StringNode.h>
-#include <Ast/Literal/IntNode.h>
-#include <Ast/VariableUsageNode.h>
-#include <Ast/VariableAssignNode.h>
-#include <Ast/Literal/FloatNode.h>
-#include <Ast/Literal/BoolNode.h>
-#include <Ast/BinaryNode.h>
-#include <Ast/VariableArrayDeclarationAssignNode.h>
-#include <Ast/VariableArrayUsageNode.h>
-#include <Ast/ForEachNode.h>
-#include <Ast/BooleanNode.h>
-#include <Ast/VariableArrayAssignNode.h>
-#include <Ast/IfNode.h>
+#include "Ast/Literal/StringNode.h"
+#include "Ast/Literal/IntNode.h"
+#include "Ast/VariableUsageNode.h"
+#include "Ast/VariableAssignNode.h"
+#include "Ast/Literal/FloatNode.h"
+#include "Ast/Literal/BoolNode.h"
+#include "Ast/BinaryNode.h"
+#include "Ast/VariableArrayDeclarationAssignNode.h"
+#include "Ast/VariableArrayUsageNode.h"
+#include "Ast/ForEachNode.h"
+#include "Ast/BooleanNode.h"
+#include "Ast/VariableArrayAssignNode.h"
+#include "Ast/IfNode.h"
+#include "Ast/WhileNode.h"
 
 Parser::Parser(Lexer& lexer) 
 	: lexer(lexer), currentToken(lexer.NextToken())
@@ -252,6 +253,17 @@ Ref<Node> Parser::ParseFor()
 	return std::make_shared<ForEachNode>(variableName, arrayName, block);
 }
 
+Ref<Node> Parser::ParseWhile()
+{
+	Advance(TokenType::While);
+
+	Ref<Node> expression = Expression();
+
+	Ref<Node> block = ParseBlock();
+
+	return std::make_shared<WhileNode>(expression, block);
+}
+
 Ref<Node> Parser::ParseIf()
 {
 	Advance(TokenType::If);
@@ -347,9 +359,9 @@ Ref<Node> Parser::Term()
 {
 	Ref<Node> result = Factor();
 
-	while (currentToken.GetTokenType() == Multiply ||
-		currentToken.GetTokenType() == Divide ||
-		currentToken.GetTokenType() == Equals)
+	while (currentToken.GetTokenType() == Multiply || currentToken.GetTokenType() == Divide || 
+		currentToken.GetTokenType() == Equals || currentToken.GetTokenType() == LessThan || currentToken.GetTokenType() == GreaterThan || 
+		currentToken.GetTokenType() == GreaterEqualThan || currentToken.GetTokenType() == LessEqualThan)
 	{
 		Token tmp = currentToken;
 		if (tmp.GetTokenType() == Multiply || tmp.GetTokenType() == Divide)
@@ -359,7 +371,8 @@ Ref<Node> Parser::Term()
 			Ref<Node> right = Factor();
 			result = std::make_shared<BinaryNode>(result, tmp.GetTokenType(), right);
 		}
-		else if (tmp.GetTokenType() == Equals)
+		else if (tmp.GetTokenType() == Equals || currentToken.GetTokenType() == LessThan || currentToken.GetTokenType() == GreaterThan || 
+			currentToken.GetTokenType() == GreaterEqualThan || currentToken.GetTokenType() == LessEqualThan)
 		{
 			Advance(tmp.GetTokenType());
 
@@ -419,6 +432,10 @@ Ref<Node> Parser::Statement()
 	{
 		return ParseFor();
 	}
+	else if (this->currentToken.GetTokenType() == While)
+	{
+		return ParseWhile();
+	}
 	else if (this->currentToken.GetTokenType() == Var)
 	{
 		return ParseGlobalVariables();
@@ -438,7 +455,8 @@ Ref<Node> Parser::Expression()
 {
 	Ref<Node> result = Term();
 
-	while (currentToken.GetTokenType() == Plus || currentToken.GetTokenType() == Minus)
+	while (currentToken.GetTokenType() == Plus || currentToken.GetTokenType() == Minus || 
+		currentToken.GetTokenType() == Multiply || currentToken.GetTokenType() == Divide)
 	{
 		Token tmp = currentToken;
 		if (tmp.GetTokenType() == Plus)

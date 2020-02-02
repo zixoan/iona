@@ -9,6 +9,7 @@
   * [string interpolation](#string-interpolation)
   * [if](#if)
   * [for each](#for-each)
+  * [while](#while)
   * [internal functions](#internal-functions)
   * [custom functions](#custom-functions)
 * [Usage](#usage)
@@ -144,6 +145,29 @@ func Main()
 }
 ```
 
+### while
+
+```javascript
+var n = 5
+
+func Main()
+{
+    while n > 0
+    {
+        WriteLine(n)
+
+        n = n - 1
+    }
+    
+    // Outputs:
+    // 5
+    // 4
+    // 3
+    // 2
+    // 1
+}
+```
+
 ### internal functions
 
 - WriteLine(string|bool|int|float) : void
@@ -182,9 +206,10 @@ TODO for future (provide an online interpreter as a playground)
 
 - [X] array index variable assignment
 - [ ] improved and standardized error messages (with file name etc.)
-- [ ] more boolean operators
-- [ ] more binary operator handling
-- [ ] if-else statements
+- [X] more boolean operators
+- [X] more binary operator handling
+- [X] if-else statements
+- [X] while loop
 - [ ] return statements
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)
 - [ ] switch statements
@@ -193,7 +218,7 @@ TODO for future (provide an online interpreter as a playground)
 ### Contributing
 
 Any contibutions are greatly appreciated. 
-Just fork the project, create a new feature, commit and push your changes and open a pull request.
+Just fork the project, create a new feature branch, commit and push your changes and open a pull request.
 
 ### License
 

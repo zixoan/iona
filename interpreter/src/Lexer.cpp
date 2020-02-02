@@ -206,11 +206,27 @@ Token Lexer::NextToken()
 				Advance();
 				return Token(SquareRight, "]", this->line);
 			case '>':
+				if (Peek() != '=')
+				{
+					Advance();
+					return Token(GreaterThan, ">", this->line);
+				}
+
 				Advance();
-				return Token(GreaterThan, ">", this->line);
+				Advance();
+
+				return Token(GreaterEqualThan, ">=", this->line);
 			case '<':
+				if (Peek() != '=')
+				{
+					Advance();
+					return Token(LessThan, "<", this->line);
+				}
+
 				Advance();
-				return Token(LessThan, "<", this->line);
+				Advance();
+
+				return Token(LessEqualThan, "<=", this->line);
 			case '=':
 				if (Peek() != '=')
 				{

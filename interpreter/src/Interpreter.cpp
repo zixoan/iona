@@ -9,7 +9,8 @@
 #include "Standard.h"
 #include <chrono>
 
-Interpreter::Interpreter(const Parser& parser) : parser(parser), root(nullptr)
+Interpreter::Interpreter(const Parser& parser) 
+	: parser(parser), root(nullptr)
 {
 	RegisterInternalFunctions();
 
@@ -95,13 +96,15 @@ void Interpreter::Visit(const Ref<VariableDeclarationAssignNode>& n)
 
 void Interpreter::Visit(const Ref<FunctionNode>& n)
 {
+	this->scopes.push_back(std::make_shared<InterpreterScope>());
+
 	n->GetBlock()->Accept(shared_from_this());
+
+	this->scopes.pop_back();
 }
 
 void Interpreter::Visit(const Ref<BlockNode>& n)
 {
-	this->scopes.push_back(std::make_shared<InterpreterScope>());
-
 	// We need to register possible function parameters after the possible function scope was pushed
 	if (!this->currentFunctionCallParams.empty())
 	{
@@ -118,17 +121,16 @@ void Interpreter::Visit(const Ref<BlockNode>& n)
 			this->scopes.back()->UpdateVariable(varName, this->currentVariable);
 		}
 
-		// We do not need to reset currentFunctionCallParams, 
-		// because functions with no parameters will have an empty vector 
-		// and therefore reset themselves
+		// We need to reset this, so that in eg. while loops the function paramters are not 
+		// declared again everytime the block executes inside the function
+		this->currentFunctionCallParams.clear();
+		this->currentFunctionCallFunctionParams.clear();
 	}
 
 	for (auto& statement : n->GetStatements())
 	{
 		statement->Accept(shared_from_this());
 	}
-
-	this->scopes.pop_back();
 }
 
 void Interpreter::Visit(const Ref<FunctionCallNode>& n)
@@ -186,9 +188,12 @@ void Interpreter::Visit(const Ref<ForEachNode>& n)
 	{
 		auto variable = innerMostScope->GetVariable(n->GetArrayName());
 
+		this->scopes.push_back(std::make_shared<InterpreterScope>());
+
 		this->scopes.back()->DeclareVariable(n->GetVariableName(), variable->type);
 
-		std::vector<VariableType> values = std::any_cast<std::vector<VariableType>>(variable->value);
+		std::vector<VariableType> values = std::any_cast<std::vector<VariableType>>(variable->value);		
+		
 		for (auto& value : values)
 		{
 			// TODO: Check variable type??
@@ -196,6 +201,8 @@ void Interpreter::Visit(const Ref<ForEachNode>& n)
 			
 			n->GetBlock()->Accept(shared_from_this());
 		}
+
+		this->scopes.pop_back();
 	}
 	else
 	{
@@ -332,43 +339,59 @@ void Interpreter::Visit(const Ref<BinaryNode>& n)
 
 	VariableType resultVariable;
 
-	// Arithmetic operators
-	if (n->GetOperant() == TokenType::Plus || n->GetOperant() == TokenType::Minus || n->GetOperant() == TokenType::Multiply || n->GetOperant() == TokenType::Divide)
+	if (leftVariable.type == TokenType::Int && rightVariable.type == TokenType::Int)
 	{
-		if (leftVariable.type == TokenType::Int && rightVariable.type == TokenType::Int)
+		resultVariable.type = TokenType::Int;
+			
+		if (n->GetOperant() == TokenType::Plus)
 		{
-			if (n->GetOperant() == TokenType::Plus)
-			{
-				resultVariable.type = TokenType::Int;
-				resultVariable.value = std::any_cast<int>(leftVariable.value) + std::any_cast<int>(rightVariable.value);
-			}
-			else if (n->GetOperant() == TokenType::Minus)
-			{
-				resultVariable.type = TokenType::Int;
-				resultVariable.value = std::any_cast<int>(leftVariable.value) - std::any_cast<int>(rightVariable.value);
-			}
-			else if (n->GetOperant() == TokenType::Multiply)
-			{
-				resultVariable.type = TokenType::Int;
-				resultVariable.value = std::any_cast<int>(leftVariable.value) * std::any_cast<int>(rightVariable.value);
-			}
-			else if (n->GetOperant() == TokenType::Divide)
-			{
-				resultVariable.type = TokenType::Int;
-				resultVariable.value = std::any_cast<int>(leftVariable.value) / std::any_cast<int>(rightVariable.value);
-			}
+			resultVariable.value = std::any_cast<int>(leftVariable.value) + std::any_cast<int>(rightVariable.value);
 		}
-		else if (leftVariable.type == TokenType::String && rightVariable.type == TokenType::String)
+		else if (n->GetOperant() == TokenType::Minus)
 		{
-			if (n->GetOperant() == TokenType::Plus)
-			{
-				resultVariable.type = TokenType::String;
-				resultVariable.value = std::any_cast<std::string>(leftVariable.value) + std::any_cast<std::string>(rightVariable.value);
-			}
-			else
-			{
-				Exit("Invalid arithmetic string operator '%s'", Helper::ToString(n->GetOperant()).c_str());
-			}
+			resultVariable.value = std::any_cast<int>(leftVariable.value) - std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::Multiply)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) * std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::Divide)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) / std::any_cast<int>(rightVariable.value);
+		}
+	}
+	else if (leftVariable.type == TokenType::Float && rightVariable.type == TokenType::Float)
+	{
+		resultVariable.type = TokenType::Float;
+
+		if (n->GetOperant() == TokenType::Plus)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) + std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::Minus)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) - std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::Multiply)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) * std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::Divide)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) / std::any_cast<float>(rightVariable.value);
+		}
+	}
+	else if (leftVariable.type == TokenType::String && rightVariable.type == TokenType::String)
+	{
+		resultVariable.type = TokenType::String;
+			
+		if (n->GetOperant() == TokenType::Plus)
+		{
+			resultVariable.value = std::any_cast<std::string>(leftVariable.value) + std::any_cast<std::string>(rightVariable.value);
+		}
+		else
+		{
+			Exit("Invalid arithmetic string operator '%s'", Helper::ToString(n->GetOperant()).c_str());
 		}
 	}
 
@@ -393,6 +416,52 @@ void Interpreter::Visit(const Ref<BooleanNode>& n)
 		if (n->GetOperant() == TokenType::Equals)
 		{
 			resultVariable.value = std::any_cast<int>(leftVariable.value) == std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) < std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) > std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessEqualThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) <= std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterEqualThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) >= std::any_cast<int>(rightVariable.value);
+		}
+	}
+	if (leftVariable.type == TokenType::Float && rightVariable.type == TokenType::Float)
+	{
+		if (n->GetOperant() == TokenType::Equals)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) == std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) < std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) > std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessEqualThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) <= std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterEqualThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) >= std::any_cast<float>(rightVariable.value);
+		}
+	}
+	else if (leftVariable.type == TokenType::String && rightVariable.type == TokenType::String)
+	{
+		if (n->GetOperant() == TokenType::Equals)
+		{
+			resultVariable.value = std::any_cast<std::string>(leftVariable.value) == std::any_cast<std::string>(rightVariable.value);
 		}
 	}
 
@@ -471,6 +540,8 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 	auto variable = innerScope->GetVariable(n->GetName());
 
 	auto arrayValues = std::any_cast<std::vector<VariableType>>(variable->value);
+	// TODO: Acces at zero without check is ok at the moment, because 
+	// we cannot have empty arrays -> but this might change
 	if (this->currentVariable.type != arrayValues.at(0).type)
 	{
 		Exit("New value of array variable '%s' needs to be of type '%s', but is '%s'",
@@ -502,4 +573,25 @@ void Interpreter::Visit(const Ref<IfNode>& n)
 	{
 		n->GetFalseBlock()->Accept(shared_from_this());
 	}
+}
+
+void Interpreter::Visit(const Ref<WhileNode>& n)
+{
+	n->GetExpression()->Accept(shared_from_this());
+
+	if (this->currentVariable.type != TokenType::Bool)
+	{
+		Exit("Expression from a while needs to be a boolean result");
+	}
+
+	this->scopes.push_back(std::make_shared<InterpreterScope>());
+
+	while (std::any_cast<bool>(this->currentVariable.value))
+	{
+		n->GetBlock()->Accept(shared_from_this());
+
+		n->GetExpression()->Accept(shared_from_this());
+	}
+
+	this->scopes.pop_back();
 }

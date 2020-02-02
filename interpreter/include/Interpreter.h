@@ -46,6 +46,7 @@ public:
 	void Visit(const Ref<BlockNode>& n);
 	void Visit(const Ref<BinaryNode>& n);
 	void Visit(const Ref<BooleanNode>& n);
+	void Visit(const Ref<IfNode>& n);
 	void Visit(const Ref<StringNode>& n);
 	void Visit(const Ref<IntNode>& n);
 	void Visit(const Ref<FloatNode>& n);

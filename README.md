@@ -7,6 +7,7 @@
 * [What is supported](#what-is-supported)
   * [built-in data types](#built-in-data-types)
   * [string interpolation](#string-interpolation)
+  * [if](#if)
   * [for each](#for-each)
   * [internal functions](#internal-functions)
   * [custom functions](#custom-functions)
@@ -35,26 +36,40 @@ In the end you would only have one file to run a program with the interpreter.
 ## Syntax preview
 
 The variable and function naming is inspired by C#. Variable types are dynamically assigned during runtime.
-There are global variables, local variables and variable assignments.
-Also custom functions with parameters. String interpolation with variables and arrays of built-in types are also supported.
+There are global variables, local variables, variable assignments and custom functions with parameters.
+String interpolation with variables and arrays of built-in types are also supported just like simple if statements.
 
 ```javascript
 var helloWorld = "Hello, World!"
 var arrayOfInts = [2, 4, 54]
 var arrayOfFloats = [2.3, 4.5, 43.0]
+var value = 5
+var myBool = false
 
 func Main()
 {
     WriteLine("helloWorld = {helloWorld}")
 
-    WriteLine(arrayOfInts[2]")
+    WriteLine(arrayOfInts[2])
 
-    SecondHelloWorld()
+    if value == 5
+    {
+        SecondHelloWorld(value)
+    }
+
+    if myBool
+    {
+        SecondHelloWorld(100)
+    }
+    else
+    {
+        WriteLine("myBool is false")
+    }
 }
 
-func SecondHelloWorld()
+func SecondHelloWorld(var x = 0)
 {
-    WriteLine("Hello, World!")
+    WriteLine("Hello, World! x = {x}")
 }
 ```
 
@@ -81,6 +96,34 @@ func Main()
 
 > Currently there are only simple variables usages supported, but in the future full expressions will be supported.
 > For example: WriteLine("5 + 5 = {5 + 5}") will then output "5 + 5 = 10"
+
+### if
+
+```javascript
+var myBool = false
+var value = 100
+
+func Main()
+{
+    if myBool
+    {
+        WriteLine("myBool is true")
+    }
+    else
+    {
+        WriteLine("myBool is false")
+    }
+
+    if value == 100
+    {
+        WriteLine("value is equal to 100")
+    }
+
+    // Outputs:
+    // myBool is false
+    // value is equal to 100
+}
+```
 
 ### for each
 

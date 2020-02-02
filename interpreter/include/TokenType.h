@@ -21,6 +21,7 @@ enum TokenType
 	In,
 	While,
 	If,
+	Else,
 
 	CurlyLeft,
 	CurlyRight,
@@ -79,7 +80,7 @@ namespace Helper
 {
 	static std::string ToString(const TokenType& type)
 	{
-		static const char* values[] = { "Function", "Name", "Call", "For", "In", "While", "If", "CurlyLeft", "CurlyRight", "SquareLeft", "SquareRight", "ParanLeft", "ParanRight", "Var", "Int", "Float", "Bool", "String", "IntArray", "BoolArray", "FloatArray", "StringArray", "Auto", "Return", "Assign", "Comma", "Semicolon", "Colon", "New", "Point", "Plus", "Minus", "Multiply", "Divide", "Equals", "None" };
+		static const char* values[] = { "Function", "Name", "Call", "For", "In", "While", "If", "Else", "CurlyLeft", "CurlyRight", "SquareLeft", "SquareRight", "ParanLeft", "ParanRight", "Var", "Int", "Float", "Bool", "String", "IntArray", "BoolArray", "FloatArray", "StringArray", "Auto", "Return", "Assign", "Comma", "Semicolon", "Colon", "New", "Point", "Plus", "Minus", "Multiply", "Divide", "Equals", "None" };
 		return values[static_cast<int>(type)];
 	}
 }

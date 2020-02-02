@@ -25,6 +25,7 @@
 #include <Ast/ForEachNode.h>
 #include <Ast/BooleanNode.h>
 #include <Ast/VariableArrayAssignNode.h>
+#include <Ast/IfNode.h>
 
 class Visitor
 {
@@ -38,6 +39,7 @@ public:
 	virtual void Visit(const Ref<BlockNode>& n) = 0;
 	virtual void Visit(const Ref<BinaryNode>& n) = 0;
 	virtual void Visit(const Ref<BooleanNode>& n) = 0;
+	virtual void Visit(const Ref<IfNode>& n) = 0;
 
 	virtual void Visit(const Ref<StringNode>& n) = 0;
 	virtual void Visit(const Ref<IntNode>& n) = 0;

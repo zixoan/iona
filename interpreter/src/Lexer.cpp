@@ -26,6 +26,7 @@ Lexer::Lexer(const std::string& input)
 	this->reservedKeywords.insert(std::pair<std::string, Token>("in", Token(In, "in")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("while", Token(While, "while")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("if", Token(If, "if")));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("else", Token(Else, "else")));
 }
 
 void Lexer::Advance()

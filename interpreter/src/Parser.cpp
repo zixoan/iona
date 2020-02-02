@@ -23,6 +23,7 @@
 #include <Ast/ForEachNode.h>
 #include <Ast/BooleanNode.h>
 #include <Ast/VariableArrayAssignNode.h>
+#include <Ast/IfNode.h>
 
 Parser::Parser(Lexer& lexer) 
 	: lexer(lexer), currentToken(lexer.NextToken())
@@ -251,6 +252,25 @@ Ref<Node> Parser::ParseFor()
 	return std::make_shared<ForEachNode>(variableName, arrayName, block);
 }
 
+Ref<Node> Parser::ParseIf()
+{
+	Advance(TokenType::If);
+
+	Ref<Node> expression = Expression();
+
+	Ref<Node> trueBlock = ParseBlock();
+	Ref<Node> falseBlock = nullptr;
+
+	if (this->currentToken.GetTokenType() == TokenType::Else)
+	{
+		Advance(TokenType::Else);
+
+		falseBlock = ParseBlock();
+	}
+
+	return std::make_shared<IfNode>(expression, trueBlock, falseBlock);
+}
+
 Ref<Node> Parser::Factor()
 {
 	Token tmp = this->currentToken;
@@ -402,6 +422,10 @@ Ref<Node> Parser::Statement()
 	else if (this->currentToken.GetTokenType() == Var)
 	{
 		return ParseGlobalVariables();
+	}
+	else if (this->currentToken.GetTokenType() == If)
+	{
+		return ParseIf();
 	}
 
 	Exit("Unexpected token '%s' ('%s') in line %i", 

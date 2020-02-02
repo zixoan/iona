@@ -27,6 +27,7 @@ private:
 	Ref<Node> ParseFunction();
 	Ref<Node> ParseFunctionCall();
 	Ref<Node> ParseFor();
+	Ref<Node> ParseIf();
 
 	std::vector<Ref<Node>> ParseFunctionStatements();
 	Ref<Node> ParseBlock();

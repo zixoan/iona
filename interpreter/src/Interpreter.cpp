@@ -484,3 +484,22 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 
 	innerScope->UpdateVariable(n->GetName(), n->GetIndex(), this->currentVariable);
 }
+
+void Interpreter::Visit(const Ref<IfNode>& n)
+{
+	n->GetExpression()->Accept(shared_from_this());
+
+	if (this->currentVariable.type != TokenType::Bool)
+	{
+		Exit("Expression from an if needs to be a boolean result");
+	}
+
+	if (std::any_cast<bool>(this->currentVariable.value))
+	{
+		n->GetTrueBlock()->Accept(shared_from_this());
+	}
+	else if (n->GetFalseBlock() != nullptr)
+	{
+		n->GetFalseBlock()->Accept(shared_from_this());
+	}
+}

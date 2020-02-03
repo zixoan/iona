@@ -19,8 +19,13 @@ Interpreter::Interpreter(const Parser& parser)
 
 void Interpreter::RegisterInternalFunctions()
 {
-	this->internalFunctions.insert(std::pair<std::string, std::function<void(const std::stack<VariableType>& in, VariableType& out)>>("WriteLine", Console::WriteLine));
-	this->internalFunctions.insert(std::pair<std::string, std::function<void(const std::stack<VariableType>& in, VariableType& out)>>("ReadLine", Console::ReadLine));
+	this->internalFunctions.Register("WriteLine", Console::WriteLine, 1);
+	this->internalFunctions.Register("ReadLine", Console::ReadLine, 0);
+	this->internalFunctions.Register("ReadInt", Console::ReadInt, 0);
+	this->internalFunctions.Register("ReadFloat", Console::ReadFloat, 0);
+
+	this->internalFunctions.Register("Size", Core::Size, 1);
+	this->internalFunctions.Register("Random", Core::Random, 2);
 }
 
 Ref<InterpreterScope> Interpreter::FindScopeOfVariable(const std::string& variableName)
@@ -155,8 +160,7 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 	// Internal function handling
 	else
 	{
-		auto internalFunc = this->internalFunctions.find(n->GetName());
-		if (internalFunc != this->internalFunctions.end())
+		if (this->internalFunctions.Exists(n->GetName()))
 		{
 			std::stack<VariableType> in;
 			VariableType out;
@@ -168,7 +172,7 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 				in.push(this->currentVariable);
 			}
 
-			internalFunc->second(in, out);
+			this->internalFunctions.Call(n->GetLine(), n->GetName(), in, out);
 
 			// We need to update the current variable with the returned one
 			this->currentVariable = std::move(out);

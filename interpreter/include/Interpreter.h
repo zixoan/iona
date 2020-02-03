@@ -14,6 +14,7 @@
 #include "Core.h"
 #include "Parser.h"
 #include "InterpreterScope.h"
+#include <FunctionRegistry.h>
 
 class Interpreter : public Visitor, public std::enable_shared_from_this<Interpreter>
 {
@@ -23,7 +24,7 @@ private:
 
 	std::vector<Ref<InterpreterScope>> scopes;
 	std::map<std::string, Ref<FunctionNode>> globalFunctions;
-	std::map<std::string, std::function<void(const std::stack<VariableType>& in, VariableType& out)>> internalFunctions;
+	FunctionRegistry internalFunctions;
 
 	VariableType currentVariable;
 	std::vector<Ref<Node>> currentFunctionCallFunctionParams;

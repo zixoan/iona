@@ -176,6 +176,18 @@ func Main()
 - ReadLine() : string
   - Reads a line from the standard input
   - var input = ReadLine()
+- ReadInt() : string
+  - Reads an int from the standard input
+  - var number = ReadInt()
+- ReadFloat() : string
+  - Reads an float from the standard input
+  - var floatingPointNum = ReadFloat()
+- Size(string|array) : int
+  - Returns the size of a given string or number of elements in an array
+  - var size = Size("Hello")
+- Random(int lowerBound, int upperBound) : int
+  - Returns an int between the lower and upper bound (both inclusive)
+  - var rand = Random(0, 3)
 
 ### custom functions
 
@@ -214,6 +226,12 @@ TODO for future (provide an online interpreter as a playground)
 - [X] while loop
 - [ ] return statements
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)
+  - [X] Size
+  - [X] ReadInt
+  - [X] ReadFloat
+  - [X] Random
+  - [ ] Min
+  - [ ] Max
 - [ ] switch statements
 - [ ] expressions inside an interpolated string
 

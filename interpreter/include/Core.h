@@ -8,6 +8,8 @@
 #ifndef CORE_H
 #define CORE_H
 
+#include <stdexcept>
+
 #ifdef _DEBUG
 #define IONA_LOG(...) printf(__VA_ARGS__)
 #else

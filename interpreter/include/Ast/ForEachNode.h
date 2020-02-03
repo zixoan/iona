@@ -19,7 +19,7 @@ private:
 	std::string arrayName;
 	Ref<Node> block;
 public:
-	ForEachNode(const std::string& variableName, const std::string& arrayName, const Ref<Node>& block);
+	ForEachNode(const char* line, const std::string& variableName, const std::string& arrayName, const Ref<Node>& block);
 
 	~ForEachNode() = default;
 

@@ -143,8 +143,8 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 
 		if (n->GetParameters().size() != function->GetParameters().size())
 		{
-			Exit("Function call parameter count (%i) is not matching expected paramter count (%i) of function '%s'",
-				n->GetParameters().size(), function->GetParameters().size(), function->GetName().c_str());
+			Exit("%s Function call parameter count (%i) is not matching expected paramter count (%i) of function '%s'",
+				n->GetLine(), n->GetParameters().size(), function->GetParameters().size(), function->GetName().c_str());
 		}
 
 		this->currentFunctionCallParams = n->GetParameters();
@@ -175,7 +175,8 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 		}
 		else
 		{
-			Exit("Function '%s' not found", n->GetName().c_str());
+			Exit("%s Function '%s' not found", 
+				n->GetLine(), n->GetName().c_str());
 		}
 	}
 }
@@ -206,7 +207,8 @@ void Interpreter::Visit(const Ref<ForEachNode>& n)
 	}
 	else
 	{
-		Exit("Array variable '%s' in for loop was not declared before", n->GetArrayName().c_str());
+		Exit("%s Array variable '%s' in for loop was not declared in this scope", 
+			n->GetLine(), n->GetArrayName().c_str());
 	}
 }
 
@@ -225,7 +227,8 @@ void Interpreter::Visit(const Ref<StringNode>& n)
 		auto innerScope = FindScopeOfVariable(varName);
 		if (innerScope == nullptr)
 		{
-			Exit("Variable '%s' used in string interpolation is not declared", varName.c_str());
+			Exit("%s Variable '%s' used in string interpolation is not declared in this scope", 
+				n->GetLine(), varName.c_str());
 		}
 
 		std::stringstream s;
@@ -248,7 +251,8 @@ void Interpreter::Visit(const Ref<StringNode>& n)
 		}
 		else
 		{
-			Exit("Unsupported type '%s' for string interpolation", Helper::ToString(vt->type).c_str());
+			Exit("%s Unsupported type '%s' for string interpolation", 
+				n->GetLine(), Helper::ToString(vt->type).c_str());
 		}
 
 		value = value.replace(indexOfDollar, endVarUsagePos - indexOfDollar + 1, s.str());
@@ -300,7 +304,7 @@ void Interpreter::Visit(const Ref<VariableUsageNode>& n)
 	}
 	else
 	{
-		Exit("Variable '%s' not declared", n->GetName().c_str());
+		Exit("Variable '%s' not declared in this scope", n->GetName().c_str());
 	}
 }
 
@@ -309,7 +313,7 @@ void Interpreter::Visit(const Ref<VariableAssignNode>& n)
 	auto innerScope = FindScopeOfVariable(n->GetName());
 	if (innerScope == nullptr)
 	{
-		Exit("Variable '%s' not declared", n->GetName().c_str());
+		Exit("Variable '%s' not declared in this scope", n->GetName().c_str());
 	}
 
 	n->GetExpression()->Accept(shared_from_this());
@@ -532,7 +536,7 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 	auto innerScope = FindScopeOfVariable(n->GetName());
 	if (innerScope == nullptr)
 	{
-		Exit("Array variable '%s' not declared", n->GetName().c_str());
+		Exit("Array variable '%s' not declared in this scope", n->GetName().c_str());
 	}
 
 	n->GetExpression()->Accept(shared_from_this());

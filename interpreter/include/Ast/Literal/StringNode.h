@@ -16,7 +16,7 @@ class StringNode : public Node, public std::enable_shared_from_this<StringNode>
 private:
 	std::string value;
 public:
-	StringNode(const std::string& value);
+	StringNode(const char* line, const std::string& value);
 
 	~StringNode() = default;
 

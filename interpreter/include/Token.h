@@ -17,18 +17,18 @@ private:
 	TokenType tokenType;
 	std::string value;
 
-	int line;
+	std::string line;
 public:
 	Token();
-	Token(const TokenType& tokenType, const std::string& value, int line = -1);
+	Token(const TokenType& tokenType, const std::string& value, const std::string& line = "");
 	~Token() = default;
 
 	TokenType GetTokenType() const;
 	std::string GetValue() const;
 
-	int GetLine() const
+	const char* GetLine() const
 	{
-		return line;
+		return line.c_str();
 	}
 
 	void SetLine(int newLine)

@@ -17,6 +17,7 @@ class Lexer
 {
 private:
 	std::string input;
+	std::string fileName;
 	char currentChar;
 	int pos;
 	std::map<std::string, Token> reservedKeywords;
@@ -27,8 +28,15 @@ private:
 	char Peek();
 
 	Token HandleReserved(int line);
+	
+	std::string GetFormattedFileLine()
+	{
+		std::stringstream s;
+		s << fileName << "(line " << line << "):";
+		return s.str();
+	}
 public:
-	Lexer(const std::string& input);
+	Lexer(const std::string& input, const std::string& fileName);
 	~Lexer() = default;
 
 	Token NextToken();

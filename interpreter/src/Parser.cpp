@@ -62,8 +62,8 @@ Ref<Node> Parser::ParseMainFile()
 
 	if (this->currentToken.GetTokenType() != TokenType::Function)
 	{
-		Exit("Expected token 'Function' but got '%s' at line %i", 
-			Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetLine());
+		Exit("%s Expected token 'Function' but got '%s'", 
+			this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str());
 	}
 
 	while (this->currentToken.GetTokenType() == TokenType::Function)
@@ -94,7 +94,7 @@ Ref<Node> Parser::ParseMainFile()
 
 Ref<Node> Parser::ParseGlobalVariables()
 {
-	int varLine = this->currentToken.GetLine();
+	auto varLine = this->currentToken.GetLine();
 	Advance(TokenType::Var);
 
 	std::string variableName = this->currentToken.GetValue();
@@ -108,8 +108,8 @@ Ref<Node> Parser::ParseGlobalVariables()
 		Token variableValue = this->currentToken;
 		if (!IsVariableType(variableValue.GetTokenType()))
 		{
-			Exit("Type '%s' of variable '%s' is not a valid variable type (line %i)",
-				Helper::ToString(variableValue.GetTokenType()).c_str(), variableName.c_str(), variableValue.GetLine());
+			Exit("%s Type '%s' of variable '%s' is not a valid variable type",
+				variableValue.GetLine(), Helper::ToString(variableValue.GetTokenType()).c_str(), variableName.c_str());
 		}
 
 		Advance(variableValue.GetTokenType());
@@ -120,6 +120,12 @@ Ref<Node> Parser::ParseGlobalVariables()
 	TokenType arrayType;
 
 	Advance(SquareLeft);
+
+	if (this->currentToken.GetTokenType() == TokenType::SquareRight)
+	{
+		Exit("%s Array '%s' cannot be empty",
+			this->currentToken.GetLine(), variableName.c_str());
+	}
 
 	switch (this->currentToken.GetTokenType())
 	{
@@ -136,7 +142,8 @@ Ref<Node> Parser::ParseGlobalVariables()
 			arrayType = FloatArray;
 			break;
 		default:
-			Exit("Unsupported array type '%s'", Helper::ToString(this->currentToken.GetTokenType()).c_str());
+			Exit("%s Unsupported array type '%s'", 
+				this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str());
 	}
 
 	arrayValues.push_back(Factor());
@@ -152,11 +159,6 @@ Ref<Node> Parser::ParseGlobalVariables()
 	}
 
 	Advance(SquareRight);
-
-	if (arrayValues.empty())
-	{
-		Exit("Arrays must have at least one value");
-	}
 
 	return std::make_shared<VariableArrayDeclarationAssignNode>(variableName, arrayType, arrayValues);
 }
@@ -177,7 +179,7 @@ Ref<Node> Parser::ParseFunction()
 	std::vector<Ref<Node>> parameters;
 	while (this->currentToken.GetTokenType() != TokenType::ParanRight)
 	{
-		// TODO: Simplify function parameters and remove the need from eg. var 
+		// TODO: Simplify function parameters and remove the need for eg. var 
 		parameters.push_back(ParseGlobalVariables());
 
 		if (this->currentToken.GetTokenType() == TokenType::Comma)
@@ -194,6 +196,7 @@ Ref<Node> Parser::ParseFunction()
 
 Ref<Node> Parser::ParseFunctionCall()
 {
+	auto line = this->currentToken.GetLine();
 	std::string functionName = this->currentToken.GetValue();
 	Advance(Call);
 
@@ -212,7 +215,7 @@ Ref<Node> Parser::ParseFunctionCall()
 	}
 	Advance(ParanRight);
 
-	return std::make_shared<FunctionCallNode>(functionName, parameters);
+	return std::make_shared<FunctionCallNode>(line, functionName, parameters);
 }
 
 Ref<Node> Parser::ParseBlock()
@@ -238,6 +241,7 @@ std::vector<Ref<Node>> Parser::ParseFunctionStatements()
 
 Ref<Node> Parser::ParseFor()
 {
+	auto line = this->currentToken.GetLine();
 	Advance(TokenType::For);
 
 	std::string variableName = this->currentToken.GetValue();
@@ -250,7 +254,7 @@ Ref<Node> Parser::ParseFor()
 
 	Ref<Node> block = ParseBlock();
 
-	return std::make_shared<ForEachNode>(variableName, arrayName, block);
+	return std::make_shared<ForEachNode>(line, variableName, arrayName, block);
 }
 
 Ref<Node> Parser::ParseWhile()
@@ -301,13 +305,14 @@ Ref<Node> Parser::Factor()
 
 			if (this->currentToken.GetTokenType() != Int)
 			{
-				Exit("Array access index for '%s' can only be an int (line %i)", varName.c_str(), this->currentToken.GetLine());
+				Exit("%s Array access index for '%s' can only be an int", 
+					this->currentToken.GetLine(), varName.c_str());
 			}
 
 			int arrayIndex = std::stoi(this->currentToken.GetValue());
 			if (arrayIndex < 0)
 			{
-				Exit("Array index for '%s' cannot be negative (line %i)", varName.c_str(), this->currentToken.GetLine());
+				Exit("%s Array index for '%s' cannot be negative", this->currentToken.GetLine(), varName.c_str());
 			}
 			Advance(Int);
 
@@ -336,10 +341,11 @@ Ref<Node> Parser::Factor()
 	}
 	else if (tmp.GetTokenType() == String)
 	{
+		auto line = this->currentToken.GetLine();
 		std::string value = this->currentToken.GetValue();
 		Advance(String);
 
-		return std::make_shared<StringNode>(value);
+		return std::make_shared<StringNode>(line, value);
 	}
 	else if (tmp.GetTokenType() == Bool)
 	{
@@ -349,8 +355,8 @@ Ref<Node> Parser::Factor()
 		return std::make_shared<BoolNode>(value);
 	}
 
-	Exit("Unexpected token '%s' ('%s') in line %i",
-		Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str(), this->currentToken.GetLine());
+	Exit("%s Unexpected token '%s' ('%s')",
+		this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
 
 	return nullptr;
 }
@@ -407,13 +413,13 @@ Ref<Node> Parser::Statement()
 
 			if (this->currentToken.GetTokenType() != TokenType::Int)
 			{
-				Exit("Array access index for '%s' can only be an int (line %i)", varName.c_str(), this->currentToken.GetLine());
+				Exit("%s Array access index for '%s' can only be an int", this->currentToken.GetLine(), varName.c_str());
 			}
 
 			int arrayIndex = std::stoi(this->currentToken.GetValue());
 			if (arrayIndex < 0)
 			{
-				Exit("Array index for '%s' cannot be negative (line %i)", varName.c_str(), this->currentToken.GetLine());
+				Exit("%s Array index for '%s' cannot be negative", this->currentToken.GetLine(), varName.c_str());
 			}
 			Advance(TokenType::Int);
 
@@ -445,8 +451,8 @@ Ref<Node> Parser::Statement()
 		return ParseIf();
 	}
 
-	Exit("Unexpected token '%s' ('%s') in line %i", 
-		Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str(), this->currentToken.GetLine());
+	Exit("%s Unexpected token '%s' ('%s')",
+		this->currentToken.GetLine(), this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
 
 	return nullptr;
 }

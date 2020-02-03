@@ -206,6 +206,8 @@ TODO for future (provide an online interpreter as a playground)
 
 - [X] array index variable assignment
 - [ ] improved and standardized error messages (with file name etc.)
+  - [X] All parser messages
+  - [ ] All interpreter messages
 - [X] more boolean operators
 - [X] more binary operator handling
 - [X] if-else statements

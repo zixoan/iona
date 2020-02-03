@@ -8,8 +8,8 @@
 #include "Ast/FunctionCallNode.h"
 #include "Visitor.h"
 
-FunctionCallNode::FunctionCallNode(const std::string& name, const std::vector<Ref<Node>>& parameters) 
-	: name(name), parameters(parameters)
+FunctionCallNode::FunctionCallNode(const char* line, const std::string& name, const std::vector<Ref<Node>>& parameters)
+	: Node(line), name(name), parameters(parameters)
 {
 
 }

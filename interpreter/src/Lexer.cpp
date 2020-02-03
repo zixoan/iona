@@ -10,8 +10,8 @@
 #include <utility>
 #include <iostream>
 
-Lexer::Lexer(const std::string& input) 
-	: input(input), pos(0), currentlyInComment(false), line(1)
+Lexer::Lexer(const std::string& input, const std::string& fileName)
+	: input(input), fileName(fileName), pos(0), currentlyInComment(false), line(1)
 {
 	this->currentChar = this->input.at(this->pos);
 	this->reservedKeywords.insert(std::pair<std::string, Token>("func", Token(Function, "func")));
@@ -73,11 +73,11 @@ Token Lexer::HandleReserved(int line)
 		// Check if we got a function call (also used for function declaration)
 		if (this->currentChar == '(')
 		{
-			return Token(Call, possibleKeywordString, line);
+			return Token(Call, possibleKeywordString, GetFormattedFileLine());
 		}
 		else
 		{
-			return Token(Name, possibleKeywordString, line);
+			return Token(Name, possibleKeywordString, GetFormattedFileLine());
 		}
 	}
 
@@ -176,83 +176,83 @@ Token Lexer::NextToken()
 
 			TokenType intOrFloat = !hasFloatPoint ? TokenType::Int : TokenType::Float;
 
-			return Token(intOrFloat, number.str(), this->line);
+			return Token(intOrFloat, number.str(), GetFormattedFileLine());
 		}
 
 		switch (this->currentChar)
 		{
 			case '.':
 				Advance();
-				return Token(Point, ".", this->line);
+				return Token(Point, ".", GetFormattedFileLine());
 			case ':':
 				Advance();
-				return Token(Colon, ":", this->line);
+				return Token(Colon, ":", GetFormattedFileLine());
 			case '(':
 				Advance();
-				return Token(ParanLeft, "(", this->line);
+				return Token(ParanLeft, "(", GetFormattedFileLine());
 			case ')':
 				Advance();
-				return Token(ParanRight, ")", this->line);
+				return Token(ParanRight, ")", GetFormattedFileLine());
 			case '{':
 				Advance();
-				return Token(CurlyLeft, "{", this->line);
+				return Token(CurlyLeft, "{", GetFormattedFileLine());
 			case '}':
 				Advance();
-				return Token(CurlyRight, "}", this->line);
+				return Token(CurlyRight, "}", GetFormattedFileLine());
 			case '[':
 				Advance();
-				return Token(SquareLeft, "[", this->line);
+				return Token(SquareLeft, "[", GetFormattedFileLine());
 			case ']':
 				Advance();
-				return Token(SquareRight, "]", this->line);
+				return Token(SquareRight, "]", GetFormattedFileLine());
 			case '>':
 				if (Peek() != '=')
 				{
 					Advance();
-					return Token(GreaterThan, ">", this->line);
+					return Token(GreaterThan, ">", GetFormattedFileLine());
 				}
 
 				Advance();
 				Advance();
 
-				return Token(GreaterEqualThan, ">=", this->line);
+				return Token(GreaterEqualThan, ">=", GetFormattedFileLine());
 			case '<':
 				if (Peek() != '=')
 				{
 					Advance();
-					return Token(LessThan, "<", this->line);
+					return Token(LessThan, "<", GetFormattedFileLine());
 				}
 
 				Advance();
 				Advance();
 
-				return Token(LessEqualThan, "<=", this->line);
+				return Token(LessEqualThan, "<=", GetFormattedFileLine());
 			case '=':
 				if (Peek() != '=')
 				{
 					Advance();
-					return Token(Assign, "=", this->line);
+					return Token(Assign, "=", GetFormattedFileLine());
 				}
 
 				Advance();
 				Advance();
 
-				return Token(Equals, "==", this->line);
+				return Token(Equals, "==", GetFormattedFileLine());
 			case '+':
 				Advance();
-				return Token(Plus, "+", this->line);
+				return Token(Plus, "+", GetFormattedFileLine());
 			case '-':
 				Advance();
-				return Token(Minus, "-", this->line);
+				return Token(Minus, "-", GetFormattedFileLine());
 			case '*':
 				Advance();
-				return Token(Multiply, "*", this->line);
+				return Token(Multiply, "*", GetFormattedFileLine());
 			case '/':
 				Advance();
-				return Token(Divide, "/", this->line);
+				return Token(Divide, "/", GetFormattedFileLine());
 			case ',':
 				Advance();
-				return Token(Comma, ",", this->line);
+				return Token(Comma, ",", GetFormattedFileLine());
 			case '"':
 			{
 				Advance();
@@ -266,13 +266,13 @@ Token Lexer::NextToken()
 
 				Advance();
 
-				return Token(String, string.str(), this->line);
+				return Token(String, string.str(), GetFormattedFileLine());
 			}
 			default:
-				std::cerr << "Invalid character '" << this->currentChar << "' in line " << this->line << std::endl;
+				std::cerr << "Invalid character '" << this->currentChar << "' in line " << GetFormattedFileLine() << std::endl;
 				break;
 		}
 	}
 
-	return Token(None, "NONE", this->line);
+	return Token(None, "NONE", GetFormattedFileLine());
 }

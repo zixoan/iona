@@ -15,11 +15,19 @@ class Visitor;
 
 class Node
 {
+protected:
+	const char* line;
 public:
 	Node() = default;
+	Node(const char* line) : line(line) { }
 	virtual ~Node() = default;
 
 	virtual void Accept(const Ref<Visitor>& v) = 0;
+
+	const char* GetLine() const
+	{
+		return line;
+	}
 };
 
 #endif

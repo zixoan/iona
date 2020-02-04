@@ -238,6 +238,17 @@ Token Lexer::NextToken()
 				Advance();
 
 				return Token(Equals, "==", GetFormattedFileLine());
+			case '!':
+				if (Peek() == '=')
+				{
+					Advance();
+					Advance();
+					return Token(NotEquals, "!=", GetFormattedFileLine());
+				}
+
+				Advance();
+
+				return Token(ExclamationMark, "!", GetFormattedFileLine());
 			case '+':
 				Advance();
 				return Token(Plus, "+", GetFormattedFileLine());

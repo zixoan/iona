@@ -425,6 +425,10 @@ void Interpreter::Visit(const Ref<BooleanNode>& n)
 		{
 			resultVariable.value = std::any_cast<int>(leftVariable.value) == std::any_cast<int>(rightVariable.value);
 		}
+		else if (n->GetOperant() == TokenType::NotEquals)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) != std::any_cast<int>(rightVariable.value);
+		}
 		else if (n->GetOperant() == TokenType::LessThan)
 		{
 			resultVariable.value = std::any_cast<int>(leftVariable.value) < std::any_cast<int>(rightVariable.value);
@@ -448,6 +452,10 @@ void Interpreter::Visit(const Ref<BooleanNode>& n)
 		{
 			resultVariable.value = std::any_cast<float>(leftVariable.value) == std::any_cast<float>(rightVariable.value);
 		}
+		else if (n->GetOperant() == TokenType::NotEquals)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) != std::any_cast<float>(rightVariable.value);
+		}
 		else if (n->GetOperant() == TokenType::LessThan)
 		{
 			resultVariable.value = std::any_cast<float>(leftVariable.value) < std::any_cast<float>(rightVariable.value);
@@ -470,6 +478,10 @@ void Interpreter::Visit(const Ref<BooleanNode>& n)
 		if (n->GetOperant() == TokenType::Equals)
 		{
 			resultVariable.value = std::any_cast<std::string>(leftVariable.value) == std::any_cast<std::string>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::NotEquals)
+		{
+			resultVariable.value = std::any_cast<std::string>(leftVariable.value) != std::any_cast<std::string>(rightVariable.value);
 		}
 	}
 

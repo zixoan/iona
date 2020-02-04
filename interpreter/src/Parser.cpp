@@ -220,6 +220,14 @@ Ref<Node> Parser::ParseFunctionCall()
 
 Ref<Node> Parser::ParseBlock()
 {
+	// Support one line statement blocks without curly brackets
+	if (this->currentToken.GetTokenType() != TokenType::CurlyLeft)
+	{
+		std::vector<Ref<Node>> statements;
+		statements.push_back(Statement());
+		return std::make_shared<BlockNode>(statements);
+	}
+
 	Advance(CurlyLeft);
 	std::vector<Ref<Node>> statements = ParseFunctionStatements();
 	Advance(CurlyRight);
@@ -366,8 +374,8 @@ Ref<Node> Parser::Term()
 	Ref<Node> result = Factor();
 
 	while (currentToken.GetTokenType() == Multiply || currentToken.GetTokenType() == Divide || 
-		currentToken.GetTokenType() == Equals || currentToken.GetTokenType() == LessThan || currentToken.GetTokenType() == GreaterThan || 
-		currentToken.GetTokenType() == GreaterEqualThan || currentToken.GetTokenType() == LessEqualThan)
+		currentToken.GetTokenType() == Equals || currentToken.GetTokenType() == NotEquals || currentToken.GetTokenType() == LessThan || 
+		currentToken.GetTokenType() == GreaterThan || currentToken.GetTokenType() == GreaterEqualThan || currentToken.GetTokenType() == LessEqualThan)
 	{
 		Token tmp = currentToken;
 		if (tmp.GetTokenType() == Multiply || tmp.GetTokenType() == Divide)
@@ -377,8 +385,8 @@ Ref<Node> Parser::Term()
 			Ref<Node> right = Factor();
 			result = std::make_shared<BinaryNode>(result, tmp.GetTokenType(), right);
 		}
-		else if (tmp.GetTokenType() == Equals || currentToken.GetTokenType() == LessThan || currentToken.GetTokenType() == GreaterThan || 
-			currentToken.GetTokenType() == GreaterEqualThan || currentToken.GetTokenType() == LessEqualThan)
+		else if (tmp.GetTokenType() == Equals || tmp.GetTokenType() == NotEquals || currentToken.GetTokenType() == LessThan || 
+			currentToken.GetTokenType() == GreaterThan || currentToken.GetTokenType() == GreaterEqualThan || currentToken.GetTokenType() == LessEqualThan)
 		{
 			Advance(tmp.GetTokenType());
 
@@ -452,7 +460,7 @@ Ref<Node> Parser::Statement()
 	}
 
 	Exit("%s Unexpected token '%s' ('%s')",
-		this->currentToken.GetLine(), this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
+		this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
 
 	return nullptr;
 }

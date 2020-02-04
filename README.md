@@ -134,9 +134,7 @@ var array = [0, 1, 2]
 func Main()
 {
     for num in array
-    {
-        WriteLine("Number = {num}")    
-    }
+        WriteLine("Number = {num}")
     
     // Outputs:
     // Number = 0
@@ -224,6 +222,7 @@ TODO for future (provide an online interpreter as a playground)
 - [X] more binary operator handling
 - [X] if-else statements
 - [X] while loop
+- [X] one line statement blocks without curly brackets
 - [ ] return statements
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)
   - [X] Size

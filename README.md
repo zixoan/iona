@@ -12,6 +12,7 @@
   * [while](#while)
   * [internal functions](#internal-functions)
   * [custom functions](#custom-functions)
+    * [function return](#function-return)
 * [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
@@ -33,6 +34,9 @@ There is a "compiler" cmake project, you might think if I am crazy to build a co
 No, thats really too much work and a hell more difficult. I have thought that, if iona supports multiple source files, it would be really annoying to run/distribute the programs.
 So I want to try an idea where I "compile" all source files into a single container like format which the iona interpreter can then execute all together.
 In the end you would only have one file to run a program with the interpreter.
+
+Another idea is to have a CLI utility program to create projects from templates (eg. for visual studio code) 
+and provide a way to automatically re-run the program if the source file changes.
 
 ## Syntax preview
 
@@ -204,6 +208,25 @@ func MyFunc(var x = 0, var y = 0)
 }
 ```
 
+#### function return
+
+Custom functions can also have a simple return statement.
+
+```javascript
+func Main()
+{
+    WriteLine(Add(100, 4))
+    // Outputs: 104
+}
+
+func Add(var a = 0, var b = 0)
+{
+    // Some other logic..    
+
+    return a + b
+}
+```
+
 > The parameter declaration will probably change to remove eg. the var keyword.
 
 ### Usage
@@ -223,7 +246,7 @@ TODO for future (provide an online interpreter as a playground)
 - [X] if-else statements
 - [X] while loop
 - [X] one line statement blocks without curly brackets
-- [ ] return statements
+- [X] simple return statement (not nested)
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)
   - [X] Size
   - [X] ReadInt
@@ -233,6 +256,11 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] Max
 - [ ] switch statements
 - [ ] expressions inside an interpolated string
+- [ ] CLI utility to create projects and watch code
+  - [ ] create projects from templates (eg. for visual studio code with tasks)
+    - iona new project-name
+  - [ ] watch directory/source file for changes and re-run program automatically
+    - iona watch
 
 ### Contributing
 

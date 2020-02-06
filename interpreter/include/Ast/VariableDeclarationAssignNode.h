@@ -17,9 +17,9 @@ class VariableDeclarationAssignNode : public Node, public std::enable_shared_fro
 {
 private:
 	std::string name;
-	Token valueToken;
+	Ref<Node> expression;
 public:
-	VariableDeclarationAssignNode(const std::string& name, const Token& valueToken);
+	VariableDeclarationAssignNode(const char* line, const std::string& name, const Ref<Node>& expression);
 
 	~VariableDeclarationAssignNode() = default;
 
@@ -30,9 +30,9 @@ public:
 		return name;
 	}
 
-	Token GetValueToken() const
+	Ref<Node> GetExpression() const
 	{
-		return valueToken;
+		return expression;
 	}
 };
 

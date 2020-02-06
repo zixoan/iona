@@ -10,7 +10,7 @@
 
 #include <stdexcept>
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 #define IONA_LOG(...) printf(__VA_ARGS__)
 #else
 #define IONA_LOG

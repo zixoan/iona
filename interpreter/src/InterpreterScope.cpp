@@ -57,47 +57,9 @@ void InterpreterScope::DeclareVariable(const std::string& variableName, const To
 	this->variables[variableName] = std::make_shared<VariableType>(t);
 }
 
-void InterpreterScope::DeclareVariable(const std::string& variableName, const Token& token)
+void InterpreterScope::DeclareVariable(const std::string& variableName, const VariableType& variable)
 {
-	VariableType t;
-
-	switch (token.GetTokenType())
-	{
-		case TokenType::Int:
-		{
-			t.type = TokenType::Int;
-			t.value = std::stoi(token.GetValue());
-
-			IONA_LOG("Declared int: %s = %s\n", variableName.c_str(), token.GetValue().c_str());
-			break;
-		}
-		case TokenType::Float:
-		{
-			t.type = TokenType::Float;
-			t.value = std::stof(token.GetValue());
-
-			IONA_LOG("Declared float: %s = %s\n", variableName.c_str(), token.GetValue().c_str());
-			break;
-		}
-		case TokenType::String:
-		{
-			t.type = TokenType::String;
-			t.value = token.GetValue();
-
-			IONA_LOG("Declared string: %s = \"%s\"\n", variableName.c_str(), token.GetValue().c_str());
-			break;
-		}
-		case TokenType::Bool:
-		{
-			t.type = TokenType::Bool;
-			t.value = token.GetValue() == "true";
-
-			IONA_LOG("Declared bool: %s = %s\n", variableName.c_str(), token.GetValue().c_str());
-			break;
-		}
-	}
-
-	this->variables[variableName] = std::make_shared<VariableType>(t);
+	this->variables[variableName] = std::make_shared<VariableType>(variable);
 }
 
 void InterpreterScope::DeclareVariable(const std::string& variableName, const TokenType& arrayType, const std::vector<VariableType>& array)

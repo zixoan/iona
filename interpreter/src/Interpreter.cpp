@@ -17,6 +17,14 @@ Interpreter::Interpreter(const Parser& parser)
 	this->scopes.push_back(std::make_shared<InterpreterScope>());
 }
 
+Interpreter::Interpreter(const Parser& parser, const Ref<InterpreterScope>& scope)
+	: parser(parser), root(nullptr)
+{
+	RegisterInternalFunctions();
+
+	this->scopes.push_back(scope);
+}
+
 void Interpreter::RegisterInternalFunctions()
 {
 	this->internalFunctions.Register("WriteLine", Console::WriteLine, 1);
@@ -96,7 +104,15 @@ void Interpreter::Visit(const Ref<MainNode>& n)
 
 void Interpreter::Visit(const Ref<VariableDeclarationAssignNode>& n)
 {
-	this->scopes.back()->DeclareVariable(n->GetName(), n->GetValueToken());
+	n->GetExpression()->Accept(shared_from_this());
+
+	if (!IsVariableType(this->currentVariable.type))
+	{
+		Exit("%s Type '%s' of variable '%s' is not a valid variable type",
+			n->GetLine(), Helper::ToString(this->currentVariable.type).c_str(), n->GetName().c_str());
+	}
+
+	this->scopes.back()->DeclareVariable(n->GetName(), this->currentVariable);
 }
 
 void Interpreter::Visit(const Ref<FunctionNode>& n)
@@ -304,7 +320,7 @@ void Interpreter::Visit(const Ref<VariableUsageNode>& n)
 
 	if (innerMostScope != nullptr)
 	{
-		this->currentVariable = std::move(*innerMostScope->GetVariable(n->GetName()));
+		this->currentVariable = *innerMostScope->GetVariable(n->GetName());
 	}
 	else
 	{
@@ -614,4 +630,9 @@ void Interpreter::Visit(const Ref<WhileNode>& n)
 	}
 
 	this->scopes.pop_back();
+}
+
+void Interpreter::Visit(const Ref<ReturnNode>& n)
+{
+	n->GetExpression()->Accept(shared_from_this());
 }

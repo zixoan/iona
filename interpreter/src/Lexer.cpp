@@ -81,7 +81,7 @@ Token Lexer::HandleReserved(int line)
 		}
 	}
 
-	possibleKeyword->second.SetLine(line);
+	possibleKeyword->second.SetLine(GetFormattedFileLine());
 
 	return possibleKeyword->second;
 }
@@ -280,7 +280,8 @@ Token Lexer::NextToken()
 				return Token(String, string.str(), GetFormattedFileLine());
 			}
 			default:
-				std::cerr << "Invalid character '" << this->currentChar << "' in line " << GetFormattedFileLine() << std::endl;
+				std::cerr << GetFormattedFileLine() << " Invalid character '" << this->currentChar << "'" << std::endl;
+				Advance();
 				break;
 		}
 	}

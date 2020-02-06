@@ -25,8 +25,9 @@
 #include "Ast/VariableArrayAssignNode.h"
 #include "Ast/IfNode.h"
 #include "Ast/WhileNode.h"
+#include <Ast/ReturnNode.h>
 
-Parser::Parser(Lexer& lexer) 
+Parser::Parser(Lexer& lexer)
 	: lexer(lexer), currentToken(lexer.NextToken())
 {
 
@@ -105,15 +106,9 @@ Ref<Node> Parser::ParseGlobalVariables()
 	// First check for non array declaration
 	if (this->currentToken.GetTokenType() != SquareLeft)
 	{
-		Token variableValue = this->currentToken;
-		if (!IsVariableType(variableValue.GetTokenType()))
-		{
-			Exit("%s Type '%s' of variable '%s' is not a valid variable type",
-				variableValue.GetLine(), Helper::ToString(variableValue.GetTokenType()).c_str(), variableName.c_str());
-		}
+		Ref<Node> expression = Expression();
 
-		Advance(variableValue.GetTokenType());
-		return std::make_shared<VariableDeclarationAssignNode>(variableName, variableValue);
+		return std::make_shared<VariableDeclarationAssignNode>(varLine, variableName, expression);
 	}
 
 	auto arrayValues = std::vector<Ref<Node>>();
@@ -295,6 +290,15 @@ Ref<Node> Parser::ParseIf()
 	return std::make_shared<IfNode>(expression, trueBlock, falseBlock);
 }
 
+Ref<Node> Parser::ParseReturn()
+{
+	Advance(TokenType::Return);
+
+	Ref<Node> expression = Expression();
+
+	return std::make_shared<ReturnNode>(expression);
+}
+
 Ref<Node> Parser::Factor()
 {
 	Token tmp = this->currentToken;
@@ -457,6 +461,10 @@ Ref<Node> Parser::Statement()
 	else if (this->currentToken.GetTokenType() == If)
 	{
 		return ParseIf();
+	}
+	else if (this->currentToken.GetTokenType() == Return)
+	{
+		return ParseReturn();
 	}
 
 	Exit("%s Unexpected token '%s' ('%s')",

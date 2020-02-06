@@ -23,7 +23,7 @@ public:
 	~InterpreterScope() = default;
 
 	void DeclareVariable(const std::string& variableName, const TokenType& variableType);
-	void DeclareVariable(const std::string& variableName, const Token& token);
+	void DeclareVariable(const std::string& variableName, const VariableType& variable);
 	void DeclareVariable(const std::string& variableName, const TokenType& arrayType, const std::vector<VariableType>& token);
 
 	bool IsDeclared(const std::string& name);

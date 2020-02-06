@@ -34,6 +34,7 @@ private:
 	Ref<InterpreterScope> FindScopeOfVariable(const std::string& variableName);
 public:
 	Interpreter(const Parser& parser);
+	Interpreter(const Parser& parser, const Ref<InterpreterScope>& scope);
 	~Interpreter() = default;
 
 	void Interpret();
@@ -57,6 +58,7 @@ public:
 	void Visit(const Ref<VariableArrayUsageNode>& n);
 	void Visit(const Ref<VariableArrayAssignNode>& n);
 	void Visit(const Ref<BoolNode>& n);
+	void Visit(const Ref<ReturnNode>& n);
 };
 
 #endif

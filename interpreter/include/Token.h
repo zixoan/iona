@@ -31,9 +31,9 @@ public:
 		return line.c_str();
 	}
 
-	void SetLine(int newLine)
+	void SetLine(const std::string& line)
 	{
-		line = newLine;
+		this->line = line;
 	}
 };
 

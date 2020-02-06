@@ -29,13 +29,13 @@ private:
 	Ref<Node> ParseFor();
 	Ref<Node> ParseWhile();
 	Ref<Node> ParseIf();
+	Ref<Node> ParseReturn();
 
 	std::vector<Ref<Node>> ParseFunctionStatements();
 	Ref<Node> ParseBlock();
 
 	Ref<Node> Factor();
 	Ref<Node> Term();
-	Ref<Node> Statement();
 	Ref<Node> Expression();
 public:
 	const std::string MainFunctionName = "Main";
@@ -44,6 +44,7 @@ public:
 	~Parser() = default;
 
 	Ref<Node> Parse();
+	Ref<Node> Statement();
 };
 
 #endif

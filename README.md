@@ -13,6 +13,7 @@
   * [internal functions](#internal-functions)
   * [custom functions](#custom-functions)
     * [function return](#function-return)
+  * [internal variables](#internal-variables)
 * [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
@@ -227,6 +228,25 @@ func Add(var a = 0, var b = 0)
 }
 ```
 
+### internal variables
+
+The following internal variables are pre declared:
+   - PI (3.14159)
+   - INT_MIN (-2147483648)
+   - INT_MAX (2147483647)
+   - FLOAT_MIN (1.17549e-38)
+   - FLOAT_MAX (3.40282e+38)
+
+They can be used just like normal variables:
+
+```javascript
+func Main()
+{
+    WriteLine(PI)
+    // Outputs: 3.14159
+}
+```
+
 > The parameter declaration will probably change to remove eg. the var keyword.
 
 ### Usage
@@ -254,6 +274,11 @@ TODO for future (provide an online interpreter as a playground)
   - [X] Random
   - [ ] Min
   - [ ] Max
+  - [ ] Reverse
+  - [ ] Range
+  - [ ] ToUpperCase
+  - [ ] ToLowerCase
+- [X] internal pre-defined variables
 - [ ] switch statements
 - [ ] expressions inside an interpolated string
 - [ ] CLI utility to create projects and watch code
@@ -261,6 +286,9 @@ TODO for future (provide an online interpreter as a playground)
     - iona new project-name
   - [ ] watch directory/source file for changes and re-run program automatically
     - iona watch
+- [ ] Visual Studio Code extensions
+  - [ ] Core language syntax highlighting etc.
+  - [ ] Code snippets
 
 ### Contributing
 

@@ -8,21 +8,22 @@
 #include "Interpreter.h"
 #include "Standard.h"
 #include <chrono>
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <limits>
 
 Interpreter::Interpreter(const Parser& parser) 
-	: parser(parser), root(nullptr)
+	: Interpreter(parser, std::make_shared<InterpreterScope>())
 {
-	RegisterInternalFunctions();
-
-	this->scopes.push_back(std::make_shared<InterpreterScope>());
 }
 
 Interpreter::Interpreter(const Parser& parser, const Ref<InterpreterScope>& scope)
 	: parser(parser), root(nullptr)
 {
-	RegisterInternalFunctions();
-
 	this->scopes.push_back(scope);
+
+	RegisterInternalFunctions();
+	RegisterInternalVariables();
 }
 
 void Interpreter::RegisterInternalFunctions()
@@ -34,6 +35,17 @@ void Interpreter::RegisterInternalFunctions()
 
 	this->internalFunctions.Register("Size", Core::Size, 1);
 	this->internalFunctions.Register("Random", Core::Random, 2);
+}
+
+void Interpreter::RegisterInternalVariables()
+{
+	this->scopes.back()->DeclareVariable("PI", { TokenType::Float, (float) M_PI });
+
+	this->scopes.back()->DeclareVariable("INT_MIN", { TokenType::Int, std::numeric_limits<int>::min() });
+	this->scopes.back()->DeclareVariable("INT_MAX", { TokenType::Int, std::numeric_limits<int>::max() });
+
+	this->scopes.back()->DeclareVariable("FLOAT_MIN", { TokenType::Float, std::numeric_limits<float>::min() });
+	this->scopes.back()->DeclareVariable("FLOAT_MAX", { TokenType::Float, std::numeric_limits<float>::max() });
 }
 
 Ref<InterpreterScope> Interpreter::FindScopeOfVariable(const std::string& variableName)
@@ -203,11 +215,11 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 
 void Interpreter::Visit(const Ref<ForEachNode>& n)
 {
-	auto innerMostScope = FindScopeOfVariable(n->GetArrayName());
+	auto scope = FindScopeOfVariable(n->GetArrayName());
 
-	if (innerMostScope != nullptr)
+	if (scope != nullptr)
 	{
-		auto variable = innerMostScope->GetVariable(n->GetArrayName());
+		auto variable = scope->GetVariable(n->GetArrayName());
 
 		this->scopes.push_back(std::make_shared<InterpreterScope>());
 
@@ -316,11 +328,11 @@ void Interpreter::Visit(const Ref<BoolNode>& n)
 
 void Interpreter::Visit(const Ref<VariableUsageNode>& n)
 {
-	auto innerMostScope = FindScopeOfVariable(n->GetName());
+	auto scope = FindScopeOfVariable(n->GetName());
 
-	if (innerMostScope != nullptr)
+	if (scope != nullptr)
 	{
-		this->currentVariable = *innerMostScope->GetVariable(n->GetName());
+		this->currentVariable = *scope->GetVariable(n->GetName());
 	}
 	else
 	{
@@ -543,13 +555,13 @@ void Interpreter::Visit(const Ref<VariableArrayDeclarationAssignNode>& n)
 
 void Interpreter::Visit(const Ref<VariableArrayUsageNode>& n)
 {
-	auto innerMostScope = FindScopeOfVariable(n->GetName());
+	auto scope = FindScopeOfVariable(n->GetName());
 
-	if (innerMostScope != nullptr)
+	if (scope != nullptr)
 	{
-		auto a = innerMostScope->GetVariable(n->GetName());
+		auto a = scope->GetVariable(n->GetName());
 
-		auto arrayVar = std::any_cast<std::vector<VariableType>>(innerMostScope->GetVariable(n->GetName())->value);
+		auto arrayVar = std::any_cast<std::vector<VariableType>>(scope->GetVariable(n->GetName())->value);
 		if (n->GetIndex() > arrayVar.size() - 1)
 		{
 			Exit("Array index %i is higher than the max array index of %i", n->GetIndex(), arrayVar.size() - 1);

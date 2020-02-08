@@ -59,7 +59,7 @@ Token Lexer::HandleReserved(int line)
 {
 	std::stringstream result;
 
-	while (this->currentChar != EOF && std::isalpha(this->currentChar))
+	while (this->currentChar != EOF && (std::isalpha(this->currentChar) || this->currentChar == '_'))
 	{
 		result << this->currentChar;
 		Advance();

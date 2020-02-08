@@ -31,6 +31,7 @@ private:
 	std::vector<Ref<Node>> currentFunctionCallParams;
 
 	void RegisterInternalFunctions();
+	void RegisterInternalVariables();
 	Ref<InterpreterScope> FindScopeOfVariable(const std::string& variableName);
 public:
 	Interpreter(const Parser& parser);

@@ -23,6 +23,7 @@ template <typename ...Args>
 static void Exit(const char* error, Args ...args)
 {
 	fprintf(stderr, error, args...);
+	fputc('\n', stderr);
 
 	// TODO: Improve
 	throw std::runtime_error("error during runtime");

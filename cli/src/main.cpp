@@ -38,6 +38,16 @@ int main(int argc, char** argv)
 				{
 					char answer;
 
+					std::cout << "Install the iona-lang extension for Visual Studio Code? [y/n]" << std::endl;
+					std::cin >> answer;
+
+					if (answer == 'y')
+					{
+						std::stringstream command;
+						command << "code --install-extension " << std::getenv("IONA_PATH") << "/iona-lang-latest.vsix";
+						system(command.str().c_str());
+					}
+
 					std::cout << "Open the project in Visual Studio Code? [y/n]" << std::endl;
 					std::cin >> answer;
 

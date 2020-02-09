@@ -191,6 +191,12 @@ func Main()
 - Random(int lowerBound, int upperBound) : int
   - Returns an int between the lower and upper bound (both inclusive)
   - var rand = Random(0, 3)
+- ToLowerCase(string) : string
+  - Returns the lower case version of the input string
+- ToUpperCase(string) : string
+  - Returns the upper case version of the input string
+- Range(int upperBound) : int_array
+  - Returns an int array from zero to the given upper bound
 
 ### custom functions
 
@@ -208,6 +214,8 @@ func MyFunc(var x = 0, var y = 0)
     WriteLine("x={x}, y={y}")
 }
 ```
+
+> The parameter declaration will probably change to remove eg. the var keyword.
 
 #### function return
 
@@ -247,8 +255,6 @@ func Main()
 }
 ```
 
-> The parameter declaration will probably change to remove eg. the var keyword.
-
 ### Usage
 
 TODO (provide binary downloads for the iona interpreter)
@@ -275,9 +281,9 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] Min
   - [ ] Max
   - [ ] Reverse
-  - [ ] Range
-  - [ ] ToUpperCase
-  - [ ] ToLowerCase
+  - [X] Range
+  - [X] ToUpperCase
+  - [X] ToLowerCase
 - [X] internal pre-defined variables
 - [ ] switch statements
 - [ ] expressions inside an interpolated string

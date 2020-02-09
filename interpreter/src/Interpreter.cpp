@@ -28,13 +28,17 @@ Interpreter::Interpreter(const Parser& parser, const Ref<InterpreterScope>& scop
 
 void Interpreter::RegisterInternalFunctions()
 {
-	this->internalFunctions.Register("WriteLine", Console::WriteLine, 1);
-	this->internalFunctions.Register("ReadLine", Console::ReadLine, 0);
-	this->internalFunctions.Register("ReadInt", Console::ReadInt, 0);
-	this->internalFunctions.Register("ReadFloat", Console::ReadFloat, 0);
+	this->internalFunctions.Register("WriteLine", Iona::Console::WriteLine, 1);
+	this->internalFunctions.Register("ReadLine", Iona::Console::ReadLine, 0);
+	this->internalFunctions.Register("ReadInt", Iona::Console::ReadInt, 0);
+	this->internalFunctions.Register("ReadFloat", Iona::Console::ReadFloat, 0);
 
-	this->internalFunctions.Register("Size", Core::Size, 1);
-	this->internalFunctions.Register("Random", Core::Random, 2);
+	this->internalFunctions.Register("ToUpperCase", Iona::String::ToUpperCase, 1);
+	this->internalFunctions.Register("ToLowerCase", Iona::String::ToLowerCase, 1);
+
+	this->internalFunctions.Register("Size", Iona::Core::Size, 1);
+	this->internalFunctions.Register("Random", Iona::Core::Random, 2);
+	this->internalFunctions.Register("Range", Iona::Core::Range, 1);
 }
 
 void Interpreter::RegisterInternalVariables()

@@ -41,8 +41,8 @@ void Parser::Advance(TokenType tokenType)
 	}
 	else
 	{
-		Exit("Unexpected token type. Expected %s but got %s on line %i", 
-			Helper::ToString(tokenType).c_str(), Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetLine());
+		Exit("%s Unexpected token type. Expected %s but got %s", 
+			this->currentToken.GetLine(), Helper::ToString(tokenType).c_str(), Helper::ToString(this->currentToken.GetTokenType()).c_str());
 	}
 }
 

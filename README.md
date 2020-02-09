@@ -145,6 +145,14 @@ func Main()
     // Number = 0
     // Number = 1
     // Number = 2
+
+    for i in Range(3)
+        WriteLine("i = {i}")
+
+    // Outputs:
+    // i = 0
+    // i = 1
+    // i = 2
 }
 ```
 

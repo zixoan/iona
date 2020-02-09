@@ -80,6 +80,12 @@ static bool IsVariableType(const TokenType& type)
 		|| type == TokenType::StringArray || type == TokenType::IntArray || type == TokenType::BoolArray || type == TokenType::FloatArray;
 }
 
+static bool IsVariableArrayType(const TokenType& type)
+{
+	return type == TokenType::StringArray || type == TokenType::IntArray || 
+			type == TokenType::BoolArray || type == TokenType::FloatArray;
+}
+
 namespace Helper
 {
 	static std::string ToString(const TokenType& type)

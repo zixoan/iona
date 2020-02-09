@@ -252,12 +252,11 @@ Ref<Node> Parser::ParseFor()
 
 	Advance(TokenType::In);
 
-	std::string arrayName = this->currentToken.GetValue();
-	Advance(TokenType::Name);
+	Ref<Node> expression = Expression();
 
 	Ref<Node> block = ParseBlock();
 
-	return std::make_shared<ForEachNode>(line, variableName, arrayName, block);
+	return std::make_shared<ForEachNode>(line, variableName, expression, block);
 }
 
 Ref<Node> Parser::ParseWhile()

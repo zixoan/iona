@@ -20,9 +20,9 @@ int main(int argc, char const* argv[])
 {
 	if (argc == 2)
 	{
-		if (!EndsWith(argv[1], ".ion"))
+		if (!EndsWith(argv[1], ".ion") && !EndsWith(argv[1], ".iona"))
 		{
-			std::cout << "Source files for iona must end with '.ion' ('" << argv[1] << "')" << std::endl;
+			std::cout << "Source files for iona must end with '.ion' or '.iona' ('" << argv[1] << "')" << std::endl;
 			return EXIT_SUCCESS;
 		}
 

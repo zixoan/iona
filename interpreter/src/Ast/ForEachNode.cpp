@@ -8,8 +8,8 @@
 #include "ForEachNode.h"
 #include "Visitor.h"
 
-ForEachNode::ForEachNode(const char* line, const std::string& variableName, const std::string& arrayName, const Ref<Node>& block)
-	: Node(line), variableName(variableName), arrayName(arrayName), block(block)
+ForEachNode::ForEachNode(const char* line, const std::string& variableName, const Ref<Node>& expression, const Ref<Node>& block)
+	: Node(line), variableName(variableName), expression(expression), block(block)
 {
 }
 

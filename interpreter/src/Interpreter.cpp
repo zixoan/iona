@@ -219,33 +219,29 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 
 void Interpreter::Visit(const Ref<ForEachNode>& n)
 {
-	auto scope = FindScopeOfVariable(n->GetArrayName());
+	n->GetExpression()->Accept(shared_from_this());
 
-	if (scope != nullptr)
+	if (!IsVariableArrayType(this->currentVariable.type))
 	{
-		auto variable = scope->GetVariable(n->GetArrayName());
+		Exit("%s For loop can only loop over arrays, but in type is '%s'",
+				n->GetLine(), Helper::ToString(this->currentVariable.type).c_str());
+	}
 
-		this->scopes.push_back(std::make_shared<InterpreterScope>());
+	this->scopes.push_back(std::make_shared<InterpreterScope>());
 
-		this->scopes.back()->DeclareVariable(n->GetVariableName(), variable->type);
+	this->scopes.back()->DeclareVariable(n->GetVariableName(), this->currentVariable.type);
 
-		std::vector<VariableType> values = std::any_cast<std::vector<VariableType>>(variable->value);		
+	std::vector<VariableType> values = std::any_cast<std::vector<VariableType>>(this->currentVariable.value);
 		
-		for (auto& value : values)
-		{
-			// TODO: Check variable type??
-			this->scopes.back()->UpdateVariable(n->GetVariableName(), value);
-			
-			n->GetBlock()->Accept(shared_from_this());
-		}
-
-		this->scopes.pop_back();
-	}
-	else
+	for (auto& value : values)
 	{
-		Exit("%s Array variable '%s' in for loop was not declared in this scope", 
-			n->GetLine(), n->GetArrayName().c_str());
+		// TODO: Check variable type??
+		this->scopes.back()->UpdateVariable(n->GetVariableName(), value);
+			
+		n->GetBlock()->Accept(shared_from_this());
 	}
+
+	this->scopes.pop_back();
 }
 
 void Interpreter::Visit(const Ref<StringNode>& n)

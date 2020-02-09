@@ -16,10 +16,10 @@ class ForEachNode : public Node, public std::enable_shared_from_this<ForEachNode
 {
 private:
 	std::string variableName;
-	std::string arrayName;
+	Ref<Node> expression;
 	Ref<Node> block;
 public:
-	ForEachNode(const char* line, const std::string& variableName, const std::string& arrayName, const Ref<Node>& block);
+	ForEachNode(const char* line, const std::string& variableName, const Ref<Node>& expression, const Ref<Node>& block);
 
 	~ForEachNode() = default;
 
@@ -30,9 +30,9 @@ public:
 		return variableName;
 	}
 
-	std::string GetArrayName() const
+	Ref<Node> GetExpression() const
 	{
-		return arrayName;
+		return expression;
 	}
 
 	Ref<Node> GetBlock() const

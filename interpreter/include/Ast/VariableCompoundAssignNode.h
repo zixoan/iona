@@ -5,22 +5,24 @@
  * SPDX-License-Identifier:	GPL-3.0-only
  */
 
-#ifndef VARIABLE_ASSIGN_NODE_H
-#define VARIABLE_ASSIGN_NODE_H
+#ifndef VARIABLE_INCREMENT_ASSIGN_NODE_H
+#define VARIABLE_INCREMENT_ASSIGN_NODE_H
 
+#include <vector>
 #include <string>
 #include "Node.h"
 #include "Token.h"
 
-class VariableAssignNode : public Node, public std::enable_shared_from_this<VariableAssignNode>
+class VariableCompoundAssignNode : public Node, public std::enable_shared_from_this<VariableCompoundAssignNode>
 {
 private:
 	std::string name;
 	Ref<Node> expression;
+	TokenType operation;
 public:
-	VariableAssignNode(const char* line, const std::string& name, const Ref<Node>& expression);
+	VariableCompoundAssignNode(const char* line, const std::string& name, const Ref<Node>& expression, const TokenType& operation);
 
-	~VariableAssignNode() = default;
+	~VariableCompoundAssignNode() = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 
@@ -32,6 +34,11 @@ public:
 	Ref<Node> GetExpression() const
 	{
 		return expression;
+	}
+
+	TokenType GetOperation() const
+	{
+		return operation;
 	}
 };
 

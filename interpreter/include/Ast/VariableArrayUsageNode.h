@@ -17,7 +17,7 @@ private:
 	std::string name;
 	unsigned int index;
 public:
-	VariableArrayUsageNode(const std::string& name, unsigned int index);
+	VariableArrayUsageNode(const char* line, const std::string& name, unsigned int index);
 
 	~VariableArrayUsageNode() = default;
 

@@ -8,8 +8,8 @@
 #include "Ast/VariableUsageNode.h"
 #include "Visitor.h"
 
-VariableUsageNode::VariableUsageNode(const std::string& name)
-	: name(name)
+VariableUsageNode::VariableUsageNode(const char* line, const std::string& name)
+	: Node(line), name(name)
 {
 
 }

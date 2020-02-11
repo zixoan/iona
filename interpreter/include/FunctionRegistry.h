@@ -14,9 +14,11 @@
 #include "Core.h"
 #include "TokenType.h"
 
+using InternalFunctionCallback = std::function<void(std::vector<VariableType>& in, VariableType& out)>;
+
 struct FunctionEntry
 {
-	std::function<void(std::vector<VariableType>& in, VariableType& out)> function;
+	InternalFunctionCallback function;
 	unsigned int parameterCount;
 	std::map<int, std::vector<TokenType>> functionParameters;
 };
@@ -31,7 +33,7 @@ public:
 	FunctionRegistry() = default;
 	~FunctionRegistry() = default;
 
-	void Register(const std::string& name, std::function<void(std::vector<VariableType> & in, VariableType & out)> function, unsigned int parameterCount, std::map<int, std::vector<TokenType>> functionParameters = {});
+	void Register(const std::string& name, InternalFunctionCallback function, unsigned int parameterCount, std::map<int, std::vector<TokenType>> functionParameters = {});
 
 	void Call(const char* line, const std::string& name, std::vector<VariableType>& in, VariableType& out);
 

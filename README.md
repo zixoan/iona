@@ -14,6 +14,8 @@
   * [custom functions](#custom-functions)
     * [function return](#function-return)
   * [internal variables](#internal-variables)
+  * [increment and decrement operator](#increment-and-decrement-operator)
+  * [compound assignment](#compound-assignment)
 * [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
@@ -59,9 +61,7 @@ func Main()
     WriteLine(arrayOfInts[2])
 
     if value == 5
-    {
         SecondHelloWorld(value)
-    }
 
     if myBool
     {
@@ -71,6 +71,9 @@ func Main()
     {
         WriteLine("myBool is false")
     }
+
+    for x in Range(5)
+        value++
 }
 
 func SecondHelloWorld(var x = 0)
@@ -167,7 +170,7 @@ func Main()
     {
         WriteLine(n)
 
-        n = n - 1
+        n--
     }
     
     // Outputs:
@@ -275,6 +278,50 @@ func Main()
 }
 ```
 
+### increment and decrement operator
+
+The short increment and decrement operator is also supported.
+
+```javascript
+var x = 0
+var y = 0.0
+
+func Main()
+{
+    x++
+    y++
+    WriteLine("x={x} y={y}")
+    // Outputs: x=1 y=1.0
+
+    x--
+    y--
+    // Outputs: x=0 y=0.0
+
+    WriteLine(x++)
+    // Outputs: 1
+}
+```
+
+### compound assignment
+
+Compound assignment is supported with the operator +,-,* and /.
+
+```javascript
+var x = 2
+var y = 5.0
+
+func Main()
+{
+    x *= 2
+    WriteLine(x)
+    // Outputs: 4
+
+    y += 2.5
+    WriteLine(x)
+    // Outputs: 7.5
+}
+```
+
 ### Usage
 
 TODO (provide binary downloads for the iona interpreter)
@@ -290,7 +337,9 @@ TODO for future (provide an online interpreter as a playground)
 - [X] more boolean operators
 - [X] more binary operator handling
 - [X] if-else statements
+  - [ ] complex if-else-if statements
 - [X] while loop
+- [ ] do while loop
 - [X] one line statement blocks without curly brackets
 - [X] simple return statement (not nested)
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)
@@ -314,17 +363,22 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] FileWriteLines
   - [ ] FileCopy
   - [ ] FileList
+  - [ ] ToString
+  - [ ] ToInt/IsInt
+  - [ ] ToFloat/IsFloat
+  - [ ] ToBool/IsBool
 - [X] internal pre-defined variables
 - [ ] switch statements
 - [ ] expressions inside an interpolated string
-- [ ] CLI utility to create projects and watch code
-  - [ ] create projects from templates (eg. for visual studio code with tasks)
+- [X] CLI utility to create projects and watch code
+  - [X] create projects from templates (eg. for visual studio code with tasks)
     - iona new project-name
   - [ ] watch directory/source file for changes and re-run program automatically
     - iona watch
-- [ ] Visual Studio Code extensions
-  - [ ] Core language syntax highlighting etc.
-  - [ ] Code snippets
+- [X] Visual Studio Code extensions
+  - [X] Core language syntax highlighting etc.
+  - [X] Code snippets
+- [ ] Tests
 
 ### Contributing
 

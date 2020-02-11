@@ -26,6 +26,8 @@
 #include "Ast/IfNode.h"
 #include "Ast/WhileNode.h"
 #include <Ast/ReturnNode.h>
+#include <Ast/VariableIncrementDecrementNode.h>
+#include <Ast/VariableCompoundAssignNode.h>
 
 Parser::Parser(Lexer& lexer)
 	: lexer(lexer), currentToken(lexer.NextToken())
@@ -261,17 +263,19 @@ Ref<Node> Parser::ParseFor()
 
 Ref<Node> Parser::ParseWhile()
 {
+	auto line = this->currentToken.GetLine();
 	Advance(TokenType::While);
 
 	Ref<Node> expression = Expression();
 
 	Ref<Node> block = ParseBlock();
 
-	return std::make_shared<WhileNode>(expression, block);
+	return std::make_shared<WhileNode>(line, expression, block);
 }
 
 Ref<Node> Parser::ParseIf()
 {
+	auto line = this->currentToken.GetLine();
 	Advance(TokenType::If);
 
 	Ref<Node> expression = Expression();
@@ -286,7 +290,7 @@ Ref<Node> Parser::ParseIf()
 		falseBlock = ParseBlock();
 	}
 
-	return std::make_shared<IfNode>(expression, trueBlock, falseBlock);
+	return std::make_shared<IfNode>(line, expression, trueBlock, falseBlock);
 }
 
 Ref<Node> Parser::ParseReturn()
@@ -306,9 +310,25 @@ Ref<Node> Parser::Factor()
 		std::string varName = this->currentToken.GetValue();
 		Advance(Name);
 
-		if (this->currentToken.GetTokenType() != SquareLeft)
+		auto line = this->currentToken.GetLine();
+
+		if (this->currentToken.GetTokenType() == Plus)
 		{
-			return std::make_shared<VariableUsageNode>(varName);
+			Advance(Plus);
+			Advance(Plus);
+
+			return std::make_shared<VariableIncrementDecrementNode>(line, varName, 1);
+		}
+		else if (this->currentToken.GetTokenType() == Minus)
+		{
+			Advance(Minus);
+			Advance(Minus);
+
+			return std::make_shared<VariableIncrementDecrementNode>(line, varName, -1);
+		}
+		else if (this->currentToken.GetTokenType() != SquareLeft)
+		{
+			return std::make_shared<VariableUsageNode>(line, varName);
 		}
 		else
 		{
@@ -329,7 +349,7 @@ Ref<Node> Parser::Factor()
 
 			Advance(SquareRight);
 
-			return std::make_shared<VariableArrayUsageNode>(varName, arrayIndex);
+			return std::make_shared<VariableArrayUsageNode>(line, varName, arrayIndex);
 		}
 	}
 	else if (tmp.GetTokenType() == Call)
@@ -412,11 +432,67 @@ Ref<Node> Parser::Statement()
 		std::string varName = this->currentToken.GetValue();
 		Advance(Name);
 
+		auto line = this->currentToken.GetLine();
+
 		if (this->currentToken.GetTokenType() == Assign)
 		{
 			Advance(Assign);
 
-			return std::make_shared<VariableAssignNode>(varName, Expression());
+			return std::make_shared<VariableAssignNode>(line, varName, Expression());
+		}
+		else if (this->currentToken.GetTokenType() == Plus)
+		{
+			Advance(Plus);
+
+			if (this->currentToken.GetTokenType() == Plus)
+			{
+				Advance(Plus);
+
+				return std::make_shared<VariableIncrementDecrementNode>(line, varName, 1);
+			}
+			else if (this->currentToken.GetTokenType() == Assign)
+			{
+				Advance(Assign);
+
+				return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Plus);
+			}
+		}
+		else if (this->currentToken.GetTokenType() == Minus)
+		{
+			auto line = this->currentToken.GetLine();
+
+			Advance(Minus);
+
+			if (this->currentToken.GetTokenType() == Minus)
+			{
+				Advance(Minus);
+
+				return std::make_shared<VariableIncrementDecrementNode>(line, varName, -1);
+			}
+			else if (this->currentToken.GetTokenType() == Assign)
+			{
+				Advance(Assign);
+
+				return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Minus);
+			}
+		}
+		else if (this->currentToken.GetTokenType() == Multiply)
+		{
+			auto line = this->currentToken.GetLine();
+
+			Advance(Multiply);
+			Advance(Assign);
+
+			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Multiply);
+		}
+		else if (this->currentToken.GetTokenType() == Divide)
+		{
+			auto line = this->currentToken.GetLine();
+
+			Advance(Divide);
+			Advance(Assign);
+
+			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Divide);
 		}
 		else if (this->currentToken.GetTokenType() == SquareLeft)
 		{
@@ -438,11 +514,11 @@ Ref<Node> Parser::Statement()
 
 			Advance(TokenType::Assign);
 
-			return std::make_unique<VariableArrayAssignNode>(varName, arrayIndex, Expression());
+			return std::make_unique<VariableArrayAssignNode>(line, varName, arrayIndex, Expression());
 		}
 		else
 		{
-			return std::make_unique<VariableUsageNode>(varName);
+			return std::make_unique<VariableUsageNode>(line, varName);
 		}
 	}
 	else if (this->currentToken.GetTokenType() == For)

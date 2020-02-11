@@ -8,8 +8,8 @@
 #include "Ast/VariableAssignNode.h"
 #include "Visitor.h"
 
-VariableAssignNode::VariableAssignNode(const std::string& name, const Ref<Node>& expression)
-	: name(name), expression(expression)
+VariableAssignNode::VariableAssignNode(const char* line, const std::string& name, const Ref<Node>& expression)
+	: Node(line), name(name), expression(expression)
 {
 
 }

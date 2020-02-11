@@ -8,8 +8,8 @@
 #include "VariableArrayAssignNode.h"
 #include "Visitor.h"
 
-VariableArrayAssignNode::VariableArrayAssignNode(const std::string& name, unsigned int index, const Ref<Node>& expression) 
-	: name(name), index(index), expression(expression)
+VariableArrayAssignNode::VariableArrayAssignNode(const char* line, const std::string& name, unsigned int index, const Ref<Node>& expression)
+	: Node(line), name(name), index(index), expression(expression)
 {
 }
 

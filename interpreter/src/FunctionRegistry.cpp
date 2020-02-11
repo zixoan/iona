@@ -1,7 +1,7 @@
 #include "FunctionRegistry.h"
 
 void FunctionRegistry::Register(const std::string& name, 
-								std::function<void(std::vector<VariableType>& in, VariableType& out)> function, 
+								InternalFunctionCallback function,
 								unsigned int parameterCount, 
 								std::map<int, std::vector<TokenType>> functionParameters)
 {

@@ -28,6 +28,8 @@
 #include <Ast/IfNode.h>
 #include <Ast/WhileNode.h>
 #include <Ast/ReturnNode.h>
+#include <Ast/VariableIncrementDecrementNode.h>
+#include <Ast/VariableCompoundAssignNode.h>
 
 class Visitor
 {
@@ -54,6 +56,8 @@ public:
 	virtual void Visit(const Ref<VariableAssignNode>& n) = 0;
 	virtual void Visit(const Ref<VariableArrayUsageNode>& n) = 0;
 	virtual void Visit(const Ref<VariableArrayAssignNode>& n) = 0;
+	virtual void Visit(const Ref<VariableIncrementDecrementNode>& n) = 0;
+	virtual void Visit(const Ref<VariableCompoundAssignNode>& n) = 0;
 };
 
 #endif

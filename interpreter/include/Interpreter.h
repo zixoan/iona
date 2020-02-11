@@ -63,6 +63,8 @@ public:
 	void Visit(const Ref<VariableAssignNode>& n);
 	void Visit(const Ref<VariableArrayUsageNode>& n);
 	void Visit(const Ref<VariableArrayAssignNode>& n);
+	void Visit(const Ref<VariableIncrementDecrementNode>& n);
+	void Visit(const Ref<VariableCompoundAssignNode>& n);
 	void Visit(const Ref<BoolNode>& n);
 	void Visit(const Ref<ReturnNode>& n);
 };

@@ -343,6 +343,37 @@ void Interpreter::Visit(const Ref<VariableUsageNode>& n)
 	}
 	else
 	{
+		Exit("%s Variable '%s' not declared in this scope", 
+			n->GetLine(), n->GetName().c_str());
+	}
+}
+
+void Interpreter::Visit(const Ref<VariableIncrementDecrementNode>& n)
+{
+	auto scope = FindScopeOfVariable(n->GetName());
+
+	if (scope != nullptr)
+	{
+		auto variable = scope->GetVariable(n->GetName());
+		
+		if (variable->type == TokenType::Int)
+		{
+			variable->value = std::any_cast<int>(variable->value) + n->GetValue();
+		}
+		else if (variable->type == TokenType::Float)
+		{
+			variable->value = std::any_cast<float>(variable->value) + n->GetValue();
+		}
+		else
+		{
+			Exit("%s Variable increments are only supported with int and float, but got %s",
+				n->GetLine(), Helper::ToString(variable->type).c_str());
+		}
+
+		this->currentVariable = *variable;
+	}
+	else
+	{
 		Exit("Variable '%s' not declared in this scope", n->GetName().c_str());
 	}
 }
@@ -352,7 +383,8 @@ void Interpreter::Visit(const Ref<VariableAssignNode>& n)
 	auto innerScope = FindScopeOfVariable(n->GetName());
 	if (innerScope == nullptr)
 	{
-		Exit("Variable '%s' not declared in this scope", n->GetName().c_str());
+		Exit("%s Variable '%s' not declared in this scope", 
+			n->GetLine(), n->GetName().c_str());
 	}
 
 	n->GetExpression()->Accept(shared_from_this());
@@ -363,11 +395,85 @@ void Interpreter::Visit(const Ref<VariableAssignNode>& n)
 	// so it was already checked that it's a valid variable type
 	if (this->currentVariable.type != variable->type)
 	{
-		Exit("New value of variable '%s' needs to be of type '%s', but is '%s'", 
-			n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+		Exit("%s New value of variable '%s' needs to be of type '%s', but is '%s'", 
+			n->GetLine(), n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
 	}
 
 	innerScope->UpdateVariable(n->GetName(), this->currentVariable);
+}
+
+void Interpreter::Visit(const Ref<VariableCompoundAssignNode>& n)
+{
+	auto innerScope = FindScopeOfVariable(n->GetName());
+	if (innerScope == nullptr)
+	{
+		Exit("%s Variable '%s' not declared in this scope", 
+			n->GetLine(), n->GetName().c_str());
+	}
+
+	n->GetExpression()->Accept(shared_from_this());
+
+	auto variable = innerScope->GetVariable(n->GetName());
+
+	// We only need to check for same type, because the variable needs to be declared
+	// so it was already checked that it's a valid variable type
+	if (this->currentVariable.type != variable->type)
+	{
+		Exit("%s New value of variable '%s' needs to be of type '%s', but is '%s'",
+			n->GetLine(), n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+	}
+
+	VariableType vt;
+
+	if (variable->type == TokenType::Int)
+	{
+		vt.type = TokenType::Int;
+
+		switch (n->GetOperation())
+		{
+			case TokenType::Plus:
+				vt.value = std::any_cast<int>(variable->value) + std::any_cast<int>(this->currentVariable.value);
+				break;
+			case TokenType::Minus:
+				vt.value = std::any_cast<int>(variable->value) - std::any_cast<int>(this->currentVariable.value);
+				break;
+			case TokenType::Multiply:
+				vt.value = std::any_cast<int>(variable->value) * std::any_cast<int>(this->currentVariable.value);
+				break;
+			case TokenType::Divide:
+				vt.value = std::any_cast<int>(variable->value) / std::any_cast<int>(this->currentVariable.value);
+				break;
+		}
+	}
+	else if (variable->type == TokenType::Float)
+	{
+		vt.type = TokenType::Float;
+
+		switch (n->GetOperation())
+		{
+			case TokenType::Plus:
+				vt.value = std::any_cast<float>(variable->value) + std::any_cast<float>(this->currentVariable.value);
+				break;
+			case TokenType::Minus:
+				vt.value = std::any_cast<float>(variable->value) - std::any_cast<float>(this->currentVariable.value);
+				break;
+			case TokenType::Multiply:
+				vt.value = std::any_cast<float>(variable->value) * std::any_cast<float>(this->currentVariable.value);
+				break;
+			case TokenType::Divide:
+				vt.value = std::any_cast<float>(variable->value) / std::any_cast<float>(this->currentVariable.value);
+				break;
+		}
+	}
+	else
+	{
+		Exit("%s Variable increment assignments are only supported with int and float, but got %s",
+			n->GetLine(), Helper::ToString(variable->type).c_str());
+	}
+
+	this->currentVariable = vt;
+
+	innerScope->UpdateVariable(n->GetName(), vt);
 }
 
 void Interpreter::Visit(const Ref<BinaryNode>& n)
@@ -571,14 +677,16 @@ void Interpreter::Visit(const Ref<VariableArrayUsageNode>& n)
 		auto arrayVar = std::any_cast<std::vector<VariableType>>(scope->GetVariable(n->GetName())->value);
 		if (n->GetIndex() > arrayVar.size() - 1)
 		{
-			Exit("Array index %i is higher than the max array index of %i", n->GetIndex(), arrayVar.size() - 1);
+			Exit("%s Array index %i is higher than the max array index of %i", 
+				n->GetLine(), n->GetIndex(), arrayVar.size() - 1);
 		}
 
 		this->currentVariable = std::move(arrayVar.at(n->GetIndex()));
 	}
 	else
 	{
-		Exit("Variable '%s' not declared", n->GetName().c_str());
+		Exit("%s Variable '%s' not declared", 
+			n->GetLine(), n->GetName().c_str());
 	}
 }
 
@@ -587,7 +695,8 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 	auto innerScope = FindScopeOfVariable(n->GetName());
 	if (innerScope == nullptr)
 	{
-		Exit("Array variable '%s' not declared in this scope", n->GetName().c_str());
+		Exit("%s Array variable '%s' not declared in this scope", 
+			n->GetLine(), n->GetName().c_str());
 	}
 
 	n->GetExpression()->Accept(shared_from_this());
@@ -599,13 +708,14 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 	// we cannot have empty arrays -> but this might change
 	if (this->currentVariable.type != arrayValues.at(0).type)
 	{
-		Exit("New value of array variable '%s' needs to be of type '%s', but is '%s'",
-			n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+		Exit("%s New value of array variable '%s' needs to be of type '%s', but is '%s'",
+			n->GetLine(), n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
 	}
 
 	if (n->GetIndex() > arrayValues.size() - 1)
 	{
-		Exit("Array index %i is higher than the max array index of %i", n->GetIndex(), arrayValues.size() - 1);
+		Exit("%s Array index %i is higher than the max array index of %i", 
+			n->GetLine(), n->GetIndex(), arrayValues.size() - 1);
 	}
 
 	innerScope->UpdateVariable(n->GetName(), n->GetIndex(), this->currentVariable);
@@ -636,7 +746,7 @@ void Interpreter::Visit(const Ref<WhileNode>& n)
 
 	if (this->currentVariable.type != TokenType::Bool)
 	{
-		Exit("Expression from a while needs to be a boolean result");
+		Exit("%s Expression from a while needs to be a boolean result", n->GetLine());
 	}
 
 	this->scopes.push_back(std::make_shared<InterpreterScope>());

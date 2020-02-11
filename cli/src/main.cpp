@@ -3,6 +3,8 @@
 #include <sstream>
 #include <regex>
 
+namespace fs = std::filesystem;
+
 bool IsVsCodeInstalled()
 {
 	std::string pathVariable = std::getenv("PATH");
@@ -25,12 +27,19 @@ int main(int argc, char** argv)
 			std::string projectName = argv[2];
 			if (IsValidProjectName(projectName))
 			{
-				std::cout << "Creating project directory for '" << projectName << std::endl;
+				std::cout << "Creating project directory for '" << projectName << "'" << std::endl;
 
 				std::string templatesPath = std::getenv("IONA_PATH");
 				templatesPath.append("/templates/vscode");
-
-				std::filesystem::copy(templatesPath, projectName, std::filesystem::copy_options::recursive);
+				
+				std::error_code ec;
+				fs::copy(templatesPath, projectName, fs::copy_options::recursive, ec);
+				if (ec)
+				{
+					std::cerr << "Failed to copy vscode template to project path:" << std::endl;
+					std::cerr << ec.message() << std::endl;
+					return EXIT_FAILURE;
+				}
 
 				std::cout << "Project directory created" << std::endl;
 
@@ -44,7 +53,7 @@ int main(int argc, char** argv)
 					if (answer == 'y')
 					{
 						std::stringstream command;
-						command << "code --install-extension " << std::getenv("IONA_PATH") << "/iona-lang-latest.vsix";
+						command << "code --install-extension \"" << std::getenv("IONA_PATH") << "/iona-lang-latest.vsix\"";
 						system(command.str().c_str());
 					}
 

@@ -19,7 +19,7 @@ private:
 	Ref<Node> trueBlock;
 	Ref<Node> falseBlock;
 public:
-	IfNode(const Ref<Node>& expression, const Ref<Node>& trueBlock, const Ref<Node>& falseBlock);
+	IfNode(const char* line, const Ref<Node>& expression, const Ref<Node>& trueBlock, const Ref<Node>& falseBlock);
 
 	~IfNode() = default;
 

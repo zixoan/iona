@@ -18,7 +18,7 @@ private:
 	Ref<Node> expression;
 	Ref<Node> block;
 public:
-	WhileNode(const Ref<Node>& expression, const Ref<Node>& block);
+	WhileNode(const char* line, const Ref<Node>& expression, const Ref<Node>& block);
 
 	~WhileNode() = default;
 

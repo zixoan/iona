@@ -28,17 +28,24 @@ Interpreter::Interpreter(const Parser& parser, const Ref<InterpreterScope>& scop
 
 void Interpreter::RegisterInternalFunctions()
 {
-	this->internalFunctions.Register("WriteLine", Iona::Console::WriteLine, 1);
+	this->internalFunctions.Register("WriteLine", Iona::Console::WriteLine, 1, { { 0, { TokenType::Int, TokenType::Float, TokenType::String, TokenType::Bool, TokenType::Array } } });
 	this->internalFunctions.Register("ReadLine", Iona::Console::ReadLine, 0);
 	this->internalFunctions.Register("ReadInt", Iona::Console::ReadInt, 0);
 	this->internalFunctions.Register("ReadFloat", Iona::Console::ReadFloat, 0);
 
-	this->internalFunctions.Register("ToUpperCase", Iona::String::ToUpperCase, 1);
-	this->internalFunctions.Register("ToLowerCase", Iona::String::ToLowerCase, 1);
+	this->internalFunctions.Register("ToUpperCase", Iona::String::ToUpperCase, 1, { { 0, { TokenType::String } } });
+	this->internalFunctions.Register("ToLowerCase", Iona::String::ToLowerCase, 1, { { 0, { TokenType::String } } });
+	this->internalFunctions.Register("StartsWith", Iona::String::StartsWith, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
+	this->internalFunctions.Register("EndsWith", Iona::String::EndsWith, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
 
-	this->internalFunctions.Register("Size", Iona::Core::Size, 1);
-	this->internalFunctions.Register("Random", Iona::Core::Random, 2);
-	this->internalFunctions.Register("Range", Iona::Core::Range, 1);
+	this->internalFunctions.Register("Size", Iona::Core::Size, 1, { { 0, { TokenType::String, TokenType::Array } } });
+	this->internalFunctions.Register("Empty", Iona::Core::Empty, 1, { { 0, { TokenType::String, TokenType::Array } } });
+	this->internalFunctions.Register("Random", Iona::Core::Random, 2, { { 0, { TokenType::Int } }, { 1, { TokenType::Int } } });
+	this->internalFunctions.Register("Range", Iona::Core::Range, 1, { { 0, { TokenType::Int } } });
+
+	this->internalFunctions.Register("FileExists", Iona::File::FileExists, 1, { { 0, { TokenType::String } } });
+	this->internalFunctions.Register("FileRead", Iona::File::FileRead, 1, { { 0, { TokenType::String } } });
+	this->internalFunctions.Register("FileWrite", Iona::File::FileWrite, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
 }
 
 void Interpreter::RegisterInternalVariables()
@@ -194,14 +201,14 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 	{
 		if (this->internalFunctions.Exists(n->GetName()))
 		{
-			std::stack<VariableType> in;
+			std::vector<VariableType> in(n->GetParameters().size());
 			VariableType out;
 
-			for (auto& param : n->GetParameters())
+			for (size_t i = 0; i < n->GetParameters().size(); i++)
 			{
-				param->Accept(shared_from_this());
+				n->GetParameters()[i]->Accept(shared_from_this());
 
-				in.push(this->currentVariable);
+				in[i] = this->currentVariable;
 			}
 
 			this->internalFunctions.Call(n->GetLine(), n->GetName(), in, out);

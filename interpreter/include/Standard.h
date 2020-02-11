@@ -8,41 +8,61 @@
 #ifndef STANDARD_H
 #define STANDARD_H
 
-#include <iostream>
 #include <random>
+#include <algorithm>
+#include <fstream>
+#include <streambuf>
+#include <iterator>
+#include <filesystem>
 
 namespace Iona
 {
 	namespace Core
 	{
-		static void Size(std::stack<VariableType>& in, VariableType& out)
+		static void Size(std::vector<VariableType>& in, VariableType& out)
 		{
-			VariableType v = in.top();
+			VariableType v = in[0];
 
 			out.type = TokenType::Int;
 
 			switch (v.type)
 			{
-			case TokenType::String:
-				out.value = (int) std::any_cast<std::string>(v.value).size();
-				break;
-			case TokenType::StringArray:
-			case TokenType::IntArray:
-			case TokenType::BoolArray:
-			case TokenType::FloatArray:
-				out.value = (int) std::any_cast<std::vector<VariableType>>(v.value).size();
-				break;
-			default:
-				std::cerr << "Unsupported variable type " << Helper::ToString(v.type) << " for internal function WriteLine()" << std::endl;
+				case TokenType::String:
+					out.value = (int) std::any_cast<std::string>(v.value).size();
+					break;
+				case TokenType::StringArray:
+				case TokenType::IntArray:
+				case TokenType::BoolArray:
+				case TokenType::FloatArray:
+					out.value = (int) std::any_cast<std::vector<VariableType>>(v.value).size();
+					break;
 			}
 		}
 
-		static void Random(std::stack<VariableType>& in, VariableType& out)
+		static void Empty(std::vector<VariableType>& in, VariableType& out)
 		{
-			VariableType upperBoundT = in.top();
-			in.pop();
-			VariableType lowerBoundT = in.top();
-			in.pop();
+			VariableType v = in[0];
+
+			out.type = TokenType::Bool;
+
+			switch (v.type)
+			{
+				case TokenType::String:
+					out.value = std::any_cast<std::string>(v.value).empty();
+					break;
+				case TokenType::StringArray:
+				case TokenType::IntArray:
+				case TokenType::BoolArray:
+				case TokenType::FloatArray:
+					out.value = std::any_cast<std::vector<VariableType>>(v.value).empty();
+					break;
+			}
+		}
+
+		static void Random(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType lowerBoundT = in[0];
+			VariableType upperBoundT = in[1];
 
 			int lowerBound = std::any_cast<int>(lowerBoundT.value);
 			int upperBound = std::any_cast<int>(upperBoundT.value);
@@ -55,15 +75,14 @@ namespace Iona
 			out.value = dis(gen);
 		}
 
-		static void Range(std::stack<VariableType>& in, VariableType& out)
+		static void Range(std::vector<VariableType>& in, VariableType& out)
 		{
-			VariableType upperBoundT = in.top();
-			in.pop();
+			VariableType upperBoundT = in[0];
 
 			int upperBound = std::any_cast<int>(upperBoundT.value);
 
 			std::vector<VariableType> values;
-			for (unsigned int i = 0; i < upperBound; i++)
+			for (int i = 0; i < upperBound; i++)
 			{
 				values.push_back({ TokenType::Int, (int) i });
 			}
@@ -75,34 +94,102 @@ namespace Iona
 
 	namespace String
 	{
-		static void ToUpperCase(std::stack<VariableType>& in, VariableType& out)
+		static void ToUpperCase(std::vector<VariableType>& in, VariableType& out)
 		{
-			VariableType v = in.top();
+			VariableType v = in[0];
 
 			std::string value = std::any_cast<std::string>(v.value);
-			std::transform(value.begin(), value.end(), value.begin(), std::toupper);
+			std::transform(value.begin(), value.end(), value.begin(),
+				[](unsigned char c) -> unsigned char { return std::toupper(c); });
 
 			out.type = TokenType::String;
 			out.value = value;
 		}
 
-		static void ToLowerCase(std::stack<VariableType>& in, VariableType& out)
+		static void ToLowerCase(std::vector<VariableType>& in, VariableType& out)
 		{
-			VariableType v = in.top();
+			VariableType v = in[0];
 
 			std::string value = std::any_cast<std::string>(v.value);
-			std::transform(value.begin(), value.end(), value.begin(), std::tolower);
+			std::transform(value.begin(), value.end(), value.begin(),
+				[](unsigned char c) -> unsigned char { return std::tolower(c); });
 
 			out.type = TokenType::String;
 			out.value = value;
+		}
+
+		static void StartsWith(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType valueT = in[0];
+			VariableType prefixT = in[1];
+
+			std::string value = std::any_cast<std::string>(valueT.value);
+			std::string prefix = std::any_cast<std::string>(prefixT.value);
+
+			out.type = TokenType::Bool;
+			out.value = Helper::StartsWith(value, prefix);
+		}
+
+		static void EndsWith(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType valueT = in[0];
+			VariableType suffixT = in[1];
+
+			std::string value = std::any_cast<std::string>(valueT.value);
+			std::string suffix = std::any_cast<std::string>(suffixT.value);
+
+			out.type = TokenType::Bool;
+			out.value = Helper::EndsWith(value, suffix);
+		}
+	}
+
+	namespace File
+	{
+		namespace fs = std::filesystem;
+
+		static void FileExists(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType v = in[0];
+
+			std::string path = std::any_cast<std::string>(v.value);
+
+			out.type = TokenType::Bool;
+			out.value = fs::exists(path);
+		}
+
+		static void FileRead(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType v = in[0];
+
+			std::string path = std::any_cast<std::string>(v.value);
+
+			std::ifstream file{ path };
+			
+			out.type = TokenType::String;
+			out.value = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+		}
+
+		static void FileWrite(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType pathT = in[0];
+			VariableType dataT = in[1];
+
+			std::string path = std::any_cast<std::string>(pathT.value);
+			std::string data = std::any_cast<std::string>(dataT.value);
+
+			std::ofstream o{ path, std::ofstream::out };
+			o << data;
+			
+			out.type = TokenType::Bool;
+			out.value = !o.bad();
 		}
 	}
 
 	namespace Console
 	{
-		static void WriteLine(std::stack<VariableType>& in, VariableType& out)
+		static void WriteLine(std::vector<VariableType>& in, VariableType& out)
 		{
-			VariableType v = in.top();
+			VariableType v = in[0];
 
 			switch (v.type)
 			{
@@ -168,7 +255,7 @@ namespace Iona
 			}
 		}
 
-		static void ReadLine(std::stack<VariableType>& in, VariableType& out)
+		static void ReadLine(std::vector<VariableType>& in, VariableType& out)
 		{
 			std::string input;
 			std::getline(std::cin, input);
@@ -177,7 +264,7 @@ namespace Iona
 			out.value = input;
 		}
 
-		static void ReadInt(std::stack<VariableType>& in, VariableType& out)
+		static void ReadInt(std::vector<VariableType>& in, VariableType& out)
 		{
 			int read;
 			std::cin >> read;
@@ -186,7 +273,7 @@ namespace Iona
 			out.value = read;
 		}
 
-		static void ReadFloat(std::stack<VariableType>& in, VariableType& out)
+		static void ReadFloat(std::vector<VariableType>& in, VariableType& out)
 		{
 			float read;
 			std::cin >> read;

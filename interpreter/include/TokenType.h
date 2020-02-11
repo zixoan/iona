@@ -42,6 +42,7 @@ enum TokenType
 	BoolArray,
 	FloatArray,
 	StringArray,
+	Array,
 
 	Auto,
 	Return,
@@ -90,8 +91,18 @@ namespace Helper
 {
 	static std::string ToString(const TokenType& type)
 	{
-		static const char* values[] = { "Function", "Name", "Call", "For", "In", "While", "If", "Else", "CurlyLeft", "CurlyRight", "SquareLeft", "SquareRight", "ParanLeft", "ParanRight", "Var", "Int", "Float", "Bool", "String", "IntArray", "BoolArray", "FloatArray", "StringArray", "Auto", "Return", "Assign", "Comma", "Semicolon", "Colon", "New", "Point", "ExclamationMark", "Plus", "Minus", "Multiply", "Divide", "Equals", "NotEquals", "GreaterThan", "LessThan", "GreaterEqualThan", "LessEqualThan", "None" };
+		static const char* values[] = { "Function", "Name", "Call", "For", "In", "While", "If", "Else", "CurlyLeft", "CurlyRight", "SquareLeft", "SquareRight", "ParanLeft", "ParanRight", "Var", "Int", "Float", "Bool", "String", "IntArray", "BoolArray", "FloatArray", "StringArray", "Array", "Auto", "Return", "Assign", "Comma", "Semicolon", "Colon", "New", "Point", "ExclamationMark", "Plus", "Minus", "Multiply", "Divide", "Equals", "NotEquals", "GreaterThan", "LessThan", "GreaterEqualThan", "LessEqualThan", "None" };
 		return values[static_cast<int>(type)];
+	}
+
+	static bool StartsWith(const std::string& s, const std::string& suffix)
+	{
+		return s.rfind(suffix, 0) == 0;
+	}
+
+	static bool EndsWith(const std::string& s, const std::string& suffix)
+	{
+		return s.size() >= suffix.size() && 0 == s.compare(s.size() - suffix.size(), suffix.size(), suffix);
 	}
 }
 

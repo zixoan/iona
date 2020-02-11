@@ -10,17 +10,13 @@
 #include "Lexer.h"
 #include "Parser.h"
 #include "Interpreter.h"
-
-bool EndsWith(const std::string& s, const std::string& suffix)
-{
-	return s.size() >= suffix.size() && 0 == s.compare(s.size() - suffix.size(), suffix.size(), suffix);
-}
+#include "Standard.h"
 
 int main(int argc, char const* argv[])
 {
 	if (argc == 2)
 	{
-		if (!EndsWith(argv[1], ".ion") && !EndsWith(argv[1], ".iona"))
+		if (!Helper::EndsWith(argv[1], ".ion") && !Helper::EndsWith(argv[1], ".iona"))
 		{
 			std::cout << "Source files for iona must end with '.ion' or '.iona' ('" << argv[1] << "')" << std::endl;
 			return EXIT_SUCCESS;
@@ -76,17 +72,25 @@ int main(int argc, char const* argv[])
 			{
 				break;
 			}
-			
-			Lexer lexer(line, "console");
-			Parser parser(lexer);
 
 			try
 			{
+				Lexer lexer(line, "console");
+				Parser parser(lexer);
+
 				auto statement = parser.Statement();
 
 				Ref<Interpreter> interpreter = std::make_shared<Interpreter>(parser, globalScope);
 
 				statement->Accept(interpreter);
+
+				// Auto print variable statements
+				if (IsVariableType(interpreter->GetCurrentVariable().type))
+				{
+					VariableType vt;
+					std::vector<VariableType> inParams = { interpreter->GetCurrentVariable() };
+					Iona::Console::WriteLine(inParams, vt);
+				}
 				continue;
 			}
 			catch (...)

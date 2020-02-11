@@ -16,21 +16,24 @@
 
 struct FunctionEntry
 {
-	std::function<void(std::stack<VariableType>& in, VariableType& out)> function;
+	std::function<void(std::vector<VariableType>& in, VariableType& out)> function;
 	unsigned int parameterCount;
+	std::map<int, std::vector<TokenType>> functionParameters;
 };
 
 class FunctionRegistry
 {
 private:
 	std::map<std::string, FunctionEntry> functions;
+
+
 public:
 	FunctionRegistry() = default;
 	~FunctionRegistry() = default;
 
-	void Register(const std::string& name, std::function<void(std::stack<VariableType>& in, VariableType& out)> functions, unsigned int parameterCount);
+	void Register(const std::string& name, std::function<void(std::vector<VariableType> & in, VariableType & out)> function, unsigned int parameterCount, std::map<int, std::vector<TokenType>> functionParameters = {});
 
-	void Call(const char* line, const std::string& name, std::stack<VariableType>& in, VariableType& out);
+	void Call(const char* line, const std::string& name, std::vector<VariableType>& in, VariableType& out);
 
 	bool Exists(const std::string& name);
 };

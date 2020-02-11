@@ -52,3 +52,7 @@ Write-Host "Setting IONA_PATH environment variable"
 $env:Path += ";$installPath"
 
 Write-Host "Finished installing windows iona bundle"
+
+Write-Host ""
+Write-Host "You can now create your first iona project by typing:"
+Write-Host "iona new hello-world"

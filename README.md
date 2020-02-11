@@ -181,7 +181,7 @@ func Main()
 
 ### internal functions
 
-- WriteLine(string|bool|int|float) : void
+- WriteLine(string|bool|int|float|array) : void
   - Outputs the data as a line to the standard output
   - WriteLine("Hello, World!")
 - ReadLine() : string
@@ -196,6 +196,8 @@ func Main()
 - Size(string|array) : int
   - Returns the size of a given string or number of elements in an array
   - var size = Size("Hello")
+- Empty(string|array) : bool
+  - Returns true if the string or array size is zero, otherwise false
 - Random(int lowerBound, int upperBound) : int
   - Returns an int between the lower and upper bound (both inclusive)
   - var rand = Random(0, 3)
@@ -203,8 +205,18 @@ func Main()
   - Returns the lower case version of the input string
 - ToUpperCase(string) : string
   - Returns the upper case version of the input string
+- StartsWith(string value, string prefix) : bool
+  - Returns true if the value string starts with the prefix string (case sensitive).
+- EndsWith(string value, string suffix) : bool
+  - Returns true if the value string ends with the suffix string (case sensitive).
 - Range(int upperBound) : int_array
   - Returns an int array from zero to the given upper bound
+- FileExists(string path) : bool
+  - Returns true if the given file/directory exists, otherwise false
+- FileRead(string path) : string
+  - Returns the complete content of the file from the given path. If the path is a directory an empty string is returned.
+- FileWrite(string path, string data) : bool
+  - Writes the data to the file path and returns true if successfull, otherwise false
 
 ### custom functions
 
@@ -283,6 +295,7 @@ TODO for future (provide an online interpreter as a playground)
 - [X] simple return statement (not nested)
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)
   - [X] Size
+  - [X] Empty
   - [X] ReadInt
   - [X] ReadFloat
   - [X] Random
@@ -292,6 +305,15 @@ TODO for future (provide an online interpreter as a playground)
   - [X] Range
   - [X] ToUpperCase
   - [X] ToLowerCase
+  - [X] EndsWith
+  - [X] StartsWith
+  - [X] FileExists
+  - [X] FileRead
+  - [X] FileWrite
+  - [ ] FileReadLines
+  - [ ] FileWriteLines
+  - [ ] FileCopy
+  - [ ] FileList
 - [X] internal pre-defined variables
 - [ ] switch statements
 - [ ] expressions inside an interpolated string

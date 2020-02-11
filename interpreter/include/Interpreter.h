@@ -40,6 +40,11 @@ public:
 
 	void Interpret();
 
+	VariableType GetCurrentVariable() const
+	{
+		return currentVariable;
+	}
+
 	void Visit(const Ref<MainNode>& n);
 	void Visit(const Ref<VariableDeclarationAssignNode>& n);
 	void Visit(const Ref<VariableArrayDeclarationAssignNode>& n);

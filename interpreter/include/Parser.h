@@ -28,6 +28,7 @@ private:
 	Ref<Node> ParseFunctionCall();
 	Ref<Node> ParseFor();
 	Ref<Node> ParseWhile();
+	Ref<Node> ParseDoWhile();
 	Ref<Node> ParseIf();
 	Ref<Node> ParseReturn();
 

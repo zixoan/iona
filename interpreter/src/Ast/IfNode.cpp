@@ -9,7 +9,7 @@
 #include "Visitor.h"
 
 IfNode::IfNode(const char* line, const Ref<Node>& expression, const Ref<Node>& trueBlock, const Ref<Node>& falseBlock)
-	: expression(expression), trueBlock(trueBlock), falseBlock(falseBlock)
+	: Node(line), expression(expression), trueBlock(trueBlock), falseBlock(falseBlock)
 {
 }
 

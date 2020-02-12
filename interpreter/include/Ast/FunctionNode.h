@@ -17,11 +17,10 @@ class FunctionNode : public Node, public std::enable_shared_from_this<FunctionNo
 {
 private:
 	std::string name;
-	Token returnToken;
 	Ref<Node> block;
-	std::vector<Ref<Node>> parameters;
+	std::vector<std::string> parameters;
 public:
-	FunctionNode(const std::string& name, const Token& returnToken, Ref<Node> block, const std::vector<Ref<Node>>& parameters);
+	FunctionNode(const std::string& name, Ref<Node> block, const std::vector<std::string>& parameters);
 
 	~FunctionNode() = default;
 
@@ -37,7 +36,7 @@ public:
 		return block;
 	}
 
-	std::vector<Ref<Node>> GetParameters()
+	std::vector<std::string> GetParameters()
 	{
 		return parameters;
 	}

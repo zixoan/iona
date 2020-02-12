@@ -5,15 +5,15 @@
  * SPDX-License-Identifier:	GPL-3.0-only
  */
 
-#include "Ast/FunctionNode.h"
+#include "DoWhileNode.h"
 #include "Visitor.h"
 
-FunctionNode::FunctionNode(const std::string& name, Ref<Node> block, const std::vector<std::string>& parameters)
-	: name(name), block(block), parameters(parameters)
+DoWhileNode::DoWhileNode(const char* line, const Ref<Node>& expression, const Ref<Node>& block)
+	: Node(line), expression(expression), block(block)
 {
 }
 
-void FunctionNode::Accept(const Ref<Visitor>& v)
+void DoWhileNode::Accept(const Ref<Visitor>& v)
 {
 	v->Visit(shared_from_this());
 }

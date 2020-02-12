@@ -142,6 +142,15 @@ void Interpreter::Visit(const Ref<FunctionNode>& n)
 {
 	this->scopes.push_back(std::make_shared<InterpreterScope>());
 
+	// We need to register possible function parameters after the possible function scope was pushed
+	for (size_t i = 0; i < this->currentFunctionCallParams.size(); ++i)
+	{
+		// Accept the parameter types (eg. StringNode)
+		this->currentFunctionCallParams[i]->Accept(shared_from_this());
+
+		this->scopes.back()->DeclareVariable(this->currentFunctionCallFunctionParams[i], this->currentVariable);
+	}
+
 	n->GetBlock()->Accept(shared_from_this());
 
 	this->scopes.pop_back();
@@ -149,28 +158,6 @@ void Interpreter::Visit(const Ref<FunctionNode>& n)
 
 void Interpreter::Visit(const Ref<BlockNode>& n)
 {
-	// We need to register possible function parameters after the possible function scope was pushed
-	if (!this->currentFunctionCallParams.empty())
-	{
-		for (size_t i = 0; i < this->currentFunctionCallParams.size(); ++i)
-		{
-			// Register the function parameter variable (accept the VariableDeclarationAssignNode)
-			this->currentFunctionCallFunctionParams[i]->Accept(shared_from_this());
-
-			// Accept the parameter types (eg. StringNode)
-			this->currentFunctionCallParams[i]->Accept(shared_from_this());
-
-			std::string varName = std::dynamic_pointer_cast<VariableDeclarationAssignNode>(this->currentFunctionCallFunctionParams[i])->GetName();
-
-			this->scopes.back()->UpdateVariable(varName, this->currentVariable);
-		}
-
-		// We need to reset this, so that in eg. while loops the function paramters are not 
-		// declared again everytime the block executes inside the function
-		this->currentFunctionCallParams.clear();
-		this->currentFunctionCallFunctionParams.clear();
-	}
-
 	for (auto& statement : n->GetStatements())
 	{
 		statement->Accept(shared_from_this());
@@ -201,14 +188,15 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 	{
 		if (this->internalFunctions.Exists(n->GetName()))
 		{
-			std::vector<VariableType> in(n->GetParameters().size());
+			std::vector<VariableType> in;
+			in.reserve(n->GetParameters().size());
 			VariableType out;
 
-			for (size_t i = 0; i < n->GetParameters().size(); i++)
+			for (auto& parameter : n->GetParameters())
 			{
-				n->GetParameters()[i]->Accept(shared_from_this());
+				parameter->Accept(shared_from_this());
 
-				in[i] = this->currentVariable;
+				in.push_back(this->currentVariable);
 			}
 
 			this->internalFunctions.Call(n->GetLine(), n->GetName(), in, out);
@@ -374,7 +362,8 @@ void Interpreter::Visit(const Ref<VariableIncrementDecrementNode>& n)
 	}
 	else
 	{
-		Exit("Variable '%s' not declared in this scope", n->GetName().c_str());
+		Exit("%s Variable '%s' not declared in this scope", 
+			n->GetLine(), n->GetName().c_str());
 	}
 }
 
@@ -727,7 +716,7 @@ void Interpreter::Visit(const Ref<IfNode>& n)
 
 	if (this->currentVariable.type != TokenType::Bool)
 	{
-		Exit("Expression from an if needs to be a boolean result");
+		Exit("%s Expression from an if needs to be a boolean result", n->GetLine());
 	}
 
 	if (std::any_cast<bool>(this->currentVariable.value))
@@ -759,6 +748,21 @@ void Interpreter::Visit(const Ref<WhileNode>& n)
 	}
 
 	this->scopes.pop_back();
+}
+
+void Interpreter::Visit(const Ref<DoWhileNode>& n)
+{
+	do
+	{
+		n->GetBlock()->Accept(shared_from_this());
+
+		n->GetExpression()->Accept(shared_from_this());
+
+		if (this->currentVariable.type != TokenType::Bool)
+		{
+			Exit("%s Expression from a do while needs to be a boolean result", n->GetLine());
+		}
+	} while (std::any_cast<bool>(this->currentVariable.value));
 }
 
 void Interpreter::Visit(const Ref<ReturnNode>& n)

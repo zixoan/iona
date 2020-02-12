@@ -4,12 +4,13 @@
 
 * [About the project](#about-the-project)
 * [Syntax preview](#syntax-preview)
+* [Visual Studio Code extension](#visual-studio-code-extension)
 * [What is supported](#what-is-supported)
   * [built-in data types](#built-in-data-types)
   * [string interpolation](#string-interpolation)
   * [if](#if)
   * [for each](#for-each)
-  * [while](#while)
+  * [while and do while](#while-and-do-while)
   * [internal functions](#internal-functions)
   * [custom functions](#custom-functions)
     * [function return](#function-return)
@@ -76,11 +77,15 @@ func Main()
         value++
 }
 
-func SecondHelloWorld(var x = 0)
+func SecondHelloWorld(x)
 {
     WriteLine("Hello, World! x = {x}")
 }
 ```
+
+## Visual Studio Code extension
+
+There is an official vs code extension available [here](https://github.com/zixoan/vscode-iona-lang) to add syntax highlighting and code snippets for iona.
 
 ## What is supported
 
@@ -159,7 +164,7 @@ func Main()
 }
 ```
 
-### while
+### while and do while
 
 ```javascript
 var n = 5
@@ -179,6 +184,16 @@ func Main()
     // 3
     // 2
     // 1
+
+    do
+    {
+        WriteLine(n)
+        n--
+    }
+    while n > 0
+
+    // Outputs:
+    // 0
 }
 ```
 
@@ -232,7 +247,7 @@ func Main()
     // Outputs: x=100, y=4
 }
 
-func MyFunc(var x = 0, var y = 0)
+func MyFunc(x, y)
 {
     WriteLine("x={x}, y={y}")
 }
@@ -251,7 +266,7 @@ func Main()
     // Outputs: 104
 }
 
-func Add(var a = 0, var b = 0)
+func Add(a, b)
 {
     // Some other logic..    
 
@@ -331,15 +346,16 @@ TODO for future (provide an online interpreter as a playground)
 ### Roadmap
 
 - [X] array index variable assignment
-- [ ] improved and standardized error messages (with file name etc.)
+- [X] improved and standardized error messages (with file name etc.)
   - [X] All parser messages
-  - [ ] All interpreter messages
+  - [X] All interpreter messages
 - [X] more boolean operators
 - [X] more binary operator handling
 - [X] if-else statements
   - [ ] complex if-else-if statements
 - [X] while loop
-- [ ] do while loop
+- [X] do while loop
+- [ ] for i
 - [X] one line statement blocks without curly brackets
 - [X] simple return statement (not nested)
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)
@@ -356,6 +372,9 @@ TODO for future (provide an online interpreter as a playground)
   - [X] ToLowerCase
   - [X] EndsWith
   - [X] StartsWith
+  - [ ] Contains
+  - [ ] Split
+  - [ ] Trim
   - [X] FileExists
   - [X] FileRead
   - [X] FileWrite

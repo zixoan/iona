@@ -20,6 +20,7 @@ enum TokenType
 	For,
 	In,
 	While,
+	Do,
 	If,
 	Else,
 
@@ -55,7 +56,9 @@ enum TokenType
 	ExclamationMark,
 
 	Plus,
+	PlusPlus,
 	Minus,
+	MinusMinus,
 	Multiply,
 	Divide,
 
@@ -91,7 +94,7 @@ namespace Helper
 {
 	static std::string ToString(const TokenType& type)
 	{
-		static const char* values[] = { "Function", "Name", "Call", "For", "In", "While", "If", "Else", "CurlyLeft", "CurlyRight", "SquareLeft", "SquareRight", "ParanLeft", "ParanRight", "Var", "Int", "Float", "Bool", "String", "IntArray", "BoolArray", "FloatArray", "StringArray", "Array", "Auto", "Return", "Assign", "Comma", "Semicolon", "Colon", "New", "Point", "ExclamationMark", "Plus", "Minus", "Multiply", "Divide", "Equals", "NotEquals", "GreaterThan", "LessThan", "GreaterEqualThan", "LessEqualThan", "None" };
+		static const char* values[] = { "Function", "Name", "Call", "For", "In", "While", "Do", "If", "Else", "CurlyLeft", "CurlyRight", "SquareLeft", "SquareRight", "ParanLeft", "ParanRight", "Var", "Int", "Float", "Bool", "String", "IntArray", "BoolArray", "FloatArray", "StringArray", "Array", "Auto", "Return", "Assign", "Comma", "Semicolon", "Colon", "New", "Point", "ExclamationMark", "Plus", "PlusPlus", "Minus", "MinusMinus", "Multiply", "Divide", "Equals", "NotEquals", "GreaterThan", "LessThan", "GreaterEqualThan", "LessEqualThan", "None" };
 		return values[static_cast<int>(type)];
 	}
 

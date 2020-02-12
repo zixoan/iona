@@ -30,6 +30,7 @@
 #include <Ast/ReturnNode.h>
 #include <Ast/VariableIncrementDecrementNode.h>
 #include <Ast/VariableCompoundAssignNode.h>
+#include <Ast/DoWhileNode.h>
 
 class Visitor
 {
@@ -45,6 +46,7 @@ public:
 	virtual void Visit(const Ref<BooleanNode>& n) = 0;
 	virtual void Visit(const Ref<IfNode>& n) = 0;
 	virtual void Visit(const Ref<WhileNode>& n) = 0;
+	virtual void Visit(const Ref<DoWhileNode>& n) = 0;
 	virtual void Visit(const Ref<ReturnNode>& n) = 0;
 
 	virtual void Visit(const Ref<StringNode>& n) = 0;

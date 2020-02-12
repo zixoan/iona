@@ -28,6 +28,7 @@
 #include <Ast/ReturnNode.h>
 #include <Ast/VariableIncrementDecrementNode.h>
 #include <Ast/VariableCompoundAssignNode.h>
+#include <Ast/DoWhileNode.h>
 
 Parser::Parser(Lexer& lexer)
 	: lexer(lexer), currentToken(lexer.NextToken())
@@ -164,31 +165,29 @@ Ref<Node> Parser::ParseFunction()
 {
 	Advance(TokenType::Function);
 
-	// TODO: returnToken is ignored for now
-	//Token returnToken = this->currentToken;
-	//Advance(returnToken.GetTokenType());
-
 	std::string functionName = currentToken.GetValue();
 	// "Call", because it is used when the next char is "(", which is when calling a function (possible parameters etc.)
 	Advance(Call);
 
 	Advance(ParanLeft);
-	std::vector<Ref<Node>> parameters;
+	std::vector<std::string> parameters;
 	while (this->currentToken.GetTokenType() != TokenType::ParanRight)
 	{
-		// TODO: Simplify function parameters and remove the need for eg. var 
-		parameters.push_back(ParseGlobalVariables());
+		std::string paramName = this->currentToken.GetValue();
+		Advance(TokenType::Name);
+
+		parameters.push_back(paramName);
 
 		if (this->currentToken.GetTokenType() == TokenType::Comma)
 		{
 			Advance(TokenType::Comma);
 		}
 	}
-	Advance(ParanRight);
+	Advance(TokenType::ParanRight);
 
 	Ref<Node> block = ParseBlock();
 
-	return std::make_shared<FunctionNode>(functionName, Token(TokenType::None, ""), block, parameters);
+	return std::make_shared<FunctionNode>(functionName, block, parameters);
 }
 
 Ref<Node> Parser::ParseFunctionCall()
@@ -273,6 +272,20 @@ Ref<Node> Parser::ParseWhile()
 	return std::make_shared<WhileNode>(line, expression, block);
 }
 
+Ref<Node> Parser::ParseDoWhile()
+{
+	auto line = this->currentToken.GetLine();
+	Advance(TokenType::Do);
+
+	Ref<Node> block = ParseBlock();
+
+	Advance(TokenType::While);
+
+	Ref<Node> expression = Expression();
+
+	return std::make_shared<DoWhileNode>(line, expression, block);
+}
+
 Ref<Node> Parser::ParseIf()
 {
 	auto line = this->currentToken.GetLine();
@@ -312,17 +325,15 @@ Ref<Node> Parser::Factor()
 
 		auto line = this->currentToken.GetLine();
 
-		if (this->currentToken.GetTokenType() == Plus)
+		if (this->currentToken.GetTokenType() == PlusPlus)
 		{
-			Advance(Plus);
-			Advance(Plus);
+			Advance(PlusPlus);
 
 			return std::make_shared<VariableIncrementDecrementNode>(line, varName, 1);
 		}
-		else if (this->currentToken.GetTokenType() == Minus)
+		else if (this->currentToken.GetTokenType() == MinusMinus)
 		{
-			Advance(Minus);
-			Advance(Minus);
+			Advance(MinusMinus);
 
 			return std::make_shared<VariableIncrementDecrementNode>(line, varName, -1);
 		}
@@ -440,41 +451,33 @@ Ref<Node> Parser::Statement()
 
 			return std::make_shared<VariableAssignNode>(line, varName, Expression());
 		}
+		else if (this->currentToken.GetTokenType() == PlusPlus)
+		{
+			Advance(PlusPlus);
+
+			return std::make_shared<VariableIncrementDecrementNode>(line, varName, 1);
+		}
 		else if (this->currentToken.GetTokenType() == Plus)
 		{
 			Advance(Plus);
+			Advance(Assign);
 
-			if (this->currentToken.GetTokenType() == Plus)
-			{
-				Advance(Plus);
+			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Plus);
+		}
+		else if (this->currentToken.GetTokenType() == MinusMinus)
+		{
+			Advance(MinusMinus);
 
-				return std::make_shared<VariableIncrementDecrementNode>(line, varName, 1);
-			}
-			else if (this->currentToken.GetTokenType() == Assign)
-			{
-				Advance(Assign);
-
-				return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Plus);
-			}
+			return std::make_shared<VariableIncrementDecrementNode>(line, varName, -1);
 		}
 		else if (this->currentToken.GetTokenType() == Minus)
 		{
 			auto line = this->currentToken.GetLine();
 
 			Advance(Minus);
+			Advance(Assign);
 
-			if (this->currentToken.GetTokenType() == Minus)
-			{
-				Advance(Minus);
-
-				return std::make_shared<VariableIncrementDecrementNode>(line, varName, -1);
-			}
-			else if (this->currentToken.GetTokenType() == Assign)
-			{
-				Advance(Assign);
-
-				return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Minus);
-			}
+			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Minus);
 		}
 		else if (this->currentToken.GetTokenType() == Multiply)
 		{
@@ -528,6 +531,10 @@ Ref<Node> Parser::Statement()
 	else if (this->currentToken.GetTokenType() == While)
 	{
 		return ParseWhile();
+	}
+	else if (this->currentToken.GetTokenType() == Do)
+	{
+		return ParseDoWhile();
 	}
 	else if (this->currentToken.GetTokenType() == Var)
 	{

@@ -27,7 +27,7 @@ private:
 	FunctionRegistry internalFunctions;
 
 	VariableType currentVariable;
-	std::vector<Ref<Node>> currentFunctionCallFunctionParams;
+	std::vector<std::string> currentFunctionCallFunctionParams;
 	std::vector<Ref<Node>> currentFunctionCallParams;
 
 	void RegisterInternalFunctions();
@@ -56,6 +56,7 @@ public:
 	void Visit(const Ref<BooleanNode>& n);
 	void Visit(const Ref<IfNode>& n);
 	void Visit(const Ref<WhileNode>& n);
+	void Visit(const Ref<DoWhileNode>& n);
 	void Visit(const Ref<StringNode>& n);
 	void Visit(const Ref<IntNode>& n);
 	void Visit(const Ref<FloatNode>& n);

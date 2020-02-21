@@ -227,7 +227,11 @@ func Main()
   - Returns true if the value string starts with the prefix string (case sensitive).
 - EndsWith(string value, string suffix) : bool
   - Returns true if the value string ends with the suffix string (case sensitive).
-- Range(int upperBound) : int_array
+- Contains(string haystack, string needle) : bool
+  - Returns true if the haystack contains any substring of the needle (case sensitive).
+- Split(string text, string separator) : array
+  - Returns a string array containing the splitted substrings based on the given separator.
+- Range(int upperBound) : array
   - Returns an int array from zero to the given upper bound
 - FileExists(string path) : bool
   - Returns true if the given file/directory exists, otherwise false
@@ -372,8 +376,8 @@ TODO for future (provide an online interpreter as a playground)
   - [X] ToLowerCase
   - [X] EndsWith
   - [X] StartsWith
-  - [ ] Contains
-  - [ ] Split
+  - [X] Contains
+  - [X] Split
   - [ ] Trim
   - [X] FileExists
   - [X] FileRead

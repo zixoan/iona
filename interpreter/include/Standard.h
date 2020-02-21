@@ -141,6 +141,40 @@ namespace Iona
 			out.type = TokenType::Bool;
 			out.value = Helper::EndsWith(value, suffix);
 		}
+
+		static void Contains(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType haystackT = in[0];
+			VariableType needleT = in[1];
+
+			std::string haystack = std::any_cast<std::string>(haystackT.value);
+			std::string needle = std::any_cast<std::string>(needleT.value);
+
+			out.type = TokenType::Bool;
+			out.value = haystack.find(needle) != std::string::npos;
+		}
+
+		static void Split(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType valueT = in[0];
+			VariableType delimiterT = in[1];
+
+			std::string value = std::any_cast<std::string>(valueT.value);
+			std::string delimiter = std::any_cast<std::string>(delimiterT.value);
+
+			std::vector<VariableType> values;
+			size_t start;
+			size_t end = 0;
+
+			while ((start = value.find_first_not_of(delimiter, end)) != std::string::npos)
+			{
+				end = value.find(delimiter, start);
+				values.push_back({ TokenType::String, value.substr(start, end - start) });
+			}
+
+			out.type = TokenType::StringArray;
+			out.value = std::move(values);
+		}
 	}
 
 	namespace File

@@ -37,6 +37,8 @@ void Interpreter::RegisterInternalFunctions()
 	this->internalFunctions.Register("ToLowerCase", Iona::String::ToLowerCase, 1, { { 0, { TokenType::String } } });
 	this->internalFunctions.Register("StartsWith", Iona::String::StartsWith, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
 	this->internalFunctions.Register("EndsWith", Iona::String::EndsWith, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
+	this->internalFunctions.Register("Contains", Iona::String::Contains, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
+	this->internalFunctions.Register("Split", Iona::String::Split, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
 
 	this->internalFunctions.Register("Size", Iona::Core::Size, 1, { { 0, { TokenType::String, TokenType::Array } } });
 	this->internalFunctions.Register("Empty", Iona::Core::Empty, 1, { { 0, { TokenType::String, TokenType::Array } } });

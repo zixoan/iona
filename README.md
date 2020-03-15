@@ -224,19 +224,21 @@ func Main()
 - ToUpperCase(string) : string
   - Returns the upper case version of the input string
 - StartsWith(string value, string prefix) : bool
-  - Returns true if the value string starts with the prefix string (case sensitive).
+  - Returns true if the value string starts with the prefix string (case sensitive)
 - EndsWith(string value, string suffix) : bool
-  - Returns true if the value string ends with the suffix string (case sensitive).
+  - Returns true if the value string ends with the suffix string (case sensitive)
 - Contains(string haystack, string needle) : bool
-  - Returns true if the haystack contains any substring of the needle (case sensitive).
+  - Returns true if the haystack contains any substring of the needle (case sensitive)
 - Split(string text, string separator) : array
-  - Returns a string array containing the splitted substrings based on the given separator.
+  - Returns a string array containing the splitted substrings based on the given separator
+- Trim(string value) : string
+  - Returns the left and right trimmed version of the input value
 - Range(int upperBound) : array
   - Returns an int array from zero to the given upper bound
 - FileExists(string path) : bool
   - Returns true if the given file/directory exists, otherwise false
 - FileRead(string path) : string
-  - Returns the complete content of the file from the given path. If the path is a directory an empty string is returned.
+  - Returns the complete content of the file from the given path. If the path is a directory an empty string is returned
 - FileWrite(string path, string data) : bool
   - Writes the data to the file path and returns true if successfull, otherwise false
 
@@ -378,7 +380,7 @@ TODO for future (provide an online interpreter as a playground)
   - [X] StartsWith
   - [X] Contains
   - [X] Split
-  - [ ] Trim
+  - [X] Trim
   - [X] FileExists
   - [X] FileRead
   - [X] FileWrite

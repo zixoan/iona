@@ -175,6 +175,24 @@ namespace Iona
 			out.type = TokenType::StringArray;
 			out.value = std::move(values);
 		}
+
+		static void Trim(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType valueT = in[0];
+
+			std::string value = std::any_cast<std::string>(valueT.value);
+
+			value.erase(value.begin(), std::find_if(value.begin(), value.end(), [](int ch) {
+				return !std::isspace(ch);
+			}));
+
+			value.erase(std::find_if(value.rbegin(), value.rend(), [](int ch) {
+				return !std::isspace(ch);
+				}).base(), value.end());
+
+			out.type = TokenType::String;
+			out.value = std::move(value);
+		}
 	}
 
 	namespace File

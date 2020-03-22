@@ -209,7 +209,7 @@ func Main()
   - Reads an int from the standard input
   - var number = ReadInt()
 - ReadFloat() : string
-  - Reads an float from the standard input
+  - Reads a float from the standard input
   - var floatingPointNum = ReadFloat()
 - Size(string|array) : int
   - Returns the size of a given string or number of elements in an array
@@ -259,8 +259,6 @@ func MyFunc(x, y)
 }
 ```
 
-> The parameter declaration will probably change to remove eg. the var keyword.
-
 #### function return
 
 Custom functions can also have a simple return statement.
@@ -282,7 +280,7 @@ func Add(a, b)
 
 ### internal variables
 
-The following internal variables are pre declared:
+The following internal constant variables are pre declared:
    - PI (3.14159)
    - INT_MIN (-2147483648)
    - INT_MAX (2147483647)

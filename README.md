@@ -219,6 +219,14 @@ func Main()
 - Random(int lowerBound, int upperBound) : int
   - Returns an int between the lower and upper bound (both inclusive)
   - var rand = Random(0, 3)
+- Min(int|float, int|float) : int|float
+  - Returns the lowest value from the two input values. Both values must be from the same type.
+  - WriteLine(Min(50, 40))
+  - // Outputs: 40
+- Max(int|float, int|float) : int|float
+  - Returns the max value from the two input values. Both values must be from the same type.
+  - WriteLine(Max(50, 40))
+  - // Outputs: 50
 - ToLowerCase(string) : string
   - Returns the lower case version of the input string
 - ToUpperCase(string) : string
@@ -235,6 +243,8 @@ func Main()
   - Returns the left and right trimmed version of the input value
 - Range(int upperBound) : array
   - Returns an int array from zero to the given upper bound
+- Reverse(array) : array
+  - Returns the reversed array from the input array. Input array can be of any built-in type.
 - FileExists(string path) : bool
   - Returns true if the given file/directory exists, otherwise false
 - FileRead(string path) : string
@@ -368,9 +378,9 @@ TODO for future (provide an online interpreter as a playground)
   - [X] ReadInt
   - [X] ReadFloat
   - [X] Random
-  - [ ] Min
-  - [ ] Max
-  - [ ] Reverse
+  - [X] Min
+  - [X] Max
+  - [X] Reverse
   - [X] Range
   - [X] ToUpperCase
   - [X] ToLowerCase
@@ -391,6 +401,7 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] ToFloat/IsFloat
   - [ ] ToBool/IsBool
 - [X] internal pre-defined variables
+- [ ] program arguments
 - [ ] switch statements
 - [ ] expressions inside an interpolated string
 - [X] CLI utility to create projects and watch code

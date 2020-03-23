@@ -45,6 +45,10 @@ void Interpreter::RegisterInternalFunctions()
 	this->internalFunctions.Register("Empty", Iona::Core::Empty, 1, { { 0, { TokenType::String, TokenType::Array } } });
 	this->internalFunctions.Register("Random", Iona::Core::Random, 2, { { 0, { TokenType::Int } }, { 1, { TokenType::Int } } });
 	this->internalFunctions.Register("Range", Iona::Core::Range, 1, { { 0, { TokenType::Int } } });
+	this->internalFunctions.Register("Reverse", Iona::Core::Reverse, 1, { { 0, { TokenType::IntArray, TokenType::StringArray, TokenType::BoolArray, TokenType::FloatArray } } });
+
+	this->internalFunctions.Register("Min", Iona::Math::Min, 2, { { 0, { TokenType::Int, TokenType::Float } }, { 1, { TokenType::Int, TokenType::Float } } });
+	this->internalFunctions.Register("Max", Iona::Math::Max, 2, { { 0, { TokenType::Int, TokenType::Float } }, { 1, { TokenType::Int, TokenType::Float } } });
 
 	this->internalFunctions.Register("FileExists", Iona::File::FileExists, 1, { { 0, { TokenType::String } } });
 	this->internalFunctions.Register("FileRead", Iona::File::FileRead, 1, { { 0, { TokenType::String } } });

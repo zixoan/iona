@@ -90,6 +90,18 @@ namespace Iona
 			out.type = TokenType::IntArray;
 			out.value = std::move(values);
 		}
+
+		static void Reverse(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType arrayT = in[0];
+
+			auto array = std::any_cast<std::vector<VariableType>>(arrayT.value);
+
+			std::reverse(array.begin(), array.end());
+
+			out.type = arrayT.type;
+			out.value = std::move(array);
+		}
 	}
 
 	namespace String
@@ -332,6 +344,55 @@ namespace Iona
 
 			out.type = TokenType::Float;
 			out.value = read;
+		}
+	}
+
+	namespace Math
+	{
+		static void Min(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType valueOneT = in[0];
+			VariableType valueTwoT = in[1];
+
+			if (valueOneT.type == TokenType::Int && valueTwoT.type == TokenType::Int)
+			{
+				int valueOne = std::any_cast<int>(valueOneT.value);
+				int valueTwo = std::any_cast<int>(valueTwoT.value);
+
+				out.type = TokenType::Int;
+				out.value = std::min(valueOne, valueTwo);
+			}
+			else if (valueOneT.type == TokenType::Float && valueTwoT.type == TokenType::Float)
+			{
+				float valueOne = std::any_cast<float>(valueOneT.value);
+				float valueTwo = std::any_cast<float>(valueTwoT.value);
+
+				out.type = TokenType::Float;
+				out.value = std::min(valueOne, valueTwo);
+			}
+		}
+
+		static void Max(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType valueOneT = in[0];
+			VariableType valueTwoT = in[1];
+
+			if (valueOneT.type == TokenType::Int && valueTwoT.type == TokenType::Int)
+			{
+				int valueOne = std::any_cast<int>(valueOneT.value);
+				int valueTwo = std::any_cast<int>(valueTwoT.value);
+
+				out.type = TokenType::Int;
+				out.value = std::max(valueOne, valueTwo);
+			}
+			else if (valueOneT.type == TokenType::Float && valueTwoT.type == TokenType::Float)
+			{
+				float valueOne = std::any_cast<float>(valueOneT.value);
+				float valueTwo = std::any_cast<float>(valueTwoT.value);
+
+				out.type = TokenType::Float;
+				out.value = std::max(valueOne, valueTwo);
+			}
 		}
 	}
 }

@@ -14,7 +14,7 @@
 
 int main(int argc, char const* argv[])
 {
-	if (argc == 2)
+	if (argc > 1)
 	{
 		if (!Helper::EndsWith(argv[1], ".ion") && !Helper::EndsWith(argv[1], ".iona"))
 		{
@@ -28,6 +28,13 @@ int main(int argc, char const* argv[])
 			return EXIT_SUCCESS;
 		}
 
+		std::vector<std::string> args;
+		args.reserve(argc);
+		for (size_t i = 1; i < argc; i++)
+		{
+			args.push_back(argv[i]);
+		}
+
 		std::ifstream in(argv[1]);
 		std::string source;
 		std::string line;
@@ -38,7 +45,7 @@ int main(int argc, char const* argv[])
 
 		Lexer lexer(source, "Main.ion");
 		Parser parser(lexer);
-		Ref<Interpreter> interpreter = std::make_shared<Interpreter>(parser);
+		Ref<Interpreter> interpreter = std::make_shared<Interpreter>(args, parser);
 
 		try
 		{
@@ -54,6 +61,13 @@ int main(int argc, char const* argv[])
 	{
 		std::cout << "Started iona in interactive mode" << std::endl;
 		std::cout << "Start typing code:" << std::endl;
+
+		std::vector<std::string> args;
+		args.reserve(argc);
+		for (size_t i = 1; i < argc; i++)
+		{
+			args.push_back(argv[i]);
+		}
 
 		Ref<InterpreterScope> globalScope = std::make_shared<InterpreterScope>();
 
@@ -80,7 +94,7 @@ int main(int argc, char const* argv[])
 
 				auto statement = parser.Statement();
 
-				Ref<Interpreter> interpreter = std::make_shared<Interpreter>(parser, globalScope);
+				Ref<Interpreter> interpreter = std::make_shared<Interpreter>(args, parser, globalScope);
 
 				statement->Accept(interpreter);
 

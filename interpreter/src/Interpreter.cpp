@@ -12,18 +12,26 @@
 #include <math.h>
 #include <limits>
 
-Interpreter::Interpreter(const Parser& parser) 
-	: Interpreter(parser, std::make_shared<InterpreterScope>())
+Interpreter::Interpreter(const std::vector<std::string>& args, const Parser& parser)
+	: Interpreter(args, parser, std::make_shared<InterpreterScope>())
 {
 }
 
-Interpreter::Interpreter(const Parser& parser, const Ref<InterpreterScope>& scope)
+Interpreter::Interpreter(const std::vector<std::string>& args, const Parser& parser, const Ref<InterpreterScope>& scope)
 	: parser(parser), root(nullptr)
 {
 	this->scopes.push_back(scope);
 
 	RegisterInternalFunctions();
 	RegisterInternalVariables();
+
+	std::vector<VariableType> argsValues;
+	argsValues.reserve(args.size());
+	for each (auto& arg in args)
+	{
+		argsValues.push_back({ TokenType::String, arg });
+	}
+	this->scopes.back()->DeclareVariable("ARGS", TokenType::StringArray, argsValues);
 }
 
 void Interpreter::RegisterInternalFunctions()

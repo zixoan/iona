@@ -15,6 +15,7 @@
   * [custom functions](#custom-functions)
     * [function return](#function-return)
   * [internal variables](#internal-variables)
+    * [program arguments](#program-arguments)
   * [increment and decrement operator](#increment-and-decrement-operator)
   * [compound assignment](#compound-assignment)
 * [Usage](#usage)
@@ -307,6 +308,29 @@ func Main()
 }
 ```
 
+#### program arguments
+
+There is a global variable called ARGS, which is a string array containing the command line arguments used to execute/run the iona program.
+
+If you execute a file called "Main.iona" with the code below inside it like this:
+ionai ./Main.iona -some arguments
+
+```javascript
+func Main()
+{
+    for arg in ARGS
+        WriteLine("Argument: {arg}")
+
+    // The output would be this:
+    // Argument: ./Main.iona
+    // Argument: -some
+    // Argument: arguments
+
+    // The first item is always the path of the executing file
+    var pathToIonaFile = ARGS[0]
+}
+```
+
 ### increment and decrement operator
 
 The short increment and decrement operator is also supported.
@@ -401,7 +425,7 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] ToFloat/IsFloat
   - [ ] ToBool/IsBool
 - [X] internal pre-defined variables
-- [ ] program arguments
+- [X] program arguments
 - [ ] switch statements
 - [ ] expressions inside an interpolated string
 - [X] CLI utility to create projects and watch code

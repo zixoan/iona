@@ -34,8 +34,8 @@ private:
 	void RegisterInternalVariables();
 	Ref<InterpreterScope> FindScopeOfVariable(const std::string& variableName);
 public:
-	Interpreter(const Parser& parser);
-	Interpreter(const Parser& parser, const Ref<InterpreterScope>& scope);
+	Interpreter(const std::vector<std::string>& args, const Parser& parser);
+	Interpreter(const std::vector<std::string>& args, const Parser& parser, const Ref<InterpreterScope>& scope);
 	~Interpreter() = default;
 
 	void Interpret();

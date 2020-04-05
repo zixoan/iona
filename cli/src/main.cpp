@@ -1,7 +1,18 @@
+/*
+ * Copyright (c) 2020 Philip "zixoan" and individual contributors.
+ * Subject to the GNU GPLv3 license. See LICENSE file for more information.
+ *
+ * SPDX-License-Identifier:	GPL-3.0-only
+ */
+
 #include <iostream>
 #include <filesystem>
 #include <sstream>
 #include <regex>
+#include <thread>
+#include <signal.h>
+#include "FileWatcher.h"
+#include "WindowsFileWatcher.h"
 
 namespace fs = std::filesystem;
 
@@ -80,9 +91,18 @@ int main(int argc, char** argv)
 				return EXIT_SUCCESS;
 			}
 		}
+		else if (strcmp(argv[1], "watch") == 0)
+		{
+			const char* watchDirectory = argv[2];
+
+			WindowsFileWatcher fileWatcher(watchDirectory);
+			fileWatcher.WatchDirectory();
+			
+			return EXIT_SUCCESS;
+		}
 	}
 
-	std::cout << "Usage: iona.exe new <ProjectName>" << std::endl;
+	std::cout << "Usages:\niona new <ProjectName>\niona watch <DirectoryPath>" << std::endl;
 
 	return EXIT_SUCCESS;
 }

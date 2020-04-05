@@ -27,7 +27,7 @@ Interpreter::Interpreter(const std::vector<std::string>& args, const Parser& par
 
 	std::vector<VariableType> argsValues;
 	argsValues.reserve(args.size());
-	for each (auto& arg in args)
+	for (auto& arg : args)
 	{
 		argsValues.push_back({ TokenType::String, arg });
 	}

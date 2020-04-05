@@ -431,7 +431,7 @@ TODO for future (provide an online interpreter as a playground)
 - [X] CLI utility to create projects and watch code
   - [X] create projects from templates (eg. for visual studio code with tasks)
     - iona new project-name
-  - [ ] watch directory/source file for changes and re-run program automatically
+  - [X] watch directory/source file for changes and re-run program automatically
     - iona watch
 - [X] Visual Studio Code extensions
   - [X] Core language syntax highlighting etc.

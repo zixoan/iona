@@ -420,7 +420,7 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] FileWriteLines
   - [ ] FileCopy
   - [ ] FileList
-  - [ ] ToString
+  - [X] ToString
   - [ ] ToInt/IsInt
   - [ ] ToFloat/IsFloat
   - [ ] ToBool/IsBool

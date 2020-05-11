@@ -54,6 +54,7 @@ void Interpreter::RegisterInternalFunctions()
 	this->internalFunctions.Register("Random", Iona::Core::Random, 2, { { 0, { TokenType::Int } }, { 1, { TokenType::Int } } });
 	this->internalFunctions.Register("Range", Iona::Core::Range, 1, { { 0, { TokenType::Int } } });
 	this->internalFunctions.Register("Reverse", Iona::Core::Reverse, 1, { { 0, { TokenType::IntArray, TokenType::StringArray, TokenType::BoolArray, TokenType::FloatArray } } });
+	this->internalFunctions.Register("ToString", Iona::Core::ToString, 1, { { 0, { TokenType::String, TokenType::Int, TokenType::Float, TokenType::Bool, TokenType::Array } } });
 
 	this->internalFunctions.Register("Min", Iona::Math::Min, 2, { { 0, { TokenType::Int, TokenType::Float } }, { 1, { TokenType::Int, TokenType::Float } } });
 	this->internalFunctions.Register("Max", Iona::Math::Max, 2, { { 0, { TokenType::Int, TokenType::Float } }, { 1, { TokenType::Int, TokenType::Float } } });

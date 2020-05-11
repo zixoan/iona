@@ -17,6 +17,67 @@
 
 namespace Iona
 {
+	static std::string ToStringInternal(VariableType v)
+	{
+		switch (v.type)
+		{
+		case TokenType::String:
+			return std::any_cast<std::string>(v.value);
+		case TokenType::Int:
+			return std::to_string(std::any_cast<int>(v.value));
+		case TokenType::Float:
+		{
+			std::stringstream stream;
+			stream << std::fixed << std::setprecision(2) << std::any_cast<float>(v.value);
+			return stream.str();
+		}
+		case TokenType::Bool:
+			return std::to_string(std::any_cast<bool>(v.value));
+		case TokenType::IntArray:
+		{
+			std::stringstream out;
+			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+			{
+				out << std::any_cast<int>(variable.value) << ", ";
+			}
+			std::string s = out.str();
+			return s.substr(0, s.size() - 2);
+		}
+		case TokenType::FloatArray:
+		{
+			std::stringstream out;
+			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+			{
+				out << std::any_cast<float>(variable.value) << ", ";
+			}
+			std::string s = out.str();
+			return s.substr(0, s.size() - 2);
+		}
+		case TokenType::StringArray:
+		{
+			std::stringstream out;
+			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+			{
+				out << std::any_cast<std::string>(variable.value) << ", ";
+			}
+			std::string s = out.str();
+			return s.substr(0, s.size() - 2);
+		}
+		case TokenType::BoolArray:
+		{
+			std::stringstream out;
+			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+			{
+				out << (std::any_cast<bool>(variable.value) ? "true" : "false") << ", ";
+			}
+			std::string s = out.str();
+			return s.substr(0, s.size() - 2);
+		}
+		}
+
+		throw std::invalid_argument("Unkown array type");
+	}
+
 	namespace Core
 	{
 		static void Size(std::vector<VariableType>& in, VariableType& out)
@@ -101,6 +162,14 @@ namespace Iona
 
 			out.type = arrayT.type;
 			out.value = std::move(array);
+		}
+
+		static void ToString(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType variableT = in[0];
+
+			out.type = TokenType::String;
+			out.value = ToStringInternal(variableT);
 		}
 	}
 
@@ -255,69 +324,8 @@ namespace Iona
 		{
 			VariableType v = in[0];
 
-			switch (v.type)
-			{
-			case TokenType::String:
-				printf("%s\n", std::any_cast<std::string>(v.value).c_str());
-				break;
-			case TokenType::Int:
-				printf("%i\n", std::any_cast<int>(v.value));
-				break;
-			case TokenType::Float:
-				printf("%g\n", std::any_cast<float>(v.value));
-				break;
-			case TokenType::Bool:
-				printf("%s\n", std::any_cast<bool>(v.value) ? "true" : "false");
-				break;
-				// TODO: It hurts my eyes, improve this for arrays!!
-			case TokenType::IntArray:
-			{
-				std::stringstream out;
-				for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-				{
-					out << std::any_cast<int>(variable.value) << ", ";
-				}
-				std::string s = out.str();
-				printf("[%s]\n", s.substr(0, s.size() - 2).c_str());
-				break;
+			printf("%s\n", ToStringInternal(v));
 			}
-			case TokenType::FloatArray:
-			{
-				std::stringstream out;
-				for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-				{
-					out << std::any_cast<float>(variable.value) << ", ";
-				}
-				std::string s = out.str();
-				printf("[%s]\n", s.substr(0, s.size() - 2).c_str());
-				break;
-			}
-			case TokenType::StringArray:
-			{
-				std::stringstream out;
-				for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-				{
-					out << std::any_cast<std::string>(variable.value) << ", ";
-				}
-				std::string s = out.str();
-				printf("[%s]\n", s.substr(0, s.size() - 2).c_str());
-				break;
-			}
-			case TokenType::BoolArray:
-			{
-				std::stringstream out;
-				for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-				{
-					out << (std::any_cast<bool>(variable.value) ? "true" : "false") << ", ";
-				}
-				std::string s = out.str();
-				printf("[%s]\n", s.substr(0, s.size() - 2).c_str());
-				break;
-			}
-			default:
-				std::cerr << "Unsupported variable type " << Helper::ToString(v.type) << " for internal function WriteLine()" << std::endl;
-			}
-		}
 
 		static void ReadLine(std::vector<VariableType>& in, VariableType& out)
 		{

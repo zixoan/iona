@@ -21,6 +21,7 @@
 #include "Ast/VariableArrayDeclarationAssignNode.h"
 #include "Ast/VariableArrayUsageNode.h"
 #include "Ast/ForEachNode.h"
+#include "Ast/ForINode.h"
 #include "Ast/BooleanNode.h"
 #include "Ast/VariableArrayAssignNode.h"
 #include "Ast/IfNode.h"
@@ -253,11 +254,31 @@ Ref<Node> Parser::ParseFor()
 
 	Advance(TokenType::In);
 
-	Ref<Node> expression = Expression();
+	// for i in arrayVar
+	// for i in Range(4)
+	if (this->currentToken.GetTokenType() != TokenType::Int)
+	{
+		Ref<Node> expression = Expression();
+		Ref<Node> block = ParseBlock();
 
-	Ref<Node> block = ParseBlock();
+		return std::make_shared<ForEachNode>(line, variableName, expression, block);
+	}
+	// for i in 0..5
+	else 
+	{
+		int from = std::stoi(this->currentToken.GetValue());
+		Advance(TokenType::Int);
 
-	return std::make_shared<ForEachNode>(line, variableName, expression, block);
+		Advance(TokenType::Point);
+		Advance(TokenType::Point);
+
+		int to = std::stoi(this->currentToken.GetValue());
+		Advance(TokenType::Int);
+
+		Ref<Node> block = ParseBlock();
+
+		return std::make_shared<ForINode>(line, variableName, from, to, block);
+	}
 }
 
 Ref<Node> Parser::ParseWhile()

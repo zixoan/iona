@@ -255,6 +255,22 @@ void Interpreter::Visit(const Ref<ForEachNode>& n)
 	this->scopes.pop_back();
 }
 
+void Interpreter::Visit(const Ref<ForINode>& n)
+{
+	this->scopes.push_back(std::make_shared<InterpreterScope>());
+
+	this->scopes.back()->DeclareVariable(n->GetVariableName(), TokenType::Int);
+
+	for (int i = n->GetFrom(); i < n->GetTo(); i++)
+	{
+		this->scopes.back()->UpdateVariable(n->GetVariableName(), { TokenType::Int, i });
+
+		n->GetBlock()->Accept(shared_from_this());
+	}
+
+	this->scopes.pop_back();
+}
+
 void Interpreter::Visit(const Ref<StringNode>& n)
 {
 	std::string value = n->GetValue();

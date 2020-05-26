@@ -23,6 +23,7 @@
 #include <Ast/VariableArrayDeclarationAssignNode.h>
 #include <Ast/VariableArrayUsageNode.h>
 #include <Ast/ForEachNode.h>
+#include <Ast/ForINode.h>
 #include <Ast/BooleanNode.h>
 #include <Ast/VariableArrayAssignNode.h>
 #include <Ast/IfNode.h>
@@ -41,6 +42,7 @@ public:
 	virtual void Visit(const Ref<FunctionNode>& n) = 0;
 	virtual void Visit(const Ref<FunctionCallNode>& n) = 0;
 	virtual void Visit(const Ref<ForEachNode>& n) = 0;
+	virtual void Visit(const Ref<ForINode>& n) = 0;
 	virtual void Visit(const Ref<BlockNode>& n) = 0;
 	virtual void Visit(const Ref<BinaryNode>& n) = 0;
 	virtual void Visit(const Ref<BooleanNode>& n) = 0;

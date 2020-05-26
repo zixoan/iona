@@ -393,7 +393,8 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] complex if-else-if statements
 - [X] while loop
 - [X] do while loop
-- [ ] for i
+- [X] for i
+  - [ ] with step parameter
 - [X] one line statement blocks without curly brackets
 - [X] simple return statement (not nested)
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)

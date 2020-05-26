@@ -51,6 +51,7 @@ public:
 	void Visit(const Ref<FunctionNode>& n);
 	void Visit(const Ref<FunctionCallNode>& n);
 	void Visit(const Ref<ForEachNode>& n);
+	void Visit(const Ref<ForINode>& n);
 	void Visit(const Ref<BlockNode>& n);
 	void Visit(const Ref<BinaryNode>& n);
 	void Visit(const Ref<BooleanNode>& n);

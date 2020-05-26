@@ -165,6 +165,11 @@ Token Lexer::NextToken()
 
 				if (this->currentChar == '.' && !hasFloatPoint)
 				{
+					if (this->Peek() == '.')
+					{
+						break;
+					}
+
 					hasFloatPoint = true;
 				}
 				else if (this->currentChar == '.' && hasFloatPoint)

@@ -17,9 +17,10 @@ private:
 	std::string variableName;
 	int from;
 	int to;
+	int step;
 	Ref<Node> block;
 public:
-	ForINode(const char* line, const std::string& variableName, int from, int to, const Ref<Node>& block);
+	ForINode(const char* line, const std::string& variableName, int from, int to, int step, const Ref<Node>& block);
 
 	~ForINode() = default;
 
@@ -38,6 +39,11 @@ public:
 	int GetTo() const
 	{
 		return to;
+	}
+
+	int GetStep() const
+	{
+		return step;
 	}
 
 	Ref<Node> GetBlock() const

@@ -24,6 +24,7 @@ Lexer::Lexer(const std::string& input, const std::string& fileName)
 	this->reservedKeywords.insert(std::pair<std::string, Token>("false", Token(Bool, "false")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("for", Token(For, "for")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("in", Token(In, "in")));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("step", Token(Step, "step")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("while", Token(While, "while")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("do", Token(Do, "do")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("if", Token(If, "if")));

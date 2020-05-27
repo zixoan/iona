@@ -275,9 +275,19 @@ Ref<Node> Parser::ParseFor()
 		int to = std::stoi(this->currentToken.GetValue());
 		Advance(TokenType::Int);
 
+		int step = 1;
+
+		if (this->currentToken.GetTokenType() == TokenType::Step)
+		{
+			Advance(TokenType::Step);
+
+			step = std::stoi(this->currentToken.GetValue());
+			Advance(TokenType::Int);
+		}
+
 		Ref<Node> block = ParseBlock();
 
-		return std::make_shared<ForINode>(line, variableName, from, to, block);
+		return std::make_shared<ForINode>(line, variableName, from, to, step, block);
 	}
 }
 

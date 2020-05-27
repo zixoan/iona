@@ -261,7 +261,7 @@ void Interpreter::Visit(const Ref<ForINode>& n)
 
 	this->scopes.back()->DeclareVariable(n->GetVariableName(), TokenType::Int);
 
-	for (int i = n->GetFrom(); i < n->GetTo(); i++)
+	for (int i = n->GetFrom(); i < n->GetTo(); i += n->GetStep())
 	{
 		this->scopes.back()->UpdateVariable(n->GetVariableName(), { TokenType::Int, i });
 

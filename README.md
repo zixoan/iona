@@ -394,7 +394,10 @@ TODO for future (provide an online interpreter as a playground)
 - [X] while loop
 - [X] do while loop
 - [X] for i
-  - [ ] with step parameter
+  - [X] with step parameter
+  - [ ] with factor support (variables and function calls)
+  - [ ] float support
+  - [ ] backwards
 - [X] one line statement blocks without curly brackets
 - [X] simple return statement (not nested)
 - [ ] a lot more internal functions (Size/Length, ReadFile, Min, Max, Random, ToUpperCase, ToLowerCase, ...)

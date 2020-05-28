@@ -252,6 +252,8 @@ func Main()
   - Returns the complete content of the file from the given path. If the path is a directory an empty string is returned
 - FileWrite(string path, string data) : bool
   - Writes the data to the file path and returns true if successfull, otherwise false
+- FileCopy(string srcPath, string dstPath) : bool
+  - Copies the source file/directory to the destination file/directory recursively and returns true if it was successful
 
 ### custom functions
 
@@ -422,7 +424,7 @@ TODO for future (provide an online interpreter as a playground)
   - [X] FileWrite
   - [ ] FileReadLines
   - [ ] FileWriteLines
-  - [ ] FileCopy
+  - [X] FileCopy
   - [ ] FileList
   - [X] ToString
   - [ ] ToInt/IsInt

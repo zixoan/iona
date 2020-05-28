@@ -316,6 +316,21 @@ namespace Iona
 			out.type = TokenType::Bool;
 			out.value = !o.bad();
 		}
+
+		static void FileCopy(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType srcPathT = in[0];
+			VariableType destPathT = in[1];
+
+			std::string srcPath = std::any_cast<std::string>(srcPathT.value);
+			std::string destPath = std::any_cast<std::string>(destPathT.value);
+
+			std::error_code error;
+			std::filesystem::copy(srcPath, destPath, fs::copy_options::recursive, error);
+
+			out.type = TokenType::Bool;
+			out.value = !error;
+	}
 	}
 
 	namespace Console

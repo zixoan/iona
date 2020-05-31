@@ -339,7 +339,7 @@ namespace Iona
 		{
 			VariableType v = in[0];
 
-			printf("%s\n", ToStringInternal(v));
+			printf("%s\n", ToStringInternal(v).c_str());
 			}
 
 		static void ReadLine(std::vector<VariableType>& in, VariableType& out)

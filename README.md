@@ -47,7 +47,7 @@ and provide a way to automatically re-run the program if the source file changes
 
 The variable and function naming is inspired by C#. Variable types are dynamically assigned during runtime.
 There are global variables, local variables, variable assignments and custom functions with parameters.
-String interpolation with variables and arrays of built-in types are also supported just like simple if statements.
+String interpolation with variables and arrays of built-in types are also supported just like if statements.
 
 ```javascript
 var helloWorld = "Hello, World!"
@@ -116,7 +116,7 @@ func Main()
 
 ```javascript
 var myBool = false
-var value = 100
+var value = 90
 
 func Main()
 {
@@ -129,14 +129,24 @@ func Main()
         WriteLine("myBool is false")
     }
 
-    if value == 100
-    {
-        WriteLine("value is equal to 100")
-    }
-
     // Outputs:
     // myBool is false
-    // value is equal to 100
+
+    if value > 100
+    {
+        WriteLine("value is greater than 100")
+    }
+    else if value > 50
+    {
+        WriteLine("value is between 51 and 100")
+	}
+    else
+    {
+        WriteLine("value is below 51")
+	}
+
+    // Outputs:
+    // value is between 51 and 100
 }
 ```
 
@@ -392,7 +402,7 @@ TODO for future (provide an online interpreter as a playground)
 - [X] more boolean operators
 - [X] more binary operator handling
 - [X] if-else statements
-  - [ ] complex if-else-if statements
+  - [X] complex if-else-if statements
 - [X] while loop
 - [X] do while loop
 - [X] for i

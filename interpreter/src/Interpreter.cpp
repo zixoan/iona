@@ -756,9 +756,26 @@ void Interpreter::Visit(const Ref<IfNode>& n)
 	{
 		n->GetTrueBlock()->Accept(shared_from_this());
 	}
-	else if (n->GetFalseBlock() != nullptr)
+	else
 	{
-		n->GetFalseBlock()->Accept(shared_from_this());
+		bool elseIfBlockExecuted = false;
+		for (const auto& [expression, block] : n->GetElseIfBlocks())
+		{
+			expression->Accept(shared_from_this());
+
+			if (std::any_cast<bool>(this->currentVariable.value))
+			{
+				block->Accept(shared_from_this());
+
+				elseIfBlockExecuted = true;
+				break;
+			}
+		}
+
+		if (!elseIfBlockExecuted && n->GetElseBlock() != nullptr)
+	{
+			n->GetElseBlock()->Accept(shared_from_this());
+		}
 	}
 }
 

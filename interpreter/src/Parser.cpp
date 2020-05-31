@@ -325,16 +325,47 @@ Ref<Node> Parser::ParseIf()
 	Ref<Node> expression = Expression();
 
 	Ref<Node> trueBlock = ParseBlock();
-	Ref<Node> falseBlock = nullptr;
+	std::map<Ref<Node>, Ref<Node>> elseIfBlocks;
+	Ref<Node> elseBlock = nullptr;
+
 
 	if (this->currentToken.GetTokenType() == TokenType::Else)
 	{
 		Advance(TokenType::Else);
 
-		falseBlock = ParseBlock();
+		if (this->currentToken.GetTokenType() != TokenType::If)
+		{
+			elseBlock = ParseBlock();
+		}
+		else
+		{
+			Advance(TokenType::If);
+
+			auto elseIfExpression = Expression();
+			auto elseIfBlock = ParseBlock();
+			elseIfBlocks.insert(std::pair<Ref<Node>, Ref<Node>>(elseIfExpression, elseIfBlock));
+
+			while (this->currentToken.GetTokenType() == TokenType::Else)
+			{
+				Advance(TokenType::Else);
+
+				if (this->currentToken.GetTokenType() == TokenType::If)
+				{
+					Advance(TokenType::If);
+
+					elseIfBlocks.insert(std::pair<Ref<Node>, Ref<Node>>(Expression(), ParseBlock()));
+				}
+				else
+				{
+					elseBlock = ParseBlock();
+
+					break;
+				}
+			}
+		}
 	}
 
-	return std::make_shared<IfNode>(line, expression, trueBlock, falseBlock);
+	return std::make_shared<IfNode>(line, expression, trueBlock, elseIfBlocks, elseBlock);
 }
 
 Ref<Node> Parser::ParseReturn()

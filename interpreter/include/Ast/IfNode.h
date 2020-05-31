@@ -11,15 +11,17 @@
 #include <string>
 #include "Node.h"
 #include "Token.h"
+#include <map>
 
 class IfNode : public Node, public std::enable_shared_from_this<IfNode>
 {
 private:
 	Ref<Node> expression;
 	Ref<Node> trueBlock;
-	Ref<Node> falseBlock;
+	std::map<Ref<Node>, Ref<Node>> elseIfBlocks;
+	Ref<Node> elseBlock;
 public:
-	IfNode(const char* line, const Ref<Node>& expression, const Ref<Node>& trueBlock, const Ref<Node>& falseBlock);
+	IfNode(const char* line, const Ref<Node>& expression, const Ref<Node>& trueBlock, const std::map<Ref<Node>, Ref<Node>>& elseIfBlocks, const Ref<Node>& elseBlock);
 
 	~IfNode() = default;
 
@@ -35,9 +37,14 @@ public:
 		return trueBlock;
 	}
 
-	Ref<Node> GetFalseBlock() const
+	std::map<Ref<Node>, Ref<Node>> GetElseIfBlocks() const
 	{
-		return falseBlock;
+		return elseIfBlocks;
+	}
+
+	Ref<Node> GetElseBlock() const
+	{
+		return elseBlock;
 	}
 };
 

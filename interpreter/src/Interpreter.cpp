@@ -63,6 +63,8 @@ void Interpreter::RegisterInternalFunctions()
 	this->internalFunctions.Register("FileRead", Iona::File::FileRead, 1, { { 0, { TokenType::String } } });
 	this->internalFunctions.Register("FileWrite", Iona::File::FileWrite, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
 	this->internalFunctions.Register("FileCopy", Iona::File::FileCopy, 2, { { 0, { TokenType::String } }, { 1, { TokenType::String } } });
+	this->internalFunctions.Register("FileReadLines", Iona::File::FileReadLines, 1, { { 0, { TokenType::String } } });
+	this->internalFunctions.Register("FileWriteLines", Iona::File::FileWriteLines, 3, { { 0, { TokenType::String } }, { 1, { TokenType::StringArray } }, { 2, { TokenType::Bool } } });
 }
 
 void Interpreter::RegisterInternalVariables()

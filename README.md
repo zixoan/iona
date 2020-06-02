@@ -259,11 +259,15 @@ func Main()
 - FileExists(string path) : bool
   - Returns true if the given file/directory exists, otherwise false
 - FileRead(string path) : string
-  - Returns the complete content of the file from the given path. If the path is a directory an empty string is returned
+  - Returns the complete content of the file from the given path. If the path is a directory an empty string is returned.
 - FileWrite(string path, string data) : bool
   - Writes the data to the file path and returns true if successfull, otherwise false
 - FileCopy(string srcPath, string dstPath) : bool
   - Copies the source file/directory to the destination file/directory recursively and returns true if it was successful
+- FileReadLines(string srcPath) : array
+  - Reads all lines from the given source file and returns a string array which contains the read lines. If something went wrong, the list will be empty
+- FileWriteLines(string dstPath, array lines, bool append) : bool
+  - Writes all given string lines to the destination file and appends it if the third parameter is true, otherwise the file get truncated before write. Returns true or false depending on whether it was successful.
 
 ### custom functions
 
@@ -432,8 +436,8 @@ TODO for future (provide an online interpreter as a playground)
   - [X] FileExists
   - [X] FileRead
   - [X] FileWrite
-  - [ ] FileReadLines
-  - [ ] FileWriteLines
+  - [X] FileReadLines
+  - [X] FileWriteLines
   - [X] FileCopy
   - [ ] FileList
   - [X] ToString

@@ -330,7 +330,48 @@ namespace Iona
 
 			out.type = TokenType::Bool;
 			out.value = !error;
-	}
+		}
+
+		static void FileReadLines(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType v = in[0];
+
+			std::string path = std::any_cast<std::string>(v.value);
+
+			std::vector<VariableType> lines;
+
+			std::ifstream file{ path };
+			std::string line;
+			while (std::getline(file, line))
+			{
+				lines.push_back({ TokenType::String, line });
+			}
+			file.close();
+
+			out.type = TokenType::StringArray;
+			out.value = lines;
+		}
+
+		static void FileWriteLines(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType pathT = in[0];
+			VariableType dataT = in[1];
+			VariableType appendT = in[2];
+
+			std::string path = std::any_cast<std::string>(pathT.value);
+			std::vector<VariableType> data = std::any_cast<std::vector<VariableType>>(dataT.value);
+			bool append = std::any_cast<bool>(appendT.value);
+
+			std::ofstream file{ path, append ? std::ios_base::app : std::ios_base::trunc };
+			for (const auto& value : data)
+			{
+				file << std::any_cast<std::string>(value.value) << std::endl;
+			}
+			file.close();
+
+			out.type = TokenType::Bool;
+			out.value = !file.bad();
+		}
 	}
 
 	namespace Console
@@ -340,7 +381,7 @@ namespace Iona
 			VariableType v = in[0];
 
 			printf("%s\n", ToStringInternal(v).c_str());
-			}
+		}
 
 		static void ReadLine(std::vector<VariableType>& in, VariableType& out)
 		{

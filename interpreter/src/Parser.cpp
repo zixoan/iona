@@ -328,7 +328,6 @@ Ref<Node> Parser::ParseIf()
 	std::map<Ref<Node>, Ref<Node>> elseIfBlocks;
 	Ref<Node> elseBlock = nullptr;
 
-
 	if (this->currentToken.GetTokenType() == TokenType::Else)
 	{
 		Advance(TokenType::Else);
@@ -353,7 +352,10 @@ Ref<Node> Parser::ParseIf()
 				{
 					Advance(TokenType::If);
 
-					elseIfBlocks.insert(std::pair<Ref<Node>, Ref<Node>>(Expression(), ParseBlock()));
+					auto innerElseIfExpression = Expression();
+					auto innerElseIfBlock = ParseBlock();
+
+					elseIfBlocks.insert(std::pair<Ref<Node>, Ref<Node>>(innerElseIfExpression, innerElseIfBlock));
 				}
 				else
 				{

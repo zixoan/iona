@@ -268,6 +268,11 @@ func Main()
   - Reads all lines from the given source file and returns a string array which contains the read lines. If something went wrong, the list will be empty
 - FileWriteLines(string dstPath, array lines, bool append) : bool
   - Writes all given string lines to the destination file and appends it if the third parameter is true, otherwise the file get truncated before write. Returns true or false depending on whether it was successful.
+- FileList(string path, string pattern): array
+  - Searches all files and folders recursively in the given path and returns the full paths of the ones that match the given regex pattern. Returns an empty array if nothing was found or an error occurs (eg. path to non existant directory).
+  - The call FileList("C:\Folder\", "^.+\.(html|txt)$") will return all files and folders ending on ".txt" or ".html"
+  - The call FileList("C:\Folder\", "^.+\.html$") will return all files and folders ending with ".html"
+
 
 ### custom functions
 
@@ -439,7 +444,7 @@ TODO for future (provide an online interpreter as a playground)
   - [X] FileReadLines
   - [X] FileWriteLines
   - [X] FileCopy
-  - [ ] FileList
+  - [X] FileList
   - [X] ToString
   - [ ] ToInt/IsInt
   - [ ] ToFloat/IsFloat

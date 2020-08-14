@@ -14,6 +14,7 @@
 #include <streambuf>
 #include <iterator>
 #include <filesystem>
+#include <regex>
 
 namespace Iona
 {
@@ -371,6 +372,46 @@ namespace Iona
 
 			out.type = TokenType::Bool;
 			out.value = !file.bad();
+		}
+
+		static void FileList(std::vector<VariableType>& in, VariableType& out)
+		{
+			VariableType pathT = in[0];
+			VariableType regexStringT = in[1];
+
+			std::string path = std::any_cast<std::string>(pathT.value);
+			std::string regexString = std::any_cast<std::string>(regexStringT.value);
+			
+			std::vector<VariableType> files;
+
+			try
+			{
+				if (regexString.empty())
+				{
+					regexString = ".*";
+				}
+
+				std::regex regex(regexString);
+
+				for (auto& p : std::filesystem::recursive_directory_iterator(path))
+				{
+					if (std::regex_match(p.path().string(), regex))
+					{
+						files.push_back(VariableType{ TokenType::String, p.path().string() });
+					}
+				}
+			}
+			catch (const std::regex_error&)
+			{
+				Exit("FileFind: String '%s' is not a valid regex", regexString.c_str());
+			}
+			catch (const std::exception&)
+			{
+				// TODO: Language runtime error handling
+			}
+
+			out.type = TokenType::StringArray;
+			out.value = files;
 		}
 	}
 

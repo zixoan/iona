@@ -33,7 +33,7 @@ namespace Iona
 			return stream.str();
 		}
 		case TokenType::Bool:
-			return std::to_string(std::any_cast<bool>(v.value));
+			return std::any_cast<bool>(v.value) ? "true" : "false";
 		case TokenType::IntArray:
 		{
 			std::stringstream out;

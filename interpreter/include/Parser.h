@@ -30,9 +30,10 @@ private:
 	Ref<Node> ParseWhile();
 	Ref<Node> ParseDoWhile();
 	Ref<Node> ParseIf();
+	Ref<Node> ParseWhen();
 	Ref<Node> ParseReturn();
 
-	std::vector<Ref<Node>> ParseFunctionStatements();
+	std::vector<Ref<Node>> ParseStatements();
 	Ref<Node> ParseBlock();
 
 	Ref<Node> Factor();

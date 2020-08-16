@@ -226,13 +226,13 @@ Ref<Node> Parser::ParseBlock()
 	}
 
 	Advance(CurlyLeft);
-	std::vector<Ref<Node>> statements = ParseFunctionStatements();
+	std::vector<Ref<Node>> statements = ParseStatements();
 	Advance(CurlyRight);
 
 	return std::make_shared<BlockNode>(statements);
 }
 
-std::vector<Ref<Node>> Parser::ParseFunctionStatements()
+std::vector<Ref<Node>> Parser::ParseStatements()
 {
 	std::vector<Ref<Node>> statements;
 
@@ -368,6 +368,48 @@ Ref<Node> Parser::ParseIf()
 	}
 
 	return std::make_shared<IfNode>(line, expression, trueBlock, elseIfBlocks, elseBlock);
+}
+
+Ref<Node> Parser::ParseWhen()
+{
+	auto line = this->currentToken.GetLine();
+	Advance(TokenType::When);
+	Ref<Node> whenFactor = Factor();
+	Advance(TokenType::CurlyLeft);
+
+	std::map<Ref<Node>, Ref<Node>> cases;
+	Ref<Node> elseBlock = nullptr;
+	while (this->currentToken.GetTokenType() != TokenType::CurlyRight)
+	{
+		// Handle default (else) case, if only the arrow symbol is used with a block
+		if (this->currentToken.GetTokenType() == TokenType::Arrow)
+		{
+			Advance(TokenType::Arrow);
+			elseBlock = ParseBlock();
+			break;
+		}
+
+		Ref<Node> value = Factor();
+		Advance(TokenType::Arrow);
+		Ref<Node> block = ParseBlock();
+
+		Ref<Node> expression = std::make_shared<BooleanNode>(whenFactor, TokenType::Equals, value);
+		cases.insert(std::pair<Ref<Node>, Ref<Node>>(expression, block));
+	}
+
+	Advance(TokenType::CurlyRight);
+
+	if (cases.size() == 0)
+	{
+		Exit("%s when statement needs to have at least one case expression and block", this->currentToken.GetLine());
+	}
+
+	Ref<Node> firstExpression = cases.begin()->first;
+	Ref<Node> firstBlock = cases.begin()->second;
+
+	cases.erase(cases.begin());
+
+	return std::make_shared<IfNode>(line, firstExpression, firstBlock, cases, elseBlock);
 }
 
 Ref<Node> Parser::ParseReturn()
@@ -607,6 +649,10 @@ Ref<Node> Parser::Statement()
 	else if (this->currentToken.GetTokenType() == If)
 	{
 		return ParseIf();
+	}
+	else if (this->currentToken.GetTokenType() == When)
+	{
+		return ParseWhen();
 	}
 	else if (this->currentToken.GetTokenType() == Return)
 	{

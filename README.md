@@ -9,6 +9,7 @@
   * [built-in data types](#built-in-data-types)
   * [string interpolation](#string-interpolation)
   * [if](#if)
+  * [when](#when)
   * [for each](#for-each)
   * [while and do while](#while-and-do-while)
   * [internal functions](#internal-functions)
@@ -147,6 +148,34 @@ func Main()
 
     // Outputs:
     // value is between 51 and 100
+}
+```
+
+### when
+
+```javascript
+func Main()
+{
+	var a = 12
+    var b = 4
+    var result = 0
+
+    WriteLine("Enter operator (+, -, *, /):")
+    var operator = "*"
+
+    when operator
+    {
+        "+" => result = a + b
+        "-" => result = a - b
+        "*" => result = a * b
+        "/" => result = a / b
+        => WriteLine("Invalid operator")
+    }
+
+    WriteLine("Result: {result}")
+
+    // Outputs:
+    // Result: 48
 }
 ```
 
@@ -451,7 +480,9 @@ TODO for future (provide an online interpreter as a playground)
   - [ ] ToBool/IsBool
 - [X] internal pre-defined variables
 - [X] program arguments
-- [ ] switch statements
+- [X] switch statements
+    - [X] const matches
+    - [ ] range matches
 - [ ] expressions inside an interpolated string
 - [X] CLI utility to create projects and watch code
   - [X] create projects from templates (eg. for visual studio code with tasks)

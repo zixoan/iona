@@ -28,6 +28,7 @@ Lexer::Lexer(const std::string& input, const std::string& fileName)
 	this->reservedKeywords.insert(std::pair<std::string, Token>("do", Token(Do, "do")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("if", Token(If, "if")));
 	this->reservedKeywords.insert(std::pair<std::string, Token>("else", Token(Else, "else")));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("when", Token(When, "when")));
 }
 
 void Lexer::Advance()
@@ -234,7 +235,13 @@ Token Lexer::NextToken()
 
 				return Token(LessEqualThan, "<=", GetFormattedFileLine());
 			case '=':
-				if (Peek() != '=')
+				if (Peek() == '>')
+				{
+					Advance();
+					Advance();
+					return Token(Arrow, "=>", GetFormattedFileLine());
+				}
+				else if (Peek() != '=')
 				{
 					Advance();
 					return Token(Assign, "=", GetFormattedFileLine());

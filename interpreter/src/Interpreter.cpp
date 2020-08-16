@@ -612,7 +612,7 @@ void Interpreter::Visit(const Ref<BooleanNode>& n)
 			resultVariable.value = std::any_cast<int>(leftVariable.value) >= std::any_cast<int>(rightVariable.value);
 		}
 	}
-	if (leftVariable.type == TokenType::Float && rightVariable.type == TokenType::Float)
+	else if (leftVariable.type == TokenType::Float && rightVariable.type == TokenType::Float)
 	{
 		if (n->GetOperant() == TokenType::Equals)
 		{
@@ -639,6 +639,60 @@ void Interpreter::Visit(const Ref<BooleanNode>& n)
 			resultVariable.value = std::any_cast<float>(leftVariable.value) >= std::any_cast<float>(rightVariable.value);
 		}
 	}
+	else if (leftVariable.type == TokenType::Int && rightVariable.type == TokenType::Float)
+	{
+		if (n->GetOperant() == TokenType::Equals)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) == std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::NotEquals)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) != std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) < std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) > std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessEqualThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) <= std::any_cast<float>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterEqualThan)
+		{
+			resultVariable.value = std::any_cast<int>(leftVariable.value) >= std::any_cast<float>(rightVariable.value);
+		}
+	}
+	else if (leftVariable.type == TokenType::Float && rightVariable.type == TokenType::Int)
+	{
+		if (n->GetOperant() == TokenType::Equals)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) == std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::NotEquals)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) != std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) < std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) > std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::LessEqualThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) <= std::any_cast<int>(rightVariable.value);
+		}
+		else if (n->GetOperant() == TokenType::GreaterEqualThan)
+		{
+			resultVariable.value = std::any_cast<float>(leftVariable.value) >= std::any_cast<int>(rightVariable.value);
+		}
+	}
 	else if (leftVariable.type == TokenType::String && rightVariable.type == TokenType::String)
 	{
 		if (n->GetOperant() == TokenType::Equals)
@@ -649,6 +703,10 @@ void Interpreter::Visit(const Ref<BooleanNode>& n)
 		{
 			resultVariable.value = std::any_cast<std::string>(leftVariable.value) != std::any_cast<std::string>(rightVariable.value);
 		}
+	}
+	else
+	{
+		resultVariable.value = false;
 	}
 
 	this->currentVariable = std::move(resultVariable);
@@ -776,7 +834,7 @@ void Interpreter::Visit(const Ref<IfNode>& n)
 		}
 
 		if (!elseIfBlockExecuted && n->GetElseBlock() != nullptr)
-	{
+		{
 			n->GetElseBlock()->Accept(shared_from_this());
 		}
 	}

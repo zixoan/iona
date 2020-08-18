@@ -52,8 +52,10 @@ int main(int argc, char const* argv[])
 			interpreter->Interpret();
 			return EXIT_SUCCESS;
 		}
-		catch (...)
+		catch (const std::exception& e)
 		{
+			std::cerr << e.what() << std::endl;
+
 			return EXIT_FAILURE;
 		}
 	}

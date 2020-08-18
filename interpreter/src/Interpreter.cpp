@@ -98,14 +98,7 @@ void Interpreter::Interpret()
 {
 	auto start = std::chrono::high_resolution_clock::now();
 
-	try
-	{
 		this->root = this->parser.Parse();
-	}
-	catch (...)
-	{
-		return;
-	}
 	
 	auto end = std::chrono::high_resolution_clock::now();
 

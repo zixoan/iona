@@ -22,11 +22,12 @@ using Ref = std::shared_ptr<T>;
 template <typename ...Args>
 static void Exit(const char* error, Args ...args)
 {
-	fprintf(stderr, error, args...);
-	fputc('\n', stderr);
+	size_t size = std::snprintf(nullptr, 0, error, args...) + 1;
+	std::vector<char> buffer(size);
+	std::snprintf(&buffer[0], size, error, args...);
 
 	// TODO: Improve
-	throw std::runtime_error("error during runtime");
+	throw std::runtime_error(&buffer[0]);
 }
 
 #endif

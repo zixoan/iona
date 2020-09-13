@@ -40,6 +40,11 @@ public:
 	~Lexer() = default;
 
 	Token NextToken();
+
+	std::string GetFileName() const
+	{
+		return fileName;
+	}
 };
 
 #endif

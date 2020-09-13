@@ -98,6 +98,7 @@ Int, Float, String, Bool
 ### string interpolation
 
 You can use string interpolation to output a formatted string more readable.
+Expressions can also be used in inside the string interpolation.
 
 ```javascript
 var x = 0
@@ -107,11 +108,11 @@ func Main()
 {
     WriteLine("x={x}, y={y}")
     // Outputs: x=0, y=5
+
+    WriteLine("5 + 5 = {5 + 5}")
+    // Outputs: 5 + 5 = 10
 }
 ```
-
-> Currently there are only simple variables usages supported, but in the future full expressions will be supported.
-> For example: WriteLine("5 + 5 = {5 + 5}") will then output "5 + 5 = 10"
 
 ### if
 
@@ -483,7 +484,7 @@ TODO for future (provide an online interpreter as a playground)
 - [X] switch statements
     - [X] const matches
     - [ ] range matches
-- [ ] expressions inside an interpolated string
+- [X] expressions inside an interpolated string
 - [X] CLI utility to create projects and watch code
   - [X] create projects from templates (eg. for visual studio code with tasks)
     - iona new project-name

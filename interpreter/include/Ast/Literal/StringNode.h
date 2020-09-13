@@ -9,14 +9,16 @@
 #define STRING_NODE_H
 
 #include <utility>
+#include <vector>
 #include "Node.h"
 
 class StringNode : public Node, public std::enable_shared_from_this<StringNode>
 {
 private:
 	std::string value;
+	std::vector<Ref<Node>> expressions;
 public:
-	StringNode(const char* line, const std::string& value);
+	StringNode(const char* line, const std::string& value, const std::vector<Ref<Node>>& expressions);
 
 	~StringNode() = default;
 
@@ -25,6 +27,11 @@ public:
 	std::string GetValue() const
 	{
 		return value;
+	}
+
+	std::vector<Ref<Node>> GetExpressions() const
+	{
+		return expressions;
 	}
 };
 

@@ -493,7 +493,39 @@ Ref<Node> Parser::Factor()
 		std::string value = this->currentToken.GetValue();
 		Advance(String);
 
-		return std::make_shared<StringNode>(line, value);
+		std::vector<Ref<Node>> expressions;
+
+		size_t indexOfCurlyOpen = value.find('{');
+		while (indexOfCurlyOpen != -1)
+		{
+			size_t indexOfCurlyClose = value.find('}', indexOfCurlyOpen);
+
+			std::string varName = value.substr(indexOfCurlyOpen + 1, indexOfCurlyClose - indexOfCurlyOpen - 1);
+
+			Lexer lexer(varName, this->lexer.GetFileName());
+			Parser parser(lexer);
+
+			try
+			{
+				expressions.push_back(parser.Expression());
+			}
+			catch (const std::exception& e)
+			{
+				// This is a "workaround" to get the correct file and line info if
+				// the interpolated string expression contains runtime errors
+				std::string what(e.what());
+				size_t colon = what.find_first_of(":", 0);
+
+				what = what.replace(0, colon + 1, line);
+				
+				throw std::runtime_error(what);
+			}
+
+			value = value.replace(indexOfCurlyOpen, (indexOfCurlyClose + 1) - indexOfCurlyOpen, std::string("$R$"));
+			indexOfCurlyOpen = value.find('{');
+		}
+
+		return std::make_shared<StringNode>(line, value, expressions);
 	}
 	else if (tmp.GetTokenType() == Bool)
 	{
@@ -530,7 +562,8 @@ Ref<Node> Parser::Term()
 		{
 			Advance(tmp.GetTokenType());
 
-			Ref<Node> right = Factor();
+			Ref<Node> right = Expression();
+			//Ref<Node> right = Term();
 			result = std::make_shared<BooleanNode>(result, tmp.GetTokenType(), right);
 		}
 	}

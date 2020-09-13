@@ -98,7 +98,7 @@ void Interpreter::Interpret()
 {
 	auto start = std::chrono::high_resolution_clock::now();
 
-		this->root = this->parser.Parse();
+	this->root = this->parser.Parse();
 	
 	auto end = std::chrono::high_resolution_clock::now();
 
@@ -272,48 +272,12 @@ void Interpreter::Visit(const Ref<StringNode>& n)
 {
 	std::string value = n->GetValue();
 
-	// Handle string variable interpolation
-	size_t indexOfDollar = value.find('{');
-	while (indexOfDollar != -1)
+	for (auto& expression : n->GetExpressions())
 	{
-		size_t endVarUsagePos = value.find('}', indexOfDollar);
+		expression->Accept(shared_from_this());
 
-		std::string varName = value.substr(indexOfDollar + 1, endVarUsagePos - indexOfDollar - 1);
-
-		auto innerScope = FindScopeOfVariable(varName);
-		if (innerScope == nullptr)
-		{
-			Exit("%s Variable '%s' used in string interpolation is not declared in this scope", 
-				n->GetLine(), varName.c_str());
-		}
-
-		std::stringstream s;
-		Ref<VariableType> vt = innerScope->GetVariable(varName);
-		if (vt->type == String)
-		{
-			s << std::any_cast<std::string>(vt->value);
-		}
-		else if (vt->type == Int)
-		{
-			s << std::any_cast<int>(vt->value);
-		}
-		else if (vt->type == Float)
-		{
-			s << std::any_cast<float>(vt->value);
-		}
-		else if (vt->type == Bool)
-		{
-			s << std::any_cast<bool>(vt->value);
-		}
-		else
-		{
-			Exit("%s Unsupported type '%s' for string interpolation", 
-				n->GetLine(), Helper::ToString(vt->type).c_str());
-		}
-
-		value = value.replace(indexOfDollar, endVarUsagePos - indexOfDollar + 1, s.str());
-
-		indexOfDollar = value.find('{');
+		int index = value.find("$R$");
+		value = value.replace(index, 3, Iona::ToStringInternal(this->currentVariable));
 	}
 
 	VariableType v;

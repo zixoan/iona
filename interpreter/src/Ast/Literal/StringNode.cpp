@@ -8,8 +8,8 @@
 #include "Ast/Literal/StringNode.h"
 #include "Visitor.h"
 
-StringNode::StringNode(const char* line, const std::string& value)
-	: Node(line), value(value)
+StringNode::StringNode(const char* line, const std::string& value, const std::vector<Ref<Node>>& expressions)
+	: Node(line), value(value), expressions(expressions)
 {
 }
 

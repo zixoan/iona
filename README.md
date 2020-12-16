@@ -20,6 +20,7 @@
   * [increment and decrement operator](#increment-and-decrement-operator)
   * [compound assignment](#compound-assignment)
 * [Usage](#usage)
+  * [CLI](#cli)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
@@ -31,10 +32,11 @@ I wanted to learn more about how programming languages actually work and create 
 
 So iona is written in c++17 and uses smart pointers (because I haven't used them a lot) for heap objects.
 The architecture/handling is very basic:
-- Source file reading
-- Lexing into tokens
-- Parsing and creating an abstract syntax tree
-- Interpreting ("executing") the AST with the visitor pattern
+
+* Source file reading
+* Lexing into tokens
+* Parsing and creating an abstract syntax tree
+* Interpreting ("executing") the AST with the visitor pattern
 
 There is a "compiler" cmake project, you might think if I am crazy to build a compiler?
 No, thats really too much work and a hell more difficult. I have thought that, if iona supports multiple source files, it would be really annoying to run/distribute the programs.
@@ -93,7 +95,7 @@ There is an official vs code extension available [here](https://github.com/zixoa
 
 ### built-in data types
 
-Int, Float, String, Bool
+Int, Float, String, Bool and the associated array types.
 
 ### string interpolation
 
@@ -141,11 +143,11 @@ func Main()
     else if value > 50
     {
         WriteLine("value is between 51 and 100")
-	}
+    }
     else
     {
         WriteLine("value is below 51")
-	}
+    }
 
     // Outputs:
     // value is between 51 and 100
@@ -303,7 +305,6 @@ func Main()
   - The call FileList("C:\Folder\", "^.+\.(html|txt)$") will return all files and folders ending on ".txt" or ".html"
   - The call FileList("C:\Folder\", "^.+\.html$") will return all files and folders ending with ".html"
 
-
 ### custom functions
 
 You can write your own functions with parameters and call them from eg. Main:
@@ -343,11 +344,12 @@ func Add(a, b)
 ### internal variables
 
 The following internal constant variables are pre declared:
-   - PI (3.14159)
-   - INT_MIN (-2147483648)
-   - INT_MAX (2147483647)
-   - FLOAT_MIN (1.17549e-38)
-   - FLOAT_MAX (3.40282e+38)
+
+* PI (3.14159)
+* INT_MIN (-2147483648)
+* INT_MAX (2147483647)
+* FLOAT_MIN (1.17549e-38)
+* FLOAT_MAX (3.40282e+38)
 
 They can be used just like normal variables:
 
@@ -399,6 +401,7 @@ func Main()
 
     x--
     y--
+    WriteLine("x={x} y={y}")
     // Outputs: x=0 y=0.0
 
     WriteLine(x++)
@@ -431,6 +434,22 @@ func Main()
 TODO (provide binary downloads for the iona interpreter)
 
 TODO for future (provide an online interpreter as a playground)
+
+#### CLI
+
+The CLI currently supports two commands.
+
+Create a new project in the current directory with a Visual Studio Code template including tasks and with optional iona extension for syntax highlighting and snippets:
+
+```shell
+iona new project-name
+```
+
+Automatically execute your code after a code change (run in project root directory):
+
+```shell
+iona watch
+```
 
 ### Roadmap
 

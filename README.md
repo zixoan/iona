@@ -31,20 +31,21 @@
 I wanted to learn more about how programming languages actually work and create something at least a little bit useful after understanding the basic concept behind it.
 
 So iona is written in c++17 and uses smart pointers (because I haven't used them a lot) for heap objects.
-The architecture/handling is very basic:
+The architecture/handling is pretty straightforward:
 
-* Source file reading
-* Lexing into tokens
-* Parsing and creating an abstract syntax tree
-* Interpreting ("executing") the AST with the visitor pattern
+* Lexical analysis (lexer creates tokens from source code)
+* Syntax analysis (parser checks for grammatically correctness and creates an ***A***bstract ***S***yntax ***T***ree)
+* Semantic analysis (semantic analyzer walks the AST, creates a symbol table and checks for semantic errors eg. variable is not declared before being used)
+* Interpretation/Execution (interpreter walks the AST and "executes"/evaluates the program)
 
 There is a "compiler" cmake project, you might think if I am crazy to build a compiler?
-No, thats really too much work and a hell more difficult. I have thought that, if iona supports multiple source files, it would be really annoying to run/distribute the programs.
+No, that's really too much work and a hell more difficult. I have thought that, if iona supports multiple source files, it would be really annoying to run/distribute the programs.
 So I want to try an idea where I "compile" all source files into a single container like format which the iona interpreter can then execute all together.
 In the end you would only have one file to run a program with the interpreter.
 
-Another idea is to have a CLI utility program to create projects from templates (eg. for visual studio code) 
-and provide a way to automatically re-run the program if the source file changes.
+~~Another idea is to have a CLI utility program to create projects from templates (eg. for visual studio code) 
+and provide a way to automatically re-run the program if the source file changes.~~
+Implemented. See [CLI](#cli) for supported commands and options.
 
 ## Syntax preview
 
@@ -204,6 +205,16 @@ func Main()
     // i = 0
     // i = 1
     // i = 2
+
+    for x in 0..10 step 2
+        WriteLine(x)
+  
+    // Outputs:
+    // 0
+    // 2
+    // 4
+    // 6
+    // 8
 }
 ```
 
@@ -445,7 +456,7 @@ Create a new project in the current directory with a Visual Studio Code template
 iona new project-name
 ```
 
-Automatically execute your code after a code change (run in project root directory):
+Automatically execute your code after a code change (run in project root directory, looks for "Main.iona"/"Main.ion" file):
 
 ```shell
 iona watch

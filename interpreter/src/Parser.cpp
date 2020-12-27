@@ -98,7 +98,7 @@ Ref<Node> Parser::ParseMainFile()
 
 Ref<Node> Parser::ParseGlobalVariables()
 {
-	auto varLine = this->currentToken.GetLine();
+	int varLine = this->currentToken.GetLine();
 	Advance(TokenType::Var);
 
 	std::string variableName = this->currentToken.GetValue();
@@ -157,12 +157,14 @@ Ref<Node> Parser::ParseGlobalVariables()
 
 	Advance(SquareRight);
 
-	return std::make_shared<VariableArrayDeclarationAssignNode>(variableName, arrayType, arrayValues);
+	return std::make_shared<VariableArrayDeclarationAssignNode>(this->lexer.GetFileName(), varLine, variableName, arrayType, arrayValues);
 }
 
 Ref<Node> Parser::ParseFunction()
 {
 	Advance(TokenType::Function);
+
+    int functionLine = this->currentToken.GetLine();
 
 	std::string functionName = currentToken.GetValue();
 	// "Call", because it is used when the next char is "(", which is when calling a function (possible parameters etc.)
@@ -186,7 +188,7 @@ Ref<Node> Parser::ParseFunction()
 
 	Ref<Node> block = ParseBlock();
 
-	return std::make_shared<FunctionNode>(functionName, block, parameters);
+	return std::make_shared<FunctionNode>(this->lexer.GetFileName(), functionLine, functionName, block, parameters);
 }
 
 Ref<Node> Parser::ParseFunctionCall()
@@ -317,7 +319,7 @@ Ref<Node> Parser::ParseDoWhile()
 
 Ref<Node> Parser::ParseIf()
 {
-	auto line = this->currentToken.GetLine();
+	int line = this->currentToken.GetLine();
 	Advance(TokenType::If);
 
 	Ref<Node> expression = Expression();
@@ -370,7 +372,7 @@ Ref<Node> Parser::ParseIf()
 
 Ref<Node> Parser::ParseWhen()
 {
-	auto line = this->currentToken.GetLine();
+	int line = this->currentToken.GetLine();
 	Advance(TokenType::When);
 	Ref<Node> whenFactor = Factor();
 	Advance(TokenType::CurlyLeft);
@@ -427,7 +429,7 @@ Ref<Node> Parser::Factor()
 		std::string varName = this->currentToken.GetValue();
 		Advance(Name);
 
-		auto line = this->currentToken.GetLine();
+		int line = this->currentToken.GetLine();
 
 		if (this->currentToken.GetTokenType() == PlusPlus)
 		{

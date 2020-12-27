@@ -18,9 +18,7 @@ void InterpreterScope::DeclareVariable(const std::string& variableName, const To
 		case TokenType::Int:
 		{
 			t.type = TokenType::Int;
-			t.value = (int) 0;
-
-			IONA_LOG("Declared int: %s = 0\n", variableName.c_str());
+			t.value = (int)0;
 			break;
 		}
 		case TokenType::StringArray:
@@ -28,8 +26,6 @@ void InterpreterScope::DeclareVariable(const std::string& variableName, const To
 		{
 			t.type = TokenType::String;
 			t.value = "";
-
-			IONA_LOG("Declared string: %s = \"\"\n", variableName.c_str());
 			break;
 		}
 		case TokenType::BoolArray:
@@ -37,8 +33,6 @@ void InterpreterScope::DeclareVariable(const std::string& variableName, const To
 		{
 			t.type = TokenType::Bool;
 			t.value = false;
-
-			IONA_LOG("Declared bool: %s = false\n", variableName.c_str());
 			break;
 		}
 		case TokenType::FloatArray:
@@ -46,12 +40,10 @@ void InterpreterScope::DeclareVariable(const std::string& variableName, const To
 		{
 			t.type = TokenType::Float;
 			t.value = 0.0f;
-
-			IONA_LOG("Declared float: %s = 0.0\n", variableName.c_str());
 			break;
 		}
-	default:
-		break;
+        default:
+            break;
 	}
 
 	this->variables[variableName] = std::make_shared<VariableType>(t);
@@ -69,8 +61,6 @@ void InterpreterScope::DeclareVariable(const std::string& variableName, const To
 	t.value = array;
 
 	this->variables[variableName] = std::make_shared<VariableType>(t);
-
-	IONA_LOG("Declared array: %s\n", variableName.c_str());
 }
 
 bool InterpreterScope::IsDeclared(const std::string& name)

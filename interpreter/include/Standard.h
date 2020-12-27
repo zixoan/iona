@@ -15,6 +15,7 @@
 #include <iterator>
 #include <filesystem>
 #include <regex>
+#include <iostream>
 
 namespace Iona
 {

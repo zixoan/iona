@@ -20,9 +20,9 @@ private:
 	Ref<Node> block;
 	std::vector<std::string> parameters;
 public:
-	FunctionNode(std::string name, Ref<Node> block, std::vector<std::string> parameters);
+	FunctionNode(const std::string& fileName, int line, std::string name, Ref<Node> block, std::vector<std::string> parameters);
 
-	~FunctionNode() = default;
+	~FunctionNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

@@ -8,8 +8,11 @@
 #include "VariableArrayDeclarationAssignNode.h"
 #include "Visitor.h"
 
-VariableArrayDeclarationAssignNode::VariableArrayDeclarationAssignNode(std::string name, const TokenType arrayType, std::vector<Ref<Node>> values)
-	: name(std::move(name)), arrayType(arrayType), values(std::move(values))
+VariableArrayDeclarationAssignNode::VariableArrayDeclarationAssignNode(const std::string& fileName,
+                                                                       int line, std::string name,
+                                                                       const TokenType arrayType,
+                                                                       std::vector<Ref<Node>> values)
+    : Node(fileName, line), name(std::move(name)), arrayType(arrayType), values(std::move(values))
 {
 }
 

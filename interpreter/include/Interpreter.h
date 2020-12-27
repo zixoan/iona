@@ -12,16 +12,12 @@
 #include <functional>
 #include <stack>
 #include "Core.h"
-#include "Parser.h"
 #include "InterpreterScope.h"
 #include <FunctionRegistry.h>
 
 class Interpreter : public Visitor, public std::enable_shared_from_this<Interpreter>
 {
 private:
-	Parser parser;
-	Ref<Node> root;
-
 	std::vector<Ref<InterpreterScope>> scopes;
 	std::map<std::string, Ref<FunctionNode>> globalFunctions;
 	FunctionRegistry internalFunctions;
@@ -34,8 +30,8 @@ private:
 	void RegisterInternalVariables();
 	Ref<InterpreterScope> FindScopeOfVariable(const std::string& variableName);
 public:
-	Interpreter(const std::vector<std::string>& args, const Parser& parser);
-	Interpreter(const std::vector<std::string>& args, const Parser& parser, const Ref<InterpreterScope>& scope);
+	Interpreter(const std::vector<std::string>& args, const Ref<Node>& astRoot);
+	Interpreter(const std::vector<std::string>& args, const Ref<Node>& astRoot, const Ref<InterpreterScope>& scope);
 	~Interpreter() = default;
 
 	void Interpret();

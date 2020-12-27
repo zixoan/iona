@@ -12,13 +12,13 @@
 #include <math.h>
 #include <limits>
 
-Interpreter::Interpreter(const std::vector<std::string>& args, const Parser& parser)
-	: Interpreter(args, parser, std::make_shared<InterpreterScope>())
+Interpreter::Interpreter(const std::vector<std::string>& args, const Ref<Node>& astRoot)
+    : Interpreter(args, astRoot, std::make_shared<InterpreterScope>())
 {
 }
 
-Interpreter::Interpreter(const std::vector<std::string>& args, const Parser& parser, const Ref<InterpreterScope>& scope)
-	: parser(parser), root(nullptr)
+Interpreter::Interpreter(const std::vector<std::string>& args, const Ref<Node>& astRoot, const Ref<InterpreterScope>& scope)
+	: Visitor(astRoot)
 {
 	this->scopes.push_back(scope);
 
@@ -98,19 +98,9 @@ void Interpreter::Interpret()
 {
 	auto start = std::chrono::high_resolution_clock::now();
 
-	this->root = this->parser.Parse();
-	
-	auto end = std::chrono::high_resolution_clock::now();
+	this->astRoot->Accept(shared_from_this());
 
-	IONA_LOG("\nParsing took %llims (%llins)\n\n",
-		std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(),
-		std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
-
-	start = std::chrono::high_resolution_clock::now();
-
-	this->root->Accept(shared_from_this());
-
-	end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
 
 	IONA_LOG("\n\nInterpreting took %llims (%llins)\n",
 		std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(),
@@ -128,10 +118,7 @@ void Interpreter::Visit(const Ref<MainNode>& n)
 	{
 		Ref<FunctionNode> fun = std::dynamic_pointer_cast<FunctionNode>(globalFunction);
 
-		this->globalFunctions.insert(std::pair<std::string, Ref<FunctionNode>>(
-			fun->GetName(),
-			fun)
-		);
+		this->globalFunctions.insert(std::pair<std::string, Ref<FunctionNode>>(fun->GetName(), fun));
 	}
 
 	// Parser has ensured that there is a main function at index zero
@@ -199,29 +186,21 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 	// Internal function handling
 	else
 	{
-		if (this->internalFunctions.Exists(n->GetName()))
-		{
-			std::vector<VariableType> in;
-			in.reserve(n->GetParameters().size());
-			VariableType out;
+        std::vector<VariableType> in;
+        in.reserve(n->GetParameters().size());
+        VariableType out;
 
-			for (auto& parameter : n->GetParameters())
-			{
-				parameter->Accept(shared_from_this());
+        for (auto& parameter : n->GetParameters())
+        {
+            parameter->Accept(shared_from_this());
 
-				in.push_back(this->currentVariable);
-			}
+            in.push_back(this->currentVariable);
+        }
 
-			this->internalFunctions.Call(n->GetFileName(), n->GetLine(), n->GetName(), in, out);
+        this->internalFunctions.Call(n->GetFileName(), n->GetLine(), n->GetName(), in, out);
 
-			// We need to update the current variable with the returned one
-			this->currentVariable = std::move(out);
-		}
-		else
-		{
-			Exit(n->GetFileName(), n->GetLine(), "Function '%s' not found",
-				n->GetName().c_str());
-		}
+        // We need to update the current variable with the returned one
+        this->currentVariable = std::move(out);
 	}
 }
 
@@ -321,11 +300,6 @@ void Interpreter::Visit(const Ref<VariableUsageNode>& n)
 	{
 		this->currentVariable = *scope->GetVariable(n->GetName());
 	}
-	else
-	{
-		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope",
-			n->GetName().c_str());
-	}
 }
 
 void Interpreter::Visit(const Ref<VariableIncrementDecrementNode>& n)
@@ -346,26 +320,17 @@ void Interpreter::Visit(const Ref<VariableIncrementDecrementNode>& n)
 		}
 		else
 		{
-			Exit(n->GetFileName(), n->GetLine(), "Variable increments are only supported with int and float, but got %s",
+			Exit(n->GetFileName(), n->GetLine(), "Variable increments are only supported with int and float type, but got %s",
 				Helper::ToString(variable->type).c_str());
 		}
 
 		this->currentVariable = *variable;
-	}
-	else
-	{
-		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope",
-			n->GetName().c_str());
 	}
 }
 
 void Interpreter::Visit(const Ref<VariableAssignNode>& n)
 {
 	auto innerScope = FindScopeOfVariable(n->GetName());
-	if (innerScope == nullptr)
-	{
-		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope", n->GetName().c_str());
-	}
 
 	n->GetExpression()->Accept(shared_from_this());
 
@@ -385,10 +350,6 @@ void Interpreter::Visit(const Ref<VariableAssignNode>& n)
 void Interpreter::Visit(const Ref<VariableCompoundAssignNode>& n)
 {
 	auto innerScope = FindScopeOfVariable(n->GetName());
-	if (innerScope == nullptr)
-	{
-		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope", n->GetName().c_str());
-	}
 
 	n->GetExpression()->Accept(shared_from_this());
 
@@ -446,7 +407,7 @@ void Interpreter::Visit(const Ref<VariableCompoundAssignNode>& n)
 	}
 	else
 	{
-		Exit(n->GetFileName(), n->GetLine(), "Variable increment assignments are only supported with int and float, but got %s",
+		Exit(n->GetFileName(), n->GetLine(), "Variable increment assignments are only supported with int and float type, but got %s",
 			Helper::ToString(variable->type).c_str());
 	}
 
@@ -728,10 +689,6 @@ void Interpreter::Visit(const Ref<VariableArrayUsageNode>& n)
 void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 {
 	auto innerScope = FindScopeOfVariable(n->GetName());
-	if (innerScope == nullptr)
-	{
-		Exit(n->GetFileName(), n->GetLine(), "Array variable '%s' not declared in this scope", n->GetName().c_str());
-	}
 
 	n->GetExpression()->Accept(shared_from_this());
 

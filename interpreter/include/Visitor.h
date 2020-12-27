@@ -35,7 +35,15 @@
 
 class Visitor
 {
+protected:
+    Ref<Node> astRoot;
 public:
+    explicit Visitor(const Ref<Node>& astRoot)
+        : astRoot(astRoot)
+    {
+
+    }
+
 	virtual void Visit(const Ref<MainNode>& n) = 0;
 	virtual void Visit(const Ref<VariableDeclarationAssignNode>& n) = 0;
 	virtual void Visit(const Ref<VariableArrayDeclarationAssignNode>& n) = 0;

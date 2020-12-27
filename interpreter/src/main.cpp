@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <filesystem>
+#include <SemanticAnalyzer.h>
 #include "Lexer.h"
 #include "Parser.h"
 #include "Interpreter.h"
@@ -32,7 +33,7 @@ int main(int argc, char const* argv[])
 		args.reserve(argc);
 		for (size_t i = 1; i < argc; i++)
 		{
-			args.push_back(argv[i]);
+			args.emplace_back(argv[i]);
 		}
 
 		std::ifstream in(argv[1]);
@@ -45,10 +46,25 @@ int main(int argc, char const* argv[])
 
 		Lexer lexer(source, "Main.ion");
 		Parser parser(lexer);
-		Ref<Interpreter> interpreter = std::make_shared<Interpreter>(args, parser);
 
 		try
 		{
+		    auto start = std::chrono::high_resolution_clock::now();
+
+            Ref<Node> astRoot = parser.Parse();
+
+            auto end = std::chrono::high_resolution_clock::now();
+
+            IONA_LOG("\nParsing took %llims (%llins)\n\n",
+                     std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(),
+                     std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+
+            Ref<SemanticAnalyzer> semanticAnalyzer = std::make_shared<SemanticAnalyzer>(args, astRoot);
+
+            semanticAnalyzer->Analyze();
+
+            Ref<Interpreter> interpreter = std::make_shared<Interpreter>(args, astRoot);
+
 			interpreter->Interpret();
 			return EXIT_SUCCESS;
 		}
@@ -68,10 +84,12 @@ int main(int argc, char const* argv[])
 		args.reserve(argc);
 		for (size_t i = 1; i < argc; i++)
 		{
-			args.push_back(argv[i]);
+			args.emplace_back(argv[i]);
 		}
 
-		Ref<InterpreterScope> globalScope = std::make_shared<InterpreterScope>();
+
+		Ref<ScopedSymbolTable> globalSemanticAnalyzerScope = std::make_shared<ScopedSymbolTable>("global", 0, nullptr);
+		Ref<InterpreterScope> globalInterpreterScope = std::make_shared<InterpreterScope>();
 
 		while (true)
 		{
@@ -96,7 +114,10 @@ int main(int argc, char const* argv[])
 
 				auto statement = parser.Statement();
 
-				Ref<Interpreter> interpreter = std::make_shared<Interpreter>(args, parser, globalScope);
+				Ref<SemanticAnalyzer> semanticAnalyzer = std::make_shared<SemanticAnalyzer>(args, statement, globalSemanticAnalyzerScope);
+				semanticAnalyzer->Analyze();
+
+				Ref<Interpreter> interpreter = std::make_shared<Interpreter>(args, statement, globalInterpreterScope);
 
 				statement->Accept(interpreter);
 
@@ -109,9 +130,9 @@ int main(int argc, char const* argv[])
 				}
 				continue;
 			}
-			catch (...)
+			catch (const std::exception& exception)
 			{
-				std::cout << std::endl;
+				std::cout << exception.what() << std::endl;
 				continue;
 			}
 		}

@@ -7,28 +7,27 @@
 
 #include "Lexer.h"
 
-#include <utility>
 #include <iostream>
+#include <Core.h>
 
 Lexer::Lexer(const std::string& input, const std::string& fileName)
-	: input(input), fileName(fileName), pos(0), currentlyInComment(false), line(1)
+	: input(input), fileName(fileName), pos(0), line(1)
 {
 	this->currentChar = this->input.at(this->pos);
-	this->reservedKeywords.insert(std::pair<std::string, Token>("func", Token(Function, "func")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("call", Token(Call, "call")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("return", Token(Return, "return")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("int", Token(Int, "int")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("var", Token(Var, "var")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("true", Token(Bool, "true")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("false", Token(Bool, "false")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("for", Token(For, "for")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("in", Token(In, "in")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("step", Token(Step, "step")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("while", Token(While, "while")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("do", Token(Do, "do")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("if", Token(If, "if")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("else", Token(Else, "else")));
-	this->reservedKeywords.insert(std::pair<std::string, Token>("when", Token(When, "when")));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("func", Token(Function, "func", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("return", Token(Return, "return", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("int", Token(Int, "int", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("var", Token(Var, "var", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("true", Token(Bool, "true", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("false", Token(Bool, "false", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("for", Token(For, "for", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("in", Token(In, "in", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("step", Token(Step, "step", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("while", Token(While, "while", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("do", Token(Do, "do", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("if", Token(If, "if", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("else", Token(Else, "else", this->fileName)));
+	this->reservedKeywords.insert(std::pair<std::string, Token>("when", Token(When, "when", this->fileName)));
 }
 
 void Lexer::Advance()
@@ -57,7 +56,7 @@ char Lexer::Peek()
 	}
 }
 
-Token Lexer::HandleReserved(int line)
+Token Lexer::HandleReserved()
 {
 	std::stringstream result;
 
@@ -75,15 +74,15 @@ Token Lexer::HandleReserved(int line)
 		// Check if we got a function call (also used for function declaration)
 		if (this->currentChar == '(')
 		{
-			return Token(Call, possibleKeywordString, GetFormattedFileLine());
+			return Token(Call, possibleKeywordString, this->fileName, this->line);
 		}
 		else
 		{
-			return Token(Name, possibleKeywordString, GetFormattedFileLine());
+			return Token(Name, possibleKeywordString, this->fileName, this->line);
 		}
 	}
 
-	possibleKeyword->second.SetLine(GetFormattedFileLine());
+	possibleKeyword->second.SetLine(this->line);
 
 	return possibleKeyword->second;
 }
@@ -92,13 +91,6 @@ Token Lexer::NextToken()
 {
 	while (this->currentChar != EOF)
 	{
-		// Source files should end with \n (line feed) instead of \r (carriage return)
-		// TODO: Verify this as one of the first steps
-		if (this->currentChar == '\n')
-		{
-			line++;
-		}
-		
 		if (this->currentChar == '/' && Peek() == '/')
 		{
 			Advance();
@@ -129,6 +121,11 @@ Token Lexer::NextToken()
 		{
 			while (this->currentChar != EOF && std::isspace(this->currentChar))
 			{
+                if (this->currentChar == '\n')
+                {
+                    line++;
+                }
+
 				Advance();
 			}
 
@@ -144,7 +141,7 @@ Token Lexer::NextToken()
 
 		if (std::isalpha(this->currentChar))
 		{
-			return HandleReserved(line);
+			return HandleReserved();
 		}
 
 		if (std::isdigit(this->currentChar) || (this->currentChar == '-' && std::isdigit(this->Peek())))
@@ -183,114 +180,114 @@ Token Lexer::NextToken()
 
 			TokenType intOrFloat = !hasFloatPoint ? TokenType::Int : TokenType::Float;
 
-			return Token(intOrFloat, number.str(), GetFormattedFileLine());
+			return Token(intOrFloat, number.str(), this->fileName, this->line);
 		}
 
 		switch (this->currentChar)
 		{
 			case '.':
 				Advance();
-				return Token(Point, ".", GetFormattedFileLine());
+				return Token(Point, ".", this->fileName, this->line);
 			case ':':
 				Advance();
-				return Token(Colon, ":", GetFormattedFileLine());
+				return Token(Colon, ":", this->fileName, this->line);
 			case '(':
 				Advance();
-				return Token(ParanLeft, "(", GetFormattedFileLine());
+				return Token(ParanLeft, "(", this->fileName, this->line);
 			case ')':
 				Advance();
-				return Token(ParanRight, ")", GetFormattedFileLine());
+				return Token(ParanRight, ")", this->fileName, this->line);
 			case '{':
 				Advance();
-				return Token(CurlyLeft, "{", GetFormattedFileLine());
+				return Token(CurlyLeft, "{", this->fileName, this->line);
 			case '}':
 				Advance();
-				return Token(CurlyRight, "}", GetFormattedFileLine());
+				return Token(CurlyRight, "}", this->fileName, this->line);
 			case '[':
 				Advance();
-				return Token(SquareLeft, "[", GetFormattedFileLine());
+				return Token(SquareLeft, "[", this->fileName, this->line);
 			case ']':
 				Advance();
-				return Token(SquareRight, "]", GetFormattedFileLine());
+				return Token(SquareRight, "]", this->fileName, this->line);
 			case '>':
 				if (Peek() != '=')
 				{
 					Advance();
-					return Token(GreaterThan, ">", GetFormattedFileLine());
+					return Token(GreaterThan, ">", this->fileName, this->line);
 				}
 
 				Advance();
 				Advance();
 
-				return Token(GreaterEqualThan, ">=", GetFormattedFileLine());
+				return Token(GreaterEqualThan, ">=", this->fileName, this->line);
 			case '<':
 				if (Peek() != '=')
 				{
 					Advance();
-					return Token(LessThan, "<", GetFormattedFileLine());
+					return Token(LessThan, "<", this->fileName, this->line);
 				}
 
 				Advance();
 				Advance();
 
-				return Token(LessEqualThan, "<=", GetFormattedFileLine());
+				return Token(LessEqualThan, "<=", this->fileName, this->line);
 			case '=':
 				if (Peek() == '>')
 				{
 					Advance();
 					Advance();
-					return Token(Arrow, "=>", GetFormattedFileLine());
+					return Token(Arrow, "=>", this->fileName, this->line);
 				}
 				else if (Peek() != '=')
 				{
 					Advance();
-					return Token(Assign, "=", GetFormattedFileLine());
+					return Token(Assign, "=", this->fileName, this->line);
 				}
 
 				Advance();
 				Advance();
 
-				return Token(Equals, "==", GetFormattedFileLine());
+				return Token(Equals, "==", this->fileName, this->line);
 			case '!':
 				if (Peek() == '=')
 				{
 					Advance();
 					Advance();
-					return Token(NotEquals, "!=", GetFormattedFileLine());
+					return Token(NotEquals, "!=", this->fileName, this->line);
 				}
 
 				Advance();
 
-				return Token(ExclamationMark, "!", GetFormattedFileLine());
+				return Token(ExclamationMark, "!", this->fileName, this->line);
 			case '+':
 				if (Peek() == '+')
 				{
 					Advance();
 					Advance();
-					return Token(PlusPlus, "++", GetFormattedFileLine());
+					return Token(PlusPlus, "++", this->fileName, this->line);
 				}
 
 				Advance();
-				return Token(Plus, "+", GetFormattedFileLine());
+				return Token(Plus, "+", this->fileName, this->line);
 			case '-':
 				if (Peek() == '-')
 				{
 					Advance();
 					Advance();
-					return Token(MinusMinus, "--", GetFormattedFileLine());
+					return Token(MinusMinus, "--", this->fileName, this->line);
 				}
 
 				Advance();
-				return Token(Minus, "-", GetFormattedFileLine());
+				return Token(Minus, "-", this->fileName, this->line);
 			case '*':
 				Advance();
-				return Token(Multiply, "*", GetFormattedFileLine());
+				return Token(Multiply, "*", this->fileName, this->line);
 			case '/':
 				Advance();
-				return Token(Divide, "/", GetFormattedFileLine());
+				return Token(Divide, "/", this->fileName, this->line);
 			case ',':
 				Advance();
-				return Token(Comma, ",", GetFormattedFileLine());
+				return Token(Comma, ",", this->fileName, this->line);
 			case '"':
 			{
 				Advance();
@@ -304,14 +301,13 @@ Token Lexer::NextToken()
 
 				Advance();
 
-				return Token(String, string.str(), GetFormattedFileLine());
+				return Token(String, string.str(), this->fileName, this->line);
 			}
 			default:
-				std::cerr << GetFormattedFileLine() << " Invalid character '" << this->currentChar << "'" << std::endl;
-				Advance();
+				Exit(this->fileName, this->line, "Invalid character '%c'", this->currentChar);
 				break;
 		}
 	}
 
-	return Token(None, "NONE", GetFormattedFileLine());
+	return Token(None, "NONE", this->fileName, this->line);
 }

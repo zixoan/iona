@@ -16,7 +16,7 @@ private:
 	Ref<Node> expression;
 	Ref<Node> block;
 public:
-	DoWhileNode(const char* line, const Ref<Node>& expression, const Ref<Node>& block);
+	DoWhileNode(const std::string& fileName, int line, const Ref<Node>& expression, const Ref<Node>& block);
 
 	~DoWhileNode() = default;
 

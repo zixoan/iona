@@ -18,7 +18,7 @@ private:
 	std::string name;
 	Ref<Node> expression;
 public:
-	VariableAssignNode(const char* line, const std::string& name, const Ref<Node>& expression);
+	VariableAssignNode(const std::string& fileName, int line, const std::string& name, const Ref<Node>& expression);
 
 	~VariableAssignNode() = default;
 

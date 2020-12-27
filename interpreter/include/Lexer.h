@@ -21,20 +21,12 @@ private:
 	char currentChar;
 	int pos;
 	std::map<std::string, Token> reservedKeywords;
-	bool currentlyInComment;
 	int line;
 
 	void Advance();
 	char Peek();
 
-	Token HandleReserved(int line);
-	
-	std::string GetFormattedFileLine()
-	{
-		std::stringstream s;
-		s << fileName << "(line " << line << "):";
-		return s.str();
-	}
+	Token HandleReserved();
 public:
 	Lexer(const std::string& input, const std::string& fileName);
 	~Lexer() = default;

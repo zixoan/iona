@@ -13,7 +13,7 @@ void FunctionRegistry::Register(const std::string& name,
 	this->functions.insert(std::pair<std::string, FunctionEntry>(name, entry));
 }
 
-void FunctionRegistry::Call(const char* line, const std::string& name, std::vector<VariableType>& in, VariableType& out)
+void FunctionRegistry::Call(const std::string& fileName, int line, const std::string& name, std::vector<VariableType>& in, VariableType& out)
 {
 	auto result = this->functions.find(name);
 	if (result != this->functions.end())
@@ -46,14 +46,12 @@ void FunctionRegistry::Call(const char* line, const std::string& name, std::vect
 			else
 			{
 				// TODO: More details like what parameter index, which type etc.
-				Exit("%s Function call parameter types are not matching the allowed types from function '%s'",
-					line, name.c_str());
+				Exit(fileName, line, "Function call parameter types are not matching the allowed types from function '%s'", name.c_str());
 			}
 		}
 		else
 		{
-			Exit("%s Function call parameter count (%i) is not matching expected paramter count (%i) of function '%s'", 
-				line, in.size(), result->second.parameterCount, name.c_str());
+			Exit(fileName, line, "Function call parameter count (%i) is not matching expected parameter count (%i) of function '%s'", in.size(), result->second.parameterCount, name.c_str());
 		}
 	}
 }

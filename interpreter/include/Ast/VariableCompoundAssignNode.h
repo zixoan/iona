@@ -20,7 +20,7 @@ private:
 	Ref<Node> expression;
 	TokenType operation;
 public:
-	VariableCompoundAssignNode(const char* line, const std::string& name, const Ref<Node>& expression, const TokenType& operation);
+	VariableCompoundAssignNode(const std::string& fileName, int line, const std::string& name, const Ref<Node>& expression, const TokenType& operation);
 
 	~VariableCompoundAssignNode() = default;
 

@@ -20,7 +20,7 @@ private:
 	int step;
 	Ref<Node> block;
 public:
-	ForINode(const char* line, const std::string& variableName, int from, int to, int step, const Ref<Node>& block);
+	ForINode(const std::string& fileName, int line, const std::string& variableName, int from, int to, int step, const Ref<Node>& block);
 
 	~ForINode() = default;
 

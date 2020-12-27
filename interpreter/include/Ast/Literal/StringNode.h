@@ -18,7 +18,7 @@ private:
 	std::string value;
 	std::vector<Ref<Node>> expressions;
 public:
-	StringNode(const char* line, const std::string& value, const std::vector<Ref<Node>>& expressions);
+	StringNode(const std::string& fileName, int line, const std::string& value, const std::vector<Ref<Node>>& expressions);
 
 	~StringNode() = default;
 

@@ -17,23 +17,29 @@ private:
 	TokenType tokenType;
 	std::string value;
 
-	std::string line;
+	std::string fileName;
+	int line;
 public:
 	Token();
-	Token(const TokenType& tokenType, const std::string& value, const std::string& line = "");
+	Token(const TokenType& tokenType, const std::string& value, std::string fileName, int line = 1);
 	~Token() = default;
 
 	TokenType GetTokenType() const;
 	std::string GetValue() const;
 
-	const char* GetLine() const
+	std::string GetFileName() const
+    {
+	    return fileName;
+    }
+
+	int GetLine() const
 	{
-		return line.c_str();
+		return line;
 	}
 
-	void SetLine(const std::string& line)
+	void SetLine(const int lineNumber)
 	{
-		this->line = line;
+		this->line = lineNumber;
 	}
 };
 

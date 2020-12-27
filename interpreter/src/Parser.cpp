@@ -17,7 +17,6 @@
 #include "Ast/VariableAssignNode.h"
 #include "Ast/Literal/FloatNode.h"
 #include "Ast/Literal/BoolNode.h"
-#include "Ast/BinaryNode.h"
 #include "Ast/VariableArrayDeclarationAssignNode.h"
 #include "Ast/VariableArrayUsageNode.h"
 #include "Ast/ForEachNode.h"
@@ -45,8 +44,8 @@ void Parser::Advance(TokenType tokenType)
 	}
 	else
 	{
-		Exit("%s Unexpected token type. Expected %s but got %s", 
-			this->currentToken.GetLine(), Helper::ToString(tokenType).c_str(), Helper::ToString(this->currentToken.GetTokenType()).c_str());
+		Exit(this->currentToken, "Unexpected token type. Expected %s but got %s",
+			Helper::ToString(tokenType).c_str(), Helper::ToString(this->currentToken.GetTokenType()).c_str());
 	}
 }
 
@@ -67,8 +66,8 @@ Ref<Node> Parser::ParseMainFile()
 
 	if (this->currentToken.GetTokenType() != TokenType::Function)
 	{
-		Exit("%s Expected token 'Function' but got '%s'", 
-			this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str());
+		Exit(this->currentToken, "Expected token 'Function' but got '%s'",
+			Helper::ToString(this->currentToken.GetTokenType()).c_str());
 	}
 
 	while (this->currentToken.GetTokenType() == TokenType::Function)
@@ -89,7 +88,7 @@ Ref<Node> Parser::ParseMainFile()
 
 	if (mainFunctionIndex == -1)
 	{
-		Exit("No 'Main' method found. Cannot execute program");
+		Exit(this->currentToken.GetFileName(), -1, "No 'Main' method found. Cannot execute program");
 	}
 
 	std::swap(globalFunctions[0], globalFunctions[mainFunctionIndex]);
@@ -112,7 +111,7 @@ Ref<Node> Parser::ParseGlobalVariables()
 	{
 		Ref<Node> expression = Expression();
 
-		return std::make_shared<VariableDeclarationAssignNode>(varLine, variableName, expression);
+		return std::make_shared<VariableDeclarationAssignNode>(this->lexer.GetFileName(), varLine, variableName, expression);
 	}
 
 	auto arrayValues = std::vector<Ref<Node>>();
@@ -122,8 +121,7 @@ Ref<Node> Parser::ParseGlobalVariables()
 
 	if (this->currentToken.GetTokenType() == TokenType::SquareRight)
 	{
-		Exit("%s Array '%s' cannot be empty",
-			this->currentToken.GetLine(), variableName.c_str());
+		Exit(this->currentToken, "Array '%s' cannot be empty", variableName.c_str());
 	}
 
 	switch (this->currentToken.GetTokenType())
@@ -141,8 +139,8 @@ Ref<Node> Parser::ParseGlobalVariables()
 			arrayType = FloatArray;
 			break;
 		default:
-			Exit("%s Unsupported array type '%s'", 
-				this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str());
+			Exit(this->currentToken, "Unsupported array type '%s'",
+				Helper::ToString(this->currentToken.GetTokenType()).c_str());
 	}
 
 	arrayValues.push_back(Factor());
@@ -212,7 +210,7 @@ Ref<Node> Parser::ParseFunctionCall()
 	}
 	Advance(ParanRight);
 
-	return std::make_shared<FunctionCallNode>(line, functionName, parameters);
+	return std::make_shared<FunctionCallNode>(this->lexer.GetFileName(), line, functionName, parameters);
 }
 
 Ref<Node> Parser::ParseBlock()
@@ -261,7 +259,7 @@ Ref<Node> Parser::ParseFor()
 		Ref<Node> expression = Expression();
 		Ref<Node> block = ParseBlock();
 
-		return std::make_shared<ForEachNode>(line, variableName, expression, block);
+		return std::make_shared<ForEachNode>(this->lexer.GetFileName(), line, variableName, expression, block);
 	}
 	// for i in 0..5
 	else 
@@ -287,7 +285,7 @@ Ref<Node> Parser::ParseFor()
 
 		Ref<Node> block = ParseBlock();
 
-		return std::make_shared<ForINode>(line, variableName, from, to, step, block);
+		return std::make_shared<ForINode>(this->lexer.GetFileName(), line, variableName, from, to, step, block);
 	}
 }
 
@@ -300,7 +298,7 @@ Ref<Node> Parser::ParseWhile()
 
 	Ref<Node> block = ParseBlock();
 
-	return std::make_shared<WhileNode>(line, expression, block);
+	return std::make_shared<WhileNode>(this->lexer.GetFileName(), line, expression, block);
 }
 
 Ref<Node> Parser::ParseDoWhile()
@@ -314,7 +312,7 @@ Ref<Node> Parser::ParseDoWhile()
 
 	Ref<Node> expression = Expression();
 
-	return std::make_shared<DoWhileNode>(line, expression, block);
+	return std::make_shared<DoWhileNode>(this->lexer.GetFileName(), line, expression, block);
 }
 
 Ref<Node> Parser::ParseIf()
@@ -367,7 +365,7 @@ Ref<Node> Parser::ParseIf()
 		}
 	}
 
-	return std::make_shared<IfNode>(line, expression, trueBlock, elseIfBlocks, elseBlock);
+	return std::make_shared<IfNode>(this->lexer.GetFileName(), line, expression, trueBlock, elseIfBlocks, elseBlock);
 }
 
 Ref<Node> Parser::ParseWhen()
@@ -401,7 +399,7 @@ Ref<Node> Parser::ParseWhen()
 
 	if (cases.size() == 0)
 	{
-		Exit("%s when statement needs to have at least one case expression and block", this->currentToken.GetLine());
+		Exit(this->currentToken, "'when' statement needs to have at least one case expression and block");
 	}
 
 	Ref<Node> firstExpression = cases.begin()->first;
@@ -409,7 +407,7 @@ Ref<Node> Parser::ParseWhen()
 
 	cases.erase(cases.begin());
 
-	return std::make_shared<IfNode>(line, firstExpression, firstBlock, cases, elseBlock);
+	return std::make_shared<IfNode>(this->lexer.GetFileName(), line, firstExpression, firstBlock, cases, elseBlock);
 }
 
 Ref<Node> Parser::ParseReturn()
@@ -435,17 +433,17 @@ Ref<Node> Parser::Factor()
 		{
 			Advance(PlusPlus);
 
-			return std::make_shared<VariableIncrementDecrementNode>(line, varName, 1);
+			return std::make_shared<VariableIncrementDecrementNode>(this->lexer.GetFileName(), line, varName, 1);
 		}
 		else if (this->currentToken.GetTokenType() == MinusMinus)
 		{
 			Advance(MinusMinus);
 
-			return std::make_shared<VariableIncrementDecrementNode>(line, varName, -1);
+			return std::make_shared<VariableIncrementDecrementNode>(this->lexer.GetFileName(), line, varName, -1);
 		}
 		else if (this->currentToken.GetTokenType() != SquareLeft)
 		{
-			return std::make_shared<VariableUsageNode>(line, varName);
+			return std::make_shared<VariableUsageNode>(this->lexer.GetFileName(), line, varName);
 		}
 		else
 		{
@@ -453,20 +451,20 @@ Ref<Node> Parser::Factor()
 
 			if (this->currentToken.GetTokenType() != Int)
 			{
-				Exit("%s Array access index for '%s' can only be an int", 
-					this->currentToken.GetLine(), varName.c_str());
+				Exit(this->currentToken, "Array access index for '%s' can only be an int",
+					varName.c_str());
 			}
 
 			int arrayIndex = std::stoi(this->currentToken.GetValue());
 			if (arrayIndex < 0)
 			{
-				Exit("%s Array index for '%s' cannot be negative", this->currentToken.GetLine(), varName.c_str());
+				Exit(this->currentToken, "Array index for '%s' cannot be negative", varName.c_str());
 			}
 			Advance(Int);
 
 			Advance(SquareRight);
 
-			return std::make_shared<VariableArrayUsageNode>(line, varName, arrayIndex);
+			return std::make_shared<VariableArrayUsageNode>(this->lexer.GetFileName(), line, varName, arrayIndex);
 		}
 	}
 	else if (tmp.GetTokenType() == Call)
@@ -489,7 +487,6 @@ Ref<Node> Parser::Factor()
 	}
 	else if (tmp.GetTokenType() == String)
 	{
-		auto line = this->currentToken.GetLine();
 		std::string value = this->currentToken.GetValue();
 		Advance(String);
 
@@ -511,21 +508,16 @@ Ref<Node> Parser::Factor()
 			}
 			catch (const std::exception& e)
 			{
-				// This is a "workaround" to get the correct file and line info if
-				// the interpolated string expression contains runtime errors
 				std::string what(e.what());
-				size_t colon = what.find_first_of(":", 0);
-
-				what = what.replace(0, colon + 1, line);
 				
-				throw std::runtime_error(what);
+				Exit(this->currentToken.GetFileName(), this->currentToken.GetLine(), what);
 			}
 
 			value = value.replace(indexOfCurlyOpen, (indexOfCurlyClose + 1) - indexOfCurlyOpen, std::string("$R$"));
 			indexOfCurlyOpen = value.find('{');
 		}
 
-		return std::make_shared<StringNode>(line, value, expressions);
+		return std::make_shared<StringNode>(this->lexer.GetFileName(), this->currentToken.GetLine(), value, expressions);
 	}
 	else if (tmp.GetTokenType() == Bool)
 	{
@@ -535,8 +527,8 @@ Ref<Node> Parser::Factor()
 		return std::make_shared<BoolNode>(value);
 	}
 
-	Exit("%s Unexpected token '%s' ('%s')",
-		this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
+	Exit(this->currentToken, "Unexpected token '%s' ('%s')",
+		Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
 
 	return nullptr;
 }
@@ -582,32 +574,33 @@ Ref<Node> Parser::Statement()
 		std::string varName = this->currentToken.GetValue();
 		Advance(Name);
 
-		auto line = this->currentToken.GetLine();
+		int line = this->currentToken.GetLine();
+		printf("Statement: %i\n", line);
 
 		if (this->currentToken.GetTokenType() == Assign)
 		{
 			Advance(Assign);
 
-			return std::make_shared<VariableAssignNode>(line, varName, Expression());
+			return std::make_shared<VariableAssignNode>(this->lexer.GetFileName(), line, varName, Expression());
 		}
 		else if (this->currentToken.GetTokenType() == PlusPlus)
 		{
 			Advance(PlusPlus);
 
-			return std::make_shared<VariableIncrementDecrementNode>(line, varName, 1);
+			return std::make_shared<VariableIncrementDecrementNode>(this->lexer.GetFileName(), line, varName, 1);
 		}
 		else if (this->currentToken.GetTokenType() == Plus)
 		{
 			Advance(Plus);
 			Advance(Assign);
 
-			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Plus);
+			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), line, varName, Expression(), TokenType::Plus);
 		}
 		else if (this->currentToken.GetTokenType() == MinusMinus)
 		{
 			Advance(MinusMinus);
 
-			return std::make_shared<VariableIncrementDecrementNode>(line, varName, -1);
+			return std::make_shared<VariableIncrementDecrementNode>(this->lexer.GetFileName(), line, varName, -1);
 		}
 		else if (this->currentToken.GetTokenType() == Minus)
 		{
@@ -616,7 +609,7 @@ Ref<Node> Parser::Statement()
 			Advance(Minus);
 			Advance(Assign);
 
-			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Minus);
+			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), line, varName, Expression(), TokenType::Minus);
 		}
 		else if (this->currentToken.GetTokenType() == Multiply)
 		{
@@ -625,7 +618,7 @@ Ref<Node> Parser::Statement()
 			Advance(Multiply);
 			Advance(Assign);
 
-			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Multiply);
+			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), line, varName, Expression(), TokenType::Multiply);
 		}
 		else if (this->currentToken.GetTokenType() == Divide)
 		{
@@ -634,7 +627,7 @@ Ref<Node> Parser::Statement()
 			Advance(Divide);
 			Advance(Assign);
 
-			return std::make_shared<VariableCompoundAssignNode>(line, varName, Expression(), TokenType::Divide);
+			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), line, varName, Expression(), TokenType::Divide);
 		}
 		else if (this->currentToken.GetTokenType() == SquareLeft)
 		{
@@ -642,13 +635,13 @@ Ref<Node> Parser::Statement()
 
 			if (this->currentToken.GetTokenType() != TokenType::Int)
 			{
-				Exit("%s Array access index for '%s' can only be an int", this->currentToken.GetLine(), varName.c_str());
+				Exit(this->currentToken, "Array access index for '%s' can only be an int", varName.c_str());
 			}
 
 			int arrayIndex = std::stoi(this->currentToken.GetValue());
 			if (arrayIndex < 0)
 			{
-				Exit("%s Array index for '%s' cannot be negative", this->currentToken.GetLine(), varName.c_str());
+				Exit(this->currentToken, "Array index for '%s' cannot be negative", varName.c_str());
 			}
 			Advance(TokenType::Int);
 
@@ -656,11 +649,11 @@ Ref<Node> Parser::Statement()
 
 			Advance(TokenType::Assign);
 
-			return std::make_unique<VariableArrayAssignNode>(line, varName, arrayIndex, Expression());
+			return std::make_unique<VariableArrayAssignNode>(this->lexer.GetFileName(), line, varName, arrayIndex, Expression());
 		}
 		else
 		{
-			return std::make_unique<VariableUsageNode>(line, varName);
+			return std::make_unique<VariableUsageNode>(this->lexer.GetFileName(), line, varName);
 		}
 	}
 	else if (this->currentToken.GetTokenType() == For)
@@ -692,8 +685,8 @@ Ref<Node> Parser::Statement()
 		return ParseReturn();
 	}
 
-	Exit("%s Unexpected token '%s' ('%s')",
-		this->currentToken.GetLine(), Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
+	Exit(this->currentToken, "Unexpected token '%s' ('%s')",
+		Helper::ToString(this->currentToken.GetTokenType()).c_str(), this->currentToken.GetValue().c_str());
 
 	return nullptr;
 }

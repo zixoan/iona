@@ -14,7 +14,7 @@ file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp
 
 add_executable(interpreter ${SRC_FILES})
 
-target_compile_options(interpreter PUBLIC /MT)
-target_link_options(interpreter PUBLIC /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
+#target_compile_options(interpreter PUBLIC /MT)
+#target_link_options(interpreter PUBLIC /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
 
 set_target_properties(interpreter PROPERTIES OUTPUT_NAME "ionai")

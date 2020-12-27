@@ -19,7 +19,7 @@ private:
 	Ref<Node> expression;
 	Ref<Node> block;
 public:
-	ForEachNode(const char* line, const std::string& variableName, const Ref<Node>& expression, const Ref<Node>& block);
+	ForEachNode(const std::string& fileName, int line, const std::string& variableName, const Ref<Node>& expression, const Ref<Node>& block);
 
 	~ForEachNode() = default;
 

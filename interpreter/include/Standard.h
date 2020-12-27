@@ -403,7 +403,7 @@ namespace Iona
 			}
 			catch (const std::regex_error&)
 			{
-				Exit("FileFind: String '%s' is not a valid regex", regexString.c_str());
+				Exit("Main.iona", -1, "FileFind: String '%s' is not a valid regex", regexString.c_str());
 			}
 			catch (const std::exception&)
 			{

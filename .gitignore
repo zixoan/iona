@@ -1,2 +1,8 @@
 .vs/
 out/
+.idea
+.cmake
+build
+CMakeCache.txt
+Makefile
+CMakeFiles

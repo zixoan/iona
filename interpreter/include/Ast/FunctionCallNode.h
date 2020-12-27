@@ -19,7 +19,7 @@ private:
 	std::string name;
 	std::vector<Ref<Node>> parameters;
 public:
-	FunctionCallNode(const char* line, const std::string& name, const std::vector<Ref<Node>>& parameters);
+	FunctionCallNode(const std::string& fileName, int line, const std::string& name, const std::vector<Ref<Node>>& parameters);
 
 	~FunctionCallNode() = default;
 

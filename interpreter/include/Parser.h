@@ -42,7 +42,7 @@ private:
 public:
 	const std::string MainFunctionName = "Main";
 
-	Parser(Lexer& lexer);
+	explicit Parser(Lexer& lexer);
 	~Parser() = default;
 
 	Ref<Node> Parse();

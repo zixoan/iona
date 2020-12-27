@@ -8,8 +8,8 @@
 #include "Ast/VariableCompoundAssignNode.h"
 #include "Visitor.h"
 
-VariableCompoundAssignNode::VariableCompoundAssignNode(const char* line, const std::string& name, const Ref<Node>& expression, const TokenType& operation)
-	: Node(line), name(name), expression(expression), operation(operation)
+VariableCompoundAssignNode::VariableCompoundAssignNode(const std::string& fileName, int line, const std::string& name, const Ref<Node>& expression, const TokenType& operation)
+	: Node(fileName, line), name(name), expression(expression), operation(operation)
 {
 
 }

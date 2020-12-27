@@ -17,7 +17,7 @@ private:
 	Ref<Node> expression;
 	Ref<Node> block;
 public:
-	WhileNode(const char* line, const Ref<Node>& expression, const Ref<Node>& block);
+	WhileNode(const std::string& fileName, int line, const Ref<Node>& expression, const Ref<Node>& block);
 
 	~WhileNode() = default;
 

@@ -16,15 +16,21 @@ class Visitor;
 class Node
 {
 protected:
-	const char* line;
+    std::string fileName;
+	int line = 0;
 public:
 	Node() = default;
-	Node(const char* line) : line(line) { }
+	explicit Node(const std::string& fileName, int line) : fileName(fileName), line(line) { }
 	virtual ~Node() = default;
 
 	virtual void Accept(const Ref<Visitor>& v) = 0;
 
-	const char* GetLine() const
+	std::string GetFileName() const
+    {
+	    return fileName;
+    }
+
+	int GetLine() const
 	{
 		return line;
 	}

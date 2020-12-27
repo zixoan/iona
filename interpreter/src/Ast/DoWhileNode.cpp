@@ -8,8 +8,8 @@
 #include "DoWhileNode.h"
 #include "Visitor.h"
 
-DoWhileNode::DoWhileNode(const char* line, const Ref<Node>& expression, const Ref<Node>& block)
-	: Node(line), expression(expression), block(block)
+DoWhileNode::DoWhileNode(const std::string& fileName, int line, const Ref<Node>& expression, const Ref<Node>& block)
+	: Node(fileName, line), expression(expression), block(block)
 {
 }
 

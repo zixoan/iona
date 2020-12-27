@@ -8,8 +8,8 @@
 #include "WhileNode.h"
 #include "Visitor.h"
 
-WhileNode::WhileNode(const char* line, const Ref<Node>& expression, const Ref<Node>& block)
-	: Node(line), expression(expression), block(block)
+WhileNode::WhileNode(const std::string& fileName, int line, const Ref<Node>& expression, const Ref<Node>& block)
+	: Node(fileName, line), expression(expression), block(block)
 {
 }
 

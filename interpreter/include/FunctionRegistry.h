@@ -27,15 +27,13 @@ class FunctionRegistry
 {
 private:
 	std::map<std::string, FunctionEntry> functions;
-
-
 public:
 	FunctionRegistry() = default;
 	~FunctionRegistry() = default;
 
 	void Register(const std::string& name, InternalFunctionCallback function, unsigned int parameterCount, std::map<int, std::vector<TokenType>> functionParameters = {});
 
-	void Call(const char* line, const std::string& name, std::vector<VariableType>& in, VariableType& out);
+	void Call(const std::string& fileName, int line, const std::string& name, std::vector<VariableType>& in, VariableType& out);
 
 	bool Exists(const std::string& name);
 };

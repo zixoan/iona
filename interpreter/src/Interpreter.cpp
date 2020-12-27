@@ -144,8 +144,8 @@ void Interpreter::Visit(const Ref<VariableDeclarationAssignNode>& n)
 
 	if (!IsVariableType(this->currentVariable.type))
 	{
-		Exit("%s Type '%s' of variable '%s' is not a valid variable type",
-			n->GetLine(), Helper::ToString(this->currentVariable.type).c_str(), n->GetName().c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Type '%s' of variable '%s' is not a valid variable type",
+			Helper::ToString(this->currentVariable.type).c_str(), n->GetName().c_str());
 	}
 
 	this->scopes.back()->DeclareVariable(n->GetName(), this->currentVariable);
@@ -187,8 +187,8 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 
 		if (n->GetParameters().size() != function->GetParameters().size())
 		{
-			Exit("%s Function call parameter count (%i) is not matching expected paramter count (%i) of function '%s'",
-				n->GetLine(), n->GetParameters().size(), function->GetParameters().size(), function->GetName().c_str());
+			Exit(n->GetFileName(), n->GetLine(), "Function call parameter count (%i) is not matching expected parameter count (%i) of function '%s'",
+				n->GetParameters().size(), function->GetParameters().size(), function->GetName().c_str());
 		}
 
 		this->currentFunctionCallParams = n->GetParameters();
@@ -212,15 +212,15 @@ void Interpreter::Visit(const Ref<FunctionCallNode>& n)
 				in.push_back(this->currentVariable);
 			}
 
-			this->internalFunctions.Call(n->GetLine(), n->GetName(), in, out);
+			this->internalFunctions.Call(n->GetFileName(), n->GetLine(), n->GetName(), in, out);
 
 			// We need to update the current variable with the returned one
 			this->currentVariable = std::move(out);
 		}
 		else
 		{
-			Exit("%s Function '%s' not found", 
-				n->GetLine(), n->GetName().c_str());
+			Exit(n->GetFileName(), n->GetLine(), "Function '%s' not found",
+				n->GetName().c_str());
 		}
 	}
 }
@@ -231,8 +231,7 @@ void Interpreter::Visit(const Ref<ForEachNode>& n)
 
 	if (!IsVariableArrayType(this->currentVariable.type))
 	{
-		Exit("%s For loop can only loop over arrays, but in type is '%s'",
-				n->GetLine(), Helper::ToString(this->currentVariable.type).c_str());
+		Exit(n->GetFileName(), n->GetLine(), "For loop can only loop over arrays, but in type is '%s'", Helper::ToString(this->currentVariable.type).c_str());
 	}
 
 	this->scopes.push_back(std::make_shared<InterpreterScope>());
@@ -324,8 +323,8 @@ void Interpreter::Visit(const Ref<VariableUsageNode>& n)
 	}
 	else
 	{
-		Exit("%s Variable '%s' not declared in this scope", 
-			n->GetLine(), n->GetName().c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope",
+			n->GetName().c_str());
 	}
 }
 
@@ -347,16 +346,16 @@ void Interpreter::Visit(const Ref<VariableIncrementDecrementNode>& n)
 		}
 		else
 		{
-			Exit("%s Variable increments are only supported with int and float, but got %s",
-				n->GetLine(), Helper::ToString(variable->type).c_str());
+			Exit(n->GetFileName(), n->GetLine(), "Variable increments are only supported with int and float, but got %s",
+				Helper::ToString(variable->type).c_str());
 		}
 
 		this->currentVariable = *variable;
 	}
 	else
 	{
-		Exit("%s Variable '%s' not declared in this scope", 
-			n->GetLine(), n->GetName().c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope",
+			n->GetName().c_str());
 	}
 }
 
@@ -365,8 +364,7 @@ void Interpreter::Visit(const Ref<VariableAssignNode>& n)
 	auto innerScope = FindScopeOfVariable(n->GetName());
 	if (innerScope == nullptr)
 	{
-		Exit("%s Variable '%s' not declared in this scope", 
-			n->GetLine(), n->GetName().c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope", n->GetName().c_str());
 	}
 
 	n->GetExpression()->Accept(shared_from_this());
@@ -377,8 +375,8 @@ void Interpreter::Visit(const Ref<VariableAssignNode>& n)
 	// so it was already checked that it's a valid variable type
 	if (this->currentVariable.type != variable->type)
 	{
-		Exit("%s New value of variable '%s' needs to be of type '%s', but is '%s'", 
-			n->GetLine(), n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+		Exit(n->GetFileName(), n->GetLine(), "New value of variable '%s' needs to be of type '%s', but is '%s'",
+			n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
 	}
 
 	innerScope->UpdateVariable(n->GetName(), this->currentVariable);
@@ -389,8 +387,7 @@ void Interpreter::Visit(const Ref<VariableCompoundAssignNode>& n)
 	auto innerScope = FindScopeOfVariable(n->GetName());
 	if (innerScope == nullptr)
 	{
-		Exit("%s Variable '%s' not declared in this scope", 
-			n->GetLine(), n->GetName().c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared in this scope", n->GetName().c_str());
 	}
 
 	n->GetExpression()->Accept(shared_from_this());
@@ -401,8 +398,8 @@ void Interpreter::Visit(const Ref<VariableCompoundAssignNode>& n)
 	// so it was already checked that it's a valid variable type
 	if (this->currentVariable.type != variable->type)
 	{
-		Exit("%s New value of variable '%s' needs to be of type '%s', but is '%s'",
-			n->GetLine(), n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+		Exit(n->GetFileName(), n->GetLine(), "New value of variable '%s' needs to be of type '%s', but is '%s'",
+			n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
 	}
 
 	VariableType vt;
@@ -449,8 +446,8 @@ void Interpreter::Visit(const Ref<VariableCompoundAssignNode>& n)
 	}
 	else
 	{
-		Exit("%s Variable increment assignments are only supported with int and float, but got %s",
-			n->GetLine(), Helper::ToString(variable->type).c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Variable increment assignments are only supported with int and float, but got %s",
+			Helper::ToString(variable->type).c_str());
 	}
 
 	this->currentVariable = vt;
@@ -522,7 +519,7 @@ void Interpreter::Visit(const Ref<BinaryNode>& n)
 		}
 		else
 		{
-			Exit("Invalid arithmetic string operator '%s'", Helper::ToString(n->GetOperant()).c_str());
+			Exit(n->GetFileName(), n->GetLine(), "Invalid arithmetic string operator '%s'", Helper::ToString(n->GetOperant()).c_str());
 		}
 	}
 
@@ -717,16 +714,14 @@ void Interpreter::Visit(const Ref<VariableArrayUsageNode>& n)
 		auto arrayVar = std::any_cast<std::vector<VariableType>>(scope->GetVariable(n->GetName())->value);
 		if (n->GetIndex() > arrayVar.size() - 1)
 		{
-			Exit("%s Array index %i is higher than the max array index of %i", 
-				n->GetLine(), n->GetIndex(), arrayVar.size() - 1);
+			Exit(n->GetFileName(), n->GetLine(), "Array index %i is higher than the max array index of %i", n->GetIndex(), arrayVar.size() - 1);
 		}
 
 		this->currentVariable = std::move(arrayVar.at(n->GetIndex()));
 	}
 	else
 	{
-		Exit("%s Variable '%s' not declared", 
-			n->GetLine(), n->GetName().c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Variable '%s' not declared", n->GetName().c_str());
 	}
 }
 
@@ -735,8 +730,7 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 	auto innerScope = FindScopeOfVariable(n->GetName());
 	if (innerScope == nullptr)
 	{
-		Exit("%s Array variable '%s' not declared in this scope", 
-			n->GetLine(), n->GetName().c_str());
+		Exit(n->GetFileName(), n->GetLine(), "Array variable '%s' not declared in this scope", n->GetName().c_str());
 	}
 
 	n->GetExpression()->Accept(shared_from_this());
@@ -748,14 +742,13 @@ void Interpreter::Visit(const Ref<VariableArrayAssignNode>& n)
 	// we cannot have empty arrays -> but this might change
 	if (this->currentVariable.type != arrayValues.at(0).type)
 	{
-		Exit("%s New value of array variable '%s' needs to be of type '%s', but is '%s'",
-			n->GetLine(), n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
+		Exit(n->GetFileName(), n->GetLine(), "New value of array variable '%s' needs to be of type '%s', but is '%s'",
+			n->GetName().c_str(), Helper::ToString(variable->type).c_str(), Helper::ToString(this->currentVariable.type).c_str());
 	}
 
 	if (n->GetIndex() > arrayValues.size() - 1)
 	{
-		Exit("%s Array index %i is higher than the max array index of %i", 
-			n->GetLine(), n->GetIndex(), arrayValues.size() - 1);
+		Exit(n->GetFileName(), n->GetLine(), "Array index %i is higher than the max array index of %i", n->GetIndex(), arrayValues.size() - 1);
 	}
 
 	innerScope->UpdateVariable(n->GetName(), n->GetIndex(), this->currentVariable);
@@ -767,7 +760,7 @@ void Interpreter::Visit(const Ref<IfNode>& n)
 
 	if (this->currentVariable.type != TokenType::Bool)
 	{
-		Exit("%s Expression from an if needs to be a boolean result", n->GetLine());
+		Exit(n->GetFileName(), n->GetLine(), "Expression from an if needs to be a boolean result");
 	}
 
 	if (std::any_cast<bool>(this->currentVariable.value))
@@ -803,7 +796,7 @@ void Interpreter::Visit(const Ref<WhileNode>& n)
 
 	if (this->currentVariable.type != TokenType::Bool)
 	{
-		Exit("%s Expression from a while needs to be a boolean result", n->GetLine());
+		Exit(n->GetFileName(), n->GetLine(), "Expression from a while needs to be a boolean result");
 	}
 
 	this->scopes.push_back(std::make_shared<InterpreterScope>());
@@ -828,7 +821,7 @@ void Interpreter::Visit(const Ref<DoWhileNode>& n)
 
 		if (this->currentVariable.type != TokenType::Bool)
 		{
-			Exit("%s Expression from a do while needs to be a boolean result", n->GetLine());
+			Exit(n->GetFileName(), n->GetLine(), "Expression from a do while needs to be a boolean result");
 		}
 	} while (std::any_cast<bool>(this->currentVariable.value));
 }

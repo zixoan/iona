@@ -21,7 +21,7 @@ private:
 	std::map<Ref<Node>, Ref<Node>> elseIfBlocks;
 	Ref<Node> elseBlock;
 public:
-	IfNode(const char* line, const Ref<Node>& expression, const Ref<Node>& trueBlock, const std::map<Ref<Node>, Ref<Node>>& elseIfBlocks, const Ref<Node>& elseBlock);
+	IfNode(const std::string& fileName, int line, const Ref<Node>& expression, const Ref<Node>& trueBlock, const std::map<Ref<Node>, Ref<Node>>& elseIfBlocks, const Ref<Node>& elseBlock);
 
 	~IfNode() = default;
 

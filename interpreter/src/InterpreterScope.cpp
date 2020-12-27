@@ -83,7 +83,7 @@ void InterpreterScope::UpdateVariable(const std::string& variableName, const Var
 	this->variables[variableName]->value = type.value;
 }
 
-void InterpreterScope::UpdateVariable(const std::string& variableName, int arrayIndex, const VariableType& type)
+void InterpreterScope::UpdateVariable(const std::string& variableName, unsigned int arrayIndex, const VariableType& type)
 {
 	auto array = this->variables[variableName]->value;
 	auto arrayValues = std::any_cast<std::vector<VariableType>>(array);

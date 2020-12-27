@@ -18,7 +18,7 @@ private:
 	std::string name;
 	int value;
 public:
-	VariableIncrementDecrementNode(const char* line, const std::string& name, int value);
+	VariableIncrementDecrementNode(const std::string& fileName, int line, const std::string& name, int value);
 
 	~VariableIncrementDecrementNode() = default;
 

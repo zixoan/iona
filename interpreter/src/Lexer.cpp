@@ -10,8 +10,8 @@
 #include <iostream>
 #include <Core.h>
 
-Lexer::Lexer(const std::string& input, const std::string& fileName)
-	: input(input), fileName(fileName), pos(0), line(1)
+Lexer::Lexer(std::string  input, std::string  fileName)
+	: input(std::move(input)), fileName(std::move(fileName)), pos(0), line(1)
 {
 	this->currentChar = this->input.at(this->pos);
 	this->reservedKeywords.insert(std::pair<std::string, Token>("func", Token(Function, "func", this->fileName)));

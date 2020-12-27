@@ -119,7 +119,7 @@ void Interpreter::Interpret()
 
 void Interpreter::Visit(const Ref<MainNode>& n)
 {
-	for (auto globalVariable : n->GetGlobalVariables())
+	for (const auto& globalVariable : n->GetGlobalVariables())
 	{
 		globalVariable->Accept(shared_from_this());
 	}
@@ -238,7 +238,7 @@ void Interpreter::Visit(const Ref<ForEachNode>& n)
 
 	this->scopes.back()->DeclareVariable(n->GetVariableName(), this->currentVariable.type);
 
-	std::vector<VariableType> values = std::any_cast<std::vector<VariableType>>(this->currentVariable.value);
+	auto values = std::any_cast<std::vector<VariableType>>(this->currentVariable.value);
 		
 	for (auto& value : values)
 	{
@@ -342,7 +342,7 @@ void Interpreter::Visit(const Ref<VariableIncrementDecrementNode>& n)
 		}
 		else if (variable->type == TokenType::Float)
 		{
-			variable->value = std::any_cast<float>(variable->value) + n->GetValue();
+			variable->value = std::any_cast<float>(variable->value) + (float)n->GetValue();
 		}
 		else
 		{

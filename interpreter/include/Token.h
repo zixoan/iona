@@ -21,7 +21,7 @@ private:
 	int line;
 public:
 	Token();
-	Token(const TokenType& tokenType, const std::string& value, std::string fileName, int line = 1);
+	Token(const TokenType& tokenType, std::string  value, std::string fileName, int line = 1);
 	~Token() = default;
 
 	TokenType GetTokenType() const;

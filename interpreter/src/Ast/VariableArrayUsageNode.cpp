@@ -8,8 +8,8 @@
 #include "VariableArrayUsageNode.h"
 #include "Visitor.h"
 
-VariableArrayUsageNode::VariableArrayUsageNode(const std::string& fileName, int line, const std::string& name, unsigned int index)
-	: Node(fileName, line), name(name), index(index)
+VariableArrayUsageNode::VariableArrayUsageNode(const std::string& fileName, int line, std::string name, unsigned int index)
+	: Node(fileName, line), name(std::move(name)), index(index)
 {
 
 }

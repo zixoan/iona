@@ -93,11 +93,6 @@ void InterpreterScope::UpdateVariable(const std::string& variableName, unsigned 
 	this->variables[variableName]->value = arrayValues;
 }
 
-void InterpreterScope::UpdateVariable(const std::string& variableName, const std::vector<VariableType>& array)
-{
-	this->variables[variableName]->value = array;
-}
-
 Ref<VariableType> InterpreterScope::GetVariable(const std::string& name)
 {
 	return this->variables.find(name)->second;

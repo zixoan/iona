@@ -20,7 +20,7 @@ private:
 	Ref<Node> block;
 	std::vector<std::string> parameters;
 public:
-	FunctionNode(const std::string& name, Ref<Node> block, const std::vector<std::string>& parameters);
+	FunctionNode(std::string name, Ref<Node> block, std::vector<std::string> parameters);
 
 	~FunctionNode() = default;
 

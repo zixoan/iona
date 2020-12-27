@@ -8,8 +8,8 @@
 #include "BlockNode.h"
 #include "Visitor.h"
 
-BlockNode::BlockNode(const std::vector<Ref<Node>>& statements)
-	: statements(statements)
+BlockNode::BlockNode(std::vector<Ref<Node>> statements)
+	: statements(std::move(statements))
 {
 
 }

@@ -18,30 +18,28 @@ void WindowsFileWatcher::WatchDirectory()
 {
 	char buf[2048];
 	DWORD nRet;
-	BOOL result = TRUE;
-	char fileName[MAX_PATH];
+    char fileName[MAX_PATH];
 	HANDLE file = CreateFile(this->path, GENERIC_READ | FILE_LIST_DIRECTORY,
 		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-		NULL,
+		nullptr,
 		OPEN_EXISTING,
 		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-		NULL);
+                             nullptr);
 
 	OVERLAPPED pollingOverlap;
 
 	FILE_NOTIFY_INFORMATION* pNotify;
-	int offset;
-	pollingOverlap.OffsetHigh = 0;
-	pollingOverlap.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    pollingOverlap.OffsetHigh = 0;
+	pollingOverlap.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 
 	int notifications = 0;
-	while (ReadDirectoryChangesW(file, &buf, sizeof(buf), FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE, &nRet, &pollingOverlap, NULL))
+	while (ReadDirectoryChangesW(file, &buf, sizeof(buf), FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE, &nRet, &pollingOverlap, nullptr))
 	{
 		WaitForSingleObject(pollingOverlap.hEvent, INFINITE);
 
 		pNotify = (FILE_NOTIFY_INFORMATION*)((char*)buf);
 		strcpy(fileName, "");
-		WideCharToMultiByte(CP_ACP, 0, pNotify->FileName, pNotify->FileNameLength / 2, fileName, sizeof(fileName), NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, pNotify->FileName, pNotify->FileNameLength / 2, fileName, sizeof(fileName), nullptr, nullptr);
 		fileName[pNotify->FileNameLength / 2] = '\0';
 
 		if (stricmp(fileName, "Main.ion") == 0 || stricmp(fileName, "Main.iona") == 0)

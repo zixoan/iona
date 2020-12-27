@@ -28,7 +28,7 @@ private:
 
 	Token HandleReserved();
 public:
-	Lexer(const std::string& input, const std::string& fileName);
+	Lexer(std::string  input, std::string  fileName);
 	~Lexer() = default;
 
 	Token NextToken();

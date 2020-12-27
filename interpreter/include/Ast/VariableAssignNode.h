@@ -18,9 +18,9 @@ private:
 	std::string name;
 	Ref<Node> expression;
 public:
-	VariableAssignNode(const std::string& fileName, int line, const std::string& name, const Ref<Node>& expression);
+	VariableAssignNode(const std::string& fileName, int line, std::string name, const Ref<Node>& expression);
 
-	~VariableAssignNode() = default;
+	~VariableAssignNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

@@ -22,58 +22,58 @@ namespace Iona
 	{
 		switch (v.type)
 		{
-		case TokenType::String:
-			return std::any_cast<std::string>(v.value);
-		case TokenType::Int:
-			return std::to_string(std::any_cast<int>(v.value));
-		case TokenType::Float:
-		{
-			std::stringstream stream;
-			stream << std::fixed << std::setprecision(2) << std::any_cast<float>(v.value);
-			return stream.str();
-		}
-		case TokenType::Bool:
-			return std::any_cast<bool>(v.value) ? "true" : "false";
-		case TokenType::IntArray:
-		{
-			std::stringstream out;
-			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-			{
-				out << std::any_cast<int>(variable.value) << ", ";
-			}
-			std::string s = out.str();
-			return s.substr(0, s.size() - 2);
-		}
-		case TokenType::FloatArray:
-		{
-			std::stringstream out;
-			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-			{
-				out << std::any_cast<float>(variable.value) << ", ";
-			}
-			std::string s = out.str();
-			return s.substr(0, s.size() - 2);
-		}
-		case TokenType::StringArray:
-		{
-			std::stringstream out;
-			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-			{
-				out << std::any_cast<std::string>(variable.value) << ", ";
-			}
-			std::string s = out.str();
-			return s.substr(0, s.size() - 2);
-		}
-		case TokenType::BoolArray:
-		{
-			std::stringstream out;
-			for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
-			{
-				out << (std::any_cast<bool>(variable.value) ? "true" : "false") << ", ";
-			}
-			std::string s = out.str();
-			return s.substr(0, s.size() - 2);
-		}
+            case TokenType::String:
+                return std::any_cast<std::string>(v.value);
+            case TokenType::Int:
+                return std::to_string(std::any_cast<int>(v.value));
+            case TokenType::Float:
+            {
+                std::stringstream stream;
+                stream << std::fixed << std::setprecision(2) << std::any_cast<float>(v.value);
+                return stream.str();
+            }
+            case TokenType::Bool:
+                return std::any_cast<bool>(v.value) ? "true" : "false";
+            case TokenType::IntArray:
+            {
+                std::stringstream out;
+                for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+                {
+                    out << std::any_cast<int>(variable.value) << ", ";
+                }
+                std::string s = out.str();
+                return s.substr(0, s.size() - 2);
+            }
+            case TokenType::FloatArray:
+            {
+                std::stringstream out;
+                for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+                {
+                    out << std::any_cast<float>(variable.value) << ", ";
+                }
+                std::string s = out.str();
+                return s.substr(0, s.size() - 2);
+            }
+            case TokenType::StringArray:
+            {
+                std::stringstream out;
+                for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+                {
+                    out << std::any_cast<std::string>(variable.value) << ", ";
+                }
+                std::string s = out.str();
+                return s.substr(0, s.size() - 2);
+            }
+            case TokenType::BoolArray:
+            {
+                std::stringstream out;
+                for (auto& variable : std::any_cast<std::vector<VariableType>>(v.value))
+                {
+                    out << (std::any_cast<bool>(variable.value) ? "true" : "false") << ", ";
+                }
+                std::string s = out.str();
+                return s.substr(0, s.size() - 2);
+            }
 		}
 
 		throw std::invalid_argument("Unkown array type");
@@ -144,7 +144,8 @@ namespace Iona
 			int upperBound = std::any_cast<int>(upperBoundT.value);
 
 			std::vector<VariableType> values;
-			for (int i = 0; i < upperBound; i++)
+			values.reserve(upperBound);
+            for (int i = 0; i < upperBound; i++)
 			{
 				values.push_back({ TokenType::Int, (int) i });
 			}
@@ -180,7 +181,7 @@ namespace Iona
 		{
 			VariableType v = in[0];
 
-			std::string value = std::any_cast<std::string>(v.value);
+			auto value = std::any_cast<std::string>(v.value);
 			std::transform(value.begin(), value.end(), value.begin(),
 				[](unsigned char c) -> unsigned char { return std::toupper(c); });
 
@@ -192,7 +193,7 @@ namespace Iona
 		{
 			VariableType v = in[0];
 
-			std::string value = std::any_cast<std::string>(v.value);
+			auto value = std::any_cast<std::string>(v.value);
 			std::transform(value.begin(), value.end(), value.begin(),
 				[](unsigned char c) -> unsigned char { return std::tolower(c); });
 
@@ -205,8 +206,8 @@ namespace Iona
 			VariableType valueT = in[0];
 			VariableType prefixT = in[1];
 
-			std::string value = std::any_cast<std::string>(valueT.value);
-			std::string prefix = std::any_cast<std::string>(prefixT.value);
+			auto value = std::any_cast<std::string>(valueT.value);
+			auto prefix = std::any_cast<std::string>(prefixT.value);
 
 			out.type = TokenType::Bool;
 			out.value = Helper::StartsWith(value, prefix);
@@ -217,8 +218,8 @@ namespace Iona
 			VariableType valueT = in[0];
 			VariableType suffixT = in[1];
 
-			std::string value = std::any_cast<std::string>(valueT.value);
-			std::string suffix = std::any_cast<std::string>(suffixT.value);
+			auto value = std::any_cast<std::string>(valueT.value);
+			auto suffix = std::any_cast<std::string>(suffixT.value);
 
 			out.type = TokenType::Bool;
 			out.value = Helper::EndsWith(value, suffix);
@@ -229,8 +230,8 @@ namespace Iona
 			VariableType haystackT = in[0];
 			VariableType needleT = in[1];
 
-			std::string haystack = std::any_cast<std::string>(haystackT.value);
-			std::string needle = std::any_cast<std::string>(needleT.value);
+			auto haystack = std::any_cast<std::string>(haystackT.value);
+			auto needle = std::any_cast<std::string>(needleT.value);
 
 			out.type = TokenType::Bool;
 			out.value = haystack.find(needle) != std::string::npos;
@@ -241,8 +242,8 @@ namespace Iona
 			VariableType valueT = in[0];
 			VariableType delimiterT = in[1];
 
-			std::string value = std::any_cast<std::string>(valueT.value);
-			std::string delimiter = std::any_cast<std::string>(delimiterT.value);
+			auto value = std::any_cast<std::string>(valueT.value);
+			auto delimiter = std::any_cast<std::string>(delimiterT.value);
 
 			std::vector<VariableType> values;
 			size_t start;
@@ -262,7 +263,7 @@ namespace Iona
 		{
 			VariableType valueT = in[0];
 
-			std::string value = std::any_cast<std::string>(valueT.value);
+            auto value = std::any_cast<std::string>(valueT.value);
 
 			value.erase(value.begin(), std::find_if(value.begin(), value.end(), [](int ch) {
 				return !std::isspace(ch);
@@ -285,7 +286,7 @@ namespace Iona
 		{
 			VariableType v = in[0];
 
-			std::string path = std::any_cast<std::string>(v.value);
+			auto path = std::any_cast<std::string>(v.value);
 
 			out.type = TokenType::Bool;
 			out.value = fs::exists(path);
@@ -295,7 +296,7 @@ namespace Iona
 		{
 			VariableType v = in[0];
 
-			std::string path = std::any_cast<std::string>(v.value);
+            auto path = std::any_cast<std::string>(v.value);
 
 			std::ifstream file{ path };
 			
@@ -308,8 +309,8 @@ namespace Iona
 			VariableType pathT = in[0];
 			VariableType dataT = in[1];
 
-			std::string path = std::any_cast<std::string>(pathT.value);
-			std::string data = std::any_cast<std::string>(dataT.value);
+			auto path = std::any_cast<std::string>(pathT.value);
+			auto data = std::any_cast<std::string>(dataT.value);
 
 			std::ofstream o{ path, std::ofstream::out };
 			o << data;
@@ -323,8 +324,8 @@ namespace Iona
 			VariableType srcPathT = in[0];
 			VariableType destPathT = in[1];
 
-			std::string srcPath = std::any_cast<std::string>(srcPathT.value);
-			std::string destPath = std::any_cast<std::string>(destPathT.value);
+			auto srcPath = std::any_cast<std::string>(srcPathT.value);
+			auto destPath = std::any_cast<std::string>(destPathT.value);
 
 			std::error_code error;
 			std::filesystem::copy(srcPath, destPath, fs::copy_options::recursive, error);
@@ -337,7 +338,7 @@ namespace Iona
 		{
 			VariableType v = in[0];
 
-			std::string path = std::any_cast<std::string>(v.value);
+			auto path = std::any_cast<std::string>(v.value);
 
 			std::vector<VariableType> lines;
 
@@ -359,8 +360,8 @@ namespace Iona
 			VariableType dataT = in[1];
 			VariableType appendT = in[2];
 
-			std::string path = std::any_cast<std::string>(pathT.value);
-			std::vector<VariableType> data = std::any_cast<std::vector<VariableType>>(dataT.value);
+			auto path = std::any_cast<std::string>(pathT.value);
+			auto data = std::any_cast<std::vector<VariableType>>(dataT.value);
 			bool append = std::any_cast<bool>(appendT.value);
 
 			std::ofstream file{ path, append ? std::ios_base::app : std::ios_base::trunc };
@@ -379,8 +380,8 @@ namespace Iona
 			VariableType pathT = in[0];
 			VariableType regexStringT = in[1];
 
-			std::string path = std::any_cast<std::string>(pathT.value);
-			std::string regexString = std::any_cast<std::string>(regexStringT.value);
+			auto path = std::any_cast<std::string>(pathT.value);
+			auto regexString = std::any_cast<std::string>(regexStringT.value);
 			
 			std::vector<VariableType> files;
 
@@ -469,8 +470,8 @@ namespace Iona
 			}
 			else if (valueOneT.type == TokenType::Float && valueTwoT.type == TokenType::Float)
 			{
-				float valueOne = std::any_cast<float>(valueOneT.value);
-				float valueTwo = std::any_cast<float>(valueTwoT.value);
+				auto valueOne = std::any_cast<float>(valueOneT.value);
+				auto valueTwo = std::any_cast<float>(valueTwoT.value);
 
 				out.type = TokenType::Float;
 				out.value = std::min(valueOne, valueTwo);
@@ -492,8 +493,8 @@ namespace Iona
 			}
 			else if (valueOneT.type == TokenType::Float && valueTwoT.type == TokenType::Float)
 			{
-				float valueOne = std::any_cast<float>(valueOneT.value);
-				float valueTwo = std::any_cast<float>(valueTwoT.value);
+				auto valueOne = std::any_cast<float>(valueOneT.value);
+				auto valueTwo = std::any_cast<float>(valueTwoT.value);
 
 				out.type = TokenType::Float;
 				out.value = std::max(valueOne, valueTwo);

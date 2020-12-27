@@ -8,8 +8,8 @@
 #include "IfNode.h"
 #include "Visitor.h"
 
-IfNode::IfNode(const std::string& fileName, int line, const Ref<Node>& expression, const Ref<Node>& trueBlock, const std::map<Ref<Node>, Ref<Node>>& elseIfBlocks, const Ref<Node>& elseBlock)
-	: Node(fileName, line), expression(expression), trueBlock(trueBlock), elseIfBlocks(elseIfBlocks), elseBlock(elseBlock)
+IfNode::IfNode(const std::string& fileName, int line, const Ref<Node>& expression, const Ref<Node>& trueBlock, std::map<Ref<Node>, Ref<Node>> elseIfBlocks, const Ref<Node>& elseBlock)
+	: Node(fileName, line), expression(expression), trueBlock(trueBlock), elseIfBlocks(std::move(elseIfBlocks)), elseBlock(elseBlock)
 {
 }
 

@@ -18,9 +18,9 @@ private:
 	std::string value;
 	std::vector<Ref<Node>> expressions;
 public:
-	StringNode(const std::string& fileName, int line, const std::string& value, const std::vector<Ref<Node>>& expressions);
+	StringNode(const std::string& fileName, int line, std::string  value, std::vector<Ref<Node>> expressions);
 
-	~StringNode() = default;
+	~StringNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

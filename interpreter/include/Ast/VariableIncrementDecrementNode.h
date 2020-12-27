@@ -18,9 +18,9 @@ private:
 	std::string name;
 	int value;
 public:
-	VariableIncrementDecrementNode(const std::string& fileName, int line, const std::string& name, int value);
+	VariableIncrementDecrementNode(const std::string& fileName, int line, std::string name, int value);
 
-	~VariableIncrementDecrementNode() = default;
+	~VariableIncrementDecrementNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

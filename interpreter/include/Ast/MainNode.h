@@ -17,7 +17,7 @@ private:
 	std::vector<Ref<Node>> globalVariables;
 	std::vector<Ref<Node>> globalFunctions;
 public:
-	MainNode(const std::vector<Ref<Node>>& globalVariables, const std::vector<Ref<Node>>& globalFunctions);
+	MainNode(std::vector<Ref<Node>> globalVariables, std::vector<Ref<Node>> globalFunctions);
 
 	~MainNode() = default;
 

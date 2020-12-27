@@ -8,8 +8,8 @@
 #include "Ast/MainNode.h"
 #include "Visitor.h"
 
-MainNode::MainNode(const std::vector<Ref<Node>>& globalVariables, const std::vector<Ref<Node>>& globalFunctions)
-	: globalVariables(globalVariables), globalFunctions(globalFunctions)
+MainNode::MainNode(std::vector<Ref<Node>> globalVariables, std::vector<Ref<Node>> globalFunctions)
+	: globalVariables(std::move(globalVariables)), globalFunctions(std::move(globalFunctions))
 {
 
 }

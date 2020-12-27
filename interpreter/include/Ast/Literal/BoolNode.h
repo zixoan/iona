@@ -15,8 +15,8 @@ class BoolNode : public Node, public std::enable_shared_from_this<BoolNode>
 private:
 	bool value;
 public:
-	BoolNode(const std::string& value);
-	~BoolNode() = default;
+	explicit BoolNode(const std::string& value);
+	~BoolNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

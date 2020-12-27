@@ -20,7 +20,7 @@ private:
 	TokenType arrayType;
 	std::vector<Ref<Node>> values;
 public:
-	VariableArrayDeclarationAssignNode(const std::string& name, const TokenType& arrayType, const std::vector<Ref<Node>>& values);
+	VariableArrayDeclarationAssignNode(std::string name, const TokenType arrayType, std::vector<Ref<Node>> values);
 
 	~VariableArrayDeclarationAssignNode() = default;
 

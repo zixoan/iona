@@ -18,7 +18,7 @@ class BlockNode : public Node, public std::enable_shared_from_this<BlockNode>
 private:
 	std::vector<Ref<Node>> statements;
 public:
-	BlockNode(const std::vector<Ref<Node>>& statements);
+	BlockNode(std::vector<Ref<Node>> statements);
 
 	~BlockNode() = default;
 

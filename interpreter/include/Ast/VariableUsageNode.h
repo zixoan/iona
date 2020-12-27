@@ -17,9 +17,9 @@ class VariableUsageNode : public Node, public std::enable_shared_from_this<Varia
 private:
 	std::string name;
 public:
-	VariableUsageNode(const std::string& fileName, int line, const std::string& name);
+	VariableUsageNode(const std::string& fileName, int line, std::string name);
 
-	~VariableUsageNode() = default;
+	~VariableUsageNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

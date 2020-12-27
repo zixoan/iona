@@ -16,8 +16,8 @@ class IntNode : public Node, public std::enable_shared_from_this<IntNode>
 private:
 	int value;
 public:
-	IntNode(const std::string& value);
-	~IntNode() = default;
+	explicit IntNode(const std::string& value);
+	~IntNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

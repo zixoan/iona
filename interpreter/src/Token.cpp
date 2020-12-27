@@ -8,13 +8,13 @@
 #include "Token.h"
 
 Token::Token() 
-	: tokenType(TokenType::None), value("")
+	: tokenType(TokenType::None), line(0)
 {
 
 }
 
-Token::Token(const TokenType& tokenType, const std::string& value, std::string fileName, const int line)
-	: tokenType(tokenType), value(value), fileName(std::move(fileName)), line(line)
+Token::Token(const TokenType& tokenType, std::string  value, std::string fileName, const int line)
+	: tokenType(tokenType), value(std::move(value)), fileName(std::move(fileName)), line(line)
 {
 }
 

@@ -15,8 +15,8 @@ class FloatNode : public Node, public std::enable_shared_from_this<FloatNode>
 private:
 	float value;
 public:
-	FloatNode(const std::string& value);
-	~FloatNode() = default;
+	explicit FloatNode(const std::string& value);
+	~FloatNode() override = default;
 
 	void Accept(const Ref<Visitor>& v) override;
 

@@ -13,7 +13,7 @@ class FileWatcher
 protected:
 	const char* path;
 public:
-	FileWatcher(const char* path) : path(path) { }
+	explicit FileWatcher(const char* path) : path(path) { }
 	virtual ~FileWatcher() = default;
 
 	virtual void WatchDirectory() = 0;

@@ -45,30 +45,30 @@ public:
 		return currentVariable;
 	}
 
-	void Visit(const Ref<MainNode>& n);
-	void Visit(const Ref<VariableDeclarationAssignNode>& n);
-	void Visit(const Ref<VariableArrayDeclarationAssignNode>& n);
-	void Visit(const Ref<FunctionNode>& n);
-	void Visit(const Ref<FunctionCallNode>& n);
-	void Visit(const Ref<ForEachNode>& n);
-	void Visit(const Ref<ForINode>& n);
-	void Visit(const Ref<BlockNode>& n);
-	void Visit(const Ref<BinaryNode>& n);
-	void Visit(const Ref<BooleanNode>& n);
-	void Visit(const Ref<IfNode>& n);
-	void Visit(const Ref<WhileNode>& n);
-	void Visit(const Ref<DoWhileNode>& n);
-	void Visit(const Ref<StringNode>& n);
-	void Visit(const Ref<IntNode>& n);
-	void Visit(const Ref<FloatNode>& n);
-	void Visit(const Ref<VariableUsageNode>& n);
-	void Visit(const Ref<VariableAssignNode>& n);
-	void Visit(const Ref<VariableArrayUsageNode>& n);
-	void Visit(const Ref<VariableArrayAssignNode>& n);
-	void Visit(const Ref<VariableIncrementDecrementNode>& n);
-	void Visit(const Ref<VariableCompoundAssignNode>& n);
-	void Visit(const Ref<BoolNode>& n);
-	void Visit(const Ref<ReturnNode>& n);
+	void Visit(const Ref<MainNode>& n) override;
+	void Visit(const Ref<VariableDeclarationAssignNode>& n) override;
+	void Visit(const Ref<VariableArrayDeclarationAssignNode>& n) override;
+	void Visit(const Ref<FunctionNode>& n) override;
+	void Visit(const Ref<FunctionCallNode>& n) override;
+	void Visit(const Ref<ForEachNode>& n) override;
+	void Visit(const Ref<ForINode>& n) override;
+	void Visit(const Ref<BlockNode>& n) override;
+	void Visit(const Ref<BinaryNode>& n) override;
+	void Visit(const Ref<BooleanNode>& n) override;
+	void Visit(const Ref<IfNode>& n) override;
+	void Visit(const Ref<WhileNode>& n) override;
+	void Visit(const Ref<DoWhileNode>& n) override;
+	void Visit(const Ref<StringNode>& n) override;
+	void Visit(const Ref<IntNode>& n) override;
+	void Visit(const Ref<FloatNode>& n) override;
+	void Visit(const Ref<VariableUsageNode>& n) override;
+	void Visit(const Ref<VariableAssignNode>& n) override;
+	void Visit(const Ref<VariableArrayUsageNode>& n) override;
+	void Visit(const Ref<VariableArrayAssignNode>& n) override;
+	void Visit(const Ref<VariableIncrementDecrementNode>& n) override;
+	void Visit(const Ref<VariableCompoundAssignNode>& n) override;
+	void Visit(const Ref<BoolNode>& n) override;
+	void Visit(const Ref<ReturnNode>& n) override;
 };
 
 #endif

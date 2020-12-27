@@ -8,8 +8,8 @@
 #include "Ast/VariableDeclarationAssignNode.h"
 #include "Visitor.h"
 
-VariableDeclarationAssignNode::VariableDeclarationAssignNode(const std::string& fileName, int line, const std::string& name, const Ref<Node>& expression)
-	: Node(fileName, line), name(name), expression(expression)
+VariableDeclarationAssignNode::VariableDeclarationAssignNode(const std::string& fileName, int line, std::string name, const Ref<Node>& expression)
+	: Node(fileName, line), name(std::move(name)), expression(expression)
 {
 
 }

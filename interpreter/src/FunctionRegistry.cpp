@@ -6,9 +6,9 @@ void FunctionRegistry::Register(const std::string& name,
 								std::map<int, std::vector<TokenType>> functionParameters)
 {
 	FunctionEntry entry;
-	entry.function = function;
+	entry.function = std::move(function);
 	entry.parameterCount = parameterCount;
-	entry.functionParameters = functionParameters;
+	entry.functionParameters = std::move(functionParameters);
 
 	this->functions.insert(std::pair<std::string, FunctionEntry>(name, entry));
 }
@@ -26,10 +26,10 @@ void FunctionRegistry::Call(const std::string& fileName, int line, const std::st
 			for (size_t i = 0; i < in.size(); i++)
 			{
 				auto allowedParamTypes = result->second.functionParameters.at(i);
-				for (size_t j = 0; j < allowedParamTypes.size(); j++)
+				for (auto & allowedParamType : allowedParamTypes)
 				{
-					if (allowedParamTypes.at(j) == in.at(i).type 
-						|| (allowedParamTypes.at(j) == TokenType::Array && IsVariableArrayType(in.at(i).type)))
+					if (allowedParamType == in.at(i).type
+						|| (allowedParamType == TokenType::Array && IsVariableArrayType(in.at(i).type)))
 					{
 						parameterCheckPassedCount++;
 						// Functions can have multiple allowed types per parameter, so if one of the allowed types matched, 

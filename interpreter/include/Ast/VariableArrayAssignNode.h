@@ -18,7 +18,7 @@ private:
 	unsigned int index;
 	Ref<Node> expression;
 public:
-	VariableArrayAssignNode(const std::string& fileName, int line, const std::string& name, unsigned int index, const Ref<Node>& expression);
+	VariableArrayAssignNode(const std::string& fileName, int line, std::string name, unsigned int index, const Ref<Node>& expression);
 
 	~VariableArrayAssignNode() = default;
 

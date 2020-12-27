@@ -397,7 +397,7 @@ Ref<Node> Parser::ParseWhen()
 
 	Advance(TokenType::CurlyRight);
 
-	if (cases.size() == 0)
+	if (cases.empty())
 	{
 		Exit(this->currentToken, "'when' statement needs to have at least one case expression and block");
 	}
@@ -499,12 +499,12 @@ Ref<Node> Parser::Factor()
 
 			std::string varName = value.substr(indexOfCurlyOpen + 1, indexOfCurlyClose - indexOfCurlyOpen - 1);
 
-			Lexer lexer(varName, this->lexer.GetFileName());
-			Parser parser(lexer);
+			Lexer innerLexer(varName, this->lexer.GetFileName());
+			Parser innerParser(innerLexer);
 
 			try
 			{
-				expressions.push_back(parser.Expression());
+				expressions.push_back(innerParser.Expression());
 			}
 			catch (const std::exception& e)
 			{
@@ -575,7 +575,6 @@ Ref<Node> Parser::Statement()
 		Advance(Name);
 
 		int line = this->currentToken.GetLine();
-		printf("Statement: %i\n", line);
 
 		if (this->currentToken.GetTokenType() == Assign)
 		{
@@ -604,30 +603,30 @@ Ref<Node> Parser::Statement()
 		}
 		else if (this->currentToken.GetTokenType() == Minus)
 		{
-			auto line = this->currentToken.GetLine();
+			auto lineNumber = this->currentToken.GetLine();
 
 			Advance(Minus);
 			Advance(Assign);
 
-			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), line, varName, Expression(), TokenType::Minus);
+			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), lineNumber, varName, Expression(), TokenType::Minus);
 		}
 		else if (this->currentToken.GetTokenType() == Multiply)
 		{
-			auto line = this->currentToken.GetLine();
+			auto lineNumber = this->currentToken.GetLine();
 
 			Advance(Multiply);
 			Advance(Assign);
 
-			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), line, varName, Expression(), TokenType::Multiply);
+			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), lineNumber, varName, Expression(), TokenType::Multiply);
 		}
 		else if (this->currentToken.GetTokenType() == Divide)
 		{
-			auto line = this->currentToken.GetLine();
+			auto lineNumber = this->currentToken.GetLine();
 
 			Advance(Divide);
 			Advance(Assign);
 
-			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), line, varName, Expression(), TokenType::Divide);
+			return std::make_shared<VariableCompoundAssignNode>(this->lexer.GetFileName(), lineNumber, varName, Expression(), TokenType::Divide);
 		}
 		else if (this->currentToken.GetTokenType() == SquareLeft)
 		{

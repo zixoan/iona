@@ -9,8 +9,6 @@
 #include <filesystem>
 #include <sstream>
 #include <regex>
-#include <thread>
-#include <signal.h>
 #include "FileWatcher.h"
 #include "WindowsFileWatcher.h"
 
@@ -26,7 +24,7 @@ bool IsVsCodeInstalled()
 bool IsValidProjectName(const std::string& s)
 {
 	// Only allow alphanumeric characters, underscores and hyphens
-	return std::regex_match(s, std::regex("^[a-zA-Z0-9_\-]+$"));
+	return std::regex_match(s, std::regex("^[a-zA-Z0-9_\\-]+$"));
 }
 
 int main(int argc, char** argv)

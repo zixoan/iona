@@ -8,8 +8,8 @@
 #include "ForINode.h"
 #include "Visitor.h"
 
-ForINode::ForINode(const std::string& fileName, int line, const std::string& variableName, int from, int to, int step, const Ref<Node>& block)
-	: Node(fileName, line), variableName(variableName), from(from), to(to), step(step), block(block)
+ForINode::ForINode(const std::string& fileName, int line, std::string variableName, int from, int to, int step, const Ref<Node>& block)
+	: Node(fileName, line), variableName(std::move(variableName)), from(from), to(to), step(step), block(block)
 {
 }
 

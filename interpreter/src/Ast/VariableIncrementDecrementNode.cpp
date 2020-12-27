@@ -8,8 +8,8 @@
 #include "Ast/VariableIncrementDecrementNode.h"
 #include "Visitor.h"
 
-VariableIncrementDecrementNode::VariableIncrementDecrementNode(const std::string& fileName, int line, const std::string& name, int value)
-	: Node(fileName, line), name(name), value(value)
+VariableIncrementDecrementNode::VariableIncrementDecrementNode(const std::string& fileName, int line, std::string name, int value)
+	: Node(fileName, line), name(std::move(name)), value(value)
 {
 
 }

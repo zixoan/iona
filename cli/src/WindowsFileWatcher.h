@@ -14,7 +14,7 @@
 class WindowsFileWatcher : public FileWatcher
 {
 public:
-	WindowsFileWatcher(const char* path);
+	explicit WindowsFileWatcher(const char* path);
 
 	void WatchDirectory() override;
 };

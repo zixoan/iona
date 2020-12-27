@@ -30,7 +30,6 @@ public:
 
 	void UpdateVariable(const std::string& variableName, const VariableType& variableType);
 	void UpdateVariable(const std::string& variableName, unsigned int arrayIndex, const VariableType& variableType);
-	void UpdateVariable(const std::string& variableName, const std::vector<VariableType>& array);
 
 	Ref<VariableType> GetVariable(const std::string& name);
 };
